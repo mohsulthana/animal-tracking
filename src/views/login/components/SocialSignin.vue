@@ -8,6 +8,9 @@
       <span class="qq-svg-container"><svg-icon icon-class="qq" class="icon" /></span>
       QQ
     </div>
+    <!-- Background image -->
+    <div style="background-image: url('https://mdbcdn.b-cdn.net/img/new/standard/city/041.webp');" />
+  <!-- Background image -->
   </div>
 </template>
 

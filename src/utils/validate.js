@@ -15,9 +15,14 @@ export function isExternal(path) {
  * @returns {Boolean}
  */
 export function validUsername(str) {
-  const valid_map = ['admin', 'editor']
+  const valid_map = ['admin', 'editor', 'duzhuofeng73@gmail.com']
   return valid_map.indexOf(str.trim()) >= 0
 }
+
+/* export function validEmail(str) {
+  const valid_map = ['tclchunling@gmail.com', 'dushengzhi@gmail.com']
+  return valid_map.indexOf(str.trim()) >= 0
+}*/
 
 /**
  * @param {string} url

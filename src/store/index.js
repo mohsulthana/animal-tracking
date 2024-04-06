@@ -1,6 +1,10 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+
 import getters from './getters'
+
+// import firebase from 'firebase'
+// import 'firebase/firestore'
 
 Vue.use(Vuex)
 
@@ -17,9 +21,18 @@ const modules = modulesFiles.keys().reduce((modules, modulePath) => {
   return modules
 }, {})
 
-const store = new Vuex.Store({
+export default new Vuex.Store({
+  /* state: {
+    qrcode:{
+      Qrcode: ''
+    }
+  },*/
+  getters,
   modules,
-  getters
+  mutations: {
+    changeQrcode(qrc) {
+      state.qrcode.Qrcode = qrc
+    }
+  }
+  // actions:{}
 })
-
-export default store

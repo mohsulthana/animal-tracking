@@ -19,6 +19,10 @@ import './permission' // permission control
 import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
+// import * as VueGoogleMaps from 'vue2-google-maps'
+// import VueBottomNavigation from 'bottom-navigation-vue'
+// QR code:
+// import './indes.css'
 
 /**
  * If you don't want to use mock-server
@@ -28,6 +32,7 @@ import * as filters from './filters' // global filters
  * Currently MockJs will be used in the production environment,
  * please remove it before going online ! ! !
  */
+console.log('main.js after import' + (+new Date()))
 if (process.env.NODE_ENV === 'production') {
   const { mockXHR } = require('../mock')
   mockXHR()
@@ -38,12 +43,22 @@ Vue.use(Element, {
   locale: enLang // 如果使用中文，无需设置，请删除
 })
 
+// google-map
+/* Vue.use(VueGoogleMaps, {
+  load: {
+    key: 'AIzaSyAHAJP72Qwxh91WbrcuiXiVO22GEGxf4T4',
+    libraries: 'places'
+  }
+})*/
+
 // register global utility filters
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
 
 Vue.config.productionTip = false
+
+// Vue.use(VueBottomNavigation)
 
 new Vue({
   el: '#app',

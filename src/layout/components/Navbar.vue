@@ -1,14 +1,14 @@
 <template>
   <div class="navbar">
-    <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    <!-- <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
     <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
-
+     -->
     <div class="right-menu">
       <template v-if="device!=='mobile'">
-        <search id="header-search" class="right-menu-item" />
+        <!-- <search id="header-search" class="right-menu-item" />
 
-        <error-log class="errLog-container right-menu-item hover-effect" />
+        <error-log class="errLog-container right-menu-item hover-effect" /> -->
 
         <screenfull id="screenfull" class="right-menu-item hover-effect" />
 
@@ -20,22 +20,24 @@
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
-          <i class="el-icon-caret-bottom" />
+          <svg-icon icon-class="exit" class-name="card-panel-icon" />
+          <!--<i class="el-icon-caret-bottom" />-->
         </div>
         <el-dropdown-menu slot="dropdown">
-          <router-link to="/profile/index">
+          <!-- <router-link to="/profile/index">
             <el-dropdown-item>Profile</el-dropdown-item>
           </router-link>
-          <router-link to="/">
-            <el-dropdown-item>Dashboard</el-dropdown-item>
-          </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-element-admin/">
+           <a target="_blank" href="https://github.com/PanJiaChen/vue-element-admin/">
             <el-dropdown-item>Github</el-dropdown-item>
           </a>
           <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
             <el-dropdown-item>Docs</el-dropdown-item>
           </a>
+          -->
+          <router-link to="/">
+            <el-dropdown-item>Dashboard</el-dropdown-item>
+          </router-link>
+
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">Log Out</span>
           </el-dropdown-item>
@@ -53,7 +55,9 @@ import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
+// import {auth} from '@/views/dashboard/admin/components/Config/firebase'
 
+console.log('navbar.vue' + (+new Date()))
 export default {
   components: {
     Breadcrumb,
@@ -75,7 +79,19 @@ export default {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
+      // auth.signOut();
+
       await this.$store.dispatch('user/logout')
+
+      this.$store.state.tagsView.visitedViews = []
+      this.$store.state.data.footages = [],
+      this.$store.state.data.animals = [],
+      this.$store.state.data.animalcategories = [],
+      this.$store.state.data.genders = [],
+      this.$store.state.data.users = [],
+      /* this.$router.removeRoute('animalonmap')
+      this.$router.removeRoute('animalRecordManage')
+      this.$router.removeRoute('animalregister')*/
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     }
   }
@@ -83,6 +99,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .card-panel-icon {
+      float: bottom;
+      font-size: 24px;
+    }
 .navbar {
   height: 50px;
   overflow: hidden;

@@ -1,5 +1,7 @@
 import store from '@/store'
 
+console.log('layout:minxin:ResizeHandler.js' + (+new Date()))
+
 const { body } = document
 const WIDTH = 992 // refer to Bootstrap's responsive design
 

@@ -9,6 +9,9 @@
 </template>
 
 <script>
+
+console.log('layout:components:AppMain.vue' + (+new Date()))
+
 export default {
   name: 'AppMain',
   computed: {

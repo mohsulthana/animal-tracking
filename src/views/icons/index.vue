@@ -99,3 +99,9 @@ export default {
   }
 }
 </style>
+body{
+  background-image: url('~@/assets/5c87a28664b7a.jpg');
+  background-color: rgb(80, 220, 255);
+  background: cover;
+    /* Other background properties here */
+}

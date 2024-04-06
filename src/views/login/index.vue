@@ -1,9 +1,11 @@
 <template>
+
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">Livestock Monitoring Login Page</h3>
+        <link rel="stylesheet" href="style.css">
       </div>
 
       <el-form-item prop="username">
@@ -48,8 +50,8 @@
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
 
       <div style="position:relative">
-        <div class="tips">
-          <span>Username : admin</span>
+        <!---        <div class="tips">
+          <span>Username : </span>
           <span>Password : any</span>
         </div>
         <div class="tips">
@@ -59,8 +61,57 @@
 
         <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
           Or connect with
-        </el-button>
+        </el-button>-->
       </div>
+    </el-form>
+    <!--
+    <el-form ref="RegisterForm" :model="RegisterForm" :rules="RegisterRules" class="Register-form" autocomplete="on" label-position="left">
+
+      <div class="title-container">
+        <h3 class="title">Register Form</h3>
+      </div>
+
+      <el-form-item prop="email">
+        <span class="svg-container">
+          <svg-icon icon-class="user" />
+        </span>
+        <el-input
+          ref="email"
+          v-model="RegisterForm.email"
+          placeholder="email"
+          name="email"
+          type="text"
+          tabindex="1"
+          autocomplete="on"
+        />
+      </el-form-item>
+
+      <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
+        <el-form-item prop="password">
+          <span class="svg-container">
+            <svg-icon icon-class="password" />
+          </span>
+          <el-input
+            :key="passwordType"
+            ref="password"
+            v-model="RegisterForm.password"
+            :type="passwordType"
+            placeholder="Password"
+            name="password"
+            tabindex="2"
+            autocomplete="on"
+            @keyup.native="checkCapslock"
+            @blur="capsTooltip = false"
+            @keyup.enter.native="handleRegister"
+          />
+          <span class="show-pwd" @click="showPwd">
+            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+          </span>
+        </el-form-item>
+      </el-tooltip>
+
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleRegister">Register</el-button>
+
     </el-form>
 
     <el-dialog title="Or connect with" :visible.sync="showDialog">
@@ -69,21 +120,41 @@
       <br>
       <br>
       <social-sign />
-    </el-dialog>
+    </el-dialog>-->
+
+    <!-- Background image -->
+    <div id="wrapper" />
+    <div
+      class="bg-image"
+    >
+      <h1 class="text-white">Page title</h1>
+    </div>
+    <!-- Background image -->
   </div>
 </template>
 
 <script>
+import { auth } from '../dashboard/admin/components/Config/firebase'
+import { firestore } from '../dashboard/admin/components/Config/firebase'
 import { validUsername } from '@/utils/validate'
 import SocialSign from './components/SocialSignin'
+import { validEmail } from '@/utils/validate'
+import Vue from 'vue'
 
 export default {
   name: 'Login',
   components: { SocialSign },
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+      if (!validEmail(value)) {
+        callback(new Error('Please enter the correct email'))
+      } else {
+        callback()
+      }
+    }
+    const validateEmail = (rule, value, callback) => {
+      if (!validEmail(value)) {
+        callback(new Error('Please enter the correct email'))
       } else {
         callback()
       }
@@ -97,11 +168,19 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: 'duc@tut.ac.za',
+        password: 'aaaaaa'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+      },
+      RegisterForm: {
+        email: 'duzhuofeng73@gmail.com',
+        password: '111111'
+      },
+      RegisterRules: {
+        email: [{ required: true, trigger: 'blur', validator: validateEmail }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       passwordType: 'password',
@@ -109,7 +188,9 @@ export default {
       loading: false,
       showDialog: false,
       redirect: undefined,
-      otherQuery: {}
+      otherQuery: {},
+      auth,
+      firestore
     }
   },
   watch: {
@@ -125,9 +206,16 @@ export default {
     }
   },
   created() {
+
     // window.addEventListener('storage', this.afterQRScan)
   },
   mounted() {
+    console.log('Login form: mounted' + (+new Date()))
+    /* this.$store.state.data.firstanimalsnapshot = 1
+    this.$store.state.data.firstanimalcategoriessnapshot = 1
+    this.$store.state.data.firstfootagesnapshot = 1
+    this.$store.state.data.firstgenderssnapshot = 1
+    this.$store.state.data.firstusersnapshot = 1*/
     if (this.loginForm.username === '') {
       this.$refs.username.focus()
     } else if (this.loginForm.password === '') {
@@ -153,7 +241,308 @@ export default {
       })
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
+      this.loading = true
+      /* this.$store.dispatch('user/login', this.loginForm)
+          .then(() => {
+          this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+            this.loading = false
+          })
+          .catch(() => {
+          this.loading = false
+          })*/
+
+      /* console.log("Before setAuthPersistence")
+      this.$store.getters.setAuthPersistence.then(() => {
+        alert('Successfully logged in database, click to start pulling data');
+        this.$store.getters.getAnimalsAndFootages.then(() => {
+          this.$store.dispatch('user/login', this.loginForm)
+                    .then(() => {
+                    this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+                      this.loading = false
+                    })
+                    .catch(() => {
+                    this.loading = false
+                    })
+                console.log("Got "+this.$store.state.data.footages.length+ " footages")
+                console.log(this.$store)
+        })
+      })*/
+      this.$store.state.data.footages = [],
+      this.$store.state.data.animals = [],
+      this.$store.state.data.animalcategories = [],
+      this.$store.state.data.genders = [],
+      this.$store.state.data.users = [],
+
+      auth.setPersistence('local')
+        .then(() => {
+          // console.log(this.loginForm.username)
+          auth.signInWithEmailAndPassword(this.loginForm.username, this.loginForm.password)
+            .then(() => {
+              alert('Successfully logged in, click to start pulling data')
+              var role = ''
+              var that = this
+              that.$store.state.data.logedinEmail = that.loginForm.username
+              that.$store.state.data.password = that.loginForm.password
+
+              // load users
+              firestore
+                .collection('users')
+                .onSnapshot(function(snapshot) {
+                  console.log('get in users loading')
+                  /* console.log("First user snapshot? "+ that.$store.state.data.firstusersnapshot)
+                if(that.$store.state.data.firstusersnapshot){
+                  that.$store.state.data.users = []
+                  //console.log("getters.firstfootages: "+that.$store.getters.firstfootagesnapshot)
+                  that.$store.state.data.firstusersnapshot = 0
+                  //console.log("getters.firstfootages: "+that.$store.getters.firstfootagesnapshot)
+                }*/
+                  snapshot.docChanges().forEach(function(change) {
+                    console.log(change.doc.data().email)
+
+                    switch (change.type) {
+                      case 'added':
+                        that.$store.state.data.users.push({
+                          ...change.doc.data(),
+                          userID: change.doc.id
+                        })
+                        break
+                      case 'modified':
+                        var a = that.$store.state.data.users.find(user => user.userID === change.doc.id)
+                        Vue.set(that.$store.state.data.users,
+                          that.$store.state.data.users.indexOf(a),
+                          { ...change.doc.data(), ...{ userID: change.doc.id }})
+                        break
+                      case 'removed':
+                        var a = that.$store.state.data.users.find(user => user.userID === change.doc.id)
+                        that.$store.state.data.users.splice(that.$store.state.data.users.indexOf(a), 1)
+                        break
+                      default:
+                        break
+                    }
+                  })
+
+                  console.log('Got ' + that.$store.state.data.users.length + ' users')
+                  console.log(that.$store.state.data.users)
+                  var user = that.$store.getters.users.find(user => user.email === that.loginForm.username)
+                  console.log(user)
+
+                  if (user) {
+                    that.role = user.role
+                    console.log('Login Email:' + that.loginForm.username + ' role: ' + that.role)
+                  } else {
+                    alert('The login email does not have permission to access data')
+                    this.$router.push('/')
+                    return
+                  }
+                })
+
+              // load animals
+              firestore
+                .collection('animals')
+                .onSnapshot(function(snapshot) {
+                  console.log('First animal snapshot? ' + that.$store.state.data.firstanimalsnapshot)
+                  /* if(that.$store.state.data.firstanimalsnapshot){
+                  that.$store.state.data.animals = []
+                  that.$store.state.data.firstanimalsnapshot = 0
+                }*/
+                  snapshot.docChanges().forEach(function(change) {
+                    switch (change.type) {
+                      case 'added':
+                        that.$store.state.data.animals.push({
+                          ...change.doc.data(),
+                          animalID: change.doc.id
+                        })
+                        break
+                      case 'modified':
+                        var a = that.$store.state.data.animals.find(animal => animal.animalID === change.doc.id)
+                        Vue.set(that.$store.state.data.animals,
+                          that.$store.state.data.animals.indexOf(a),
+                          { ...change.doc.data(), ...{ animalID: change.doc.id }})
+                        break
+                      case 'removed':
+                        var a = that.$store.state.data.animals.find(animal => animal.animalID === change.doc.id)
+                        that.$store.state.data.animals.splice(that.$store.state.data.animals.indexOf(a), 1)
+                        break
+                      default:
+                        break
+                    }
+                    console.log(change.type + ' animal: ' + change.doc.data())
+                  })
+                  console.log('Got ' + that.$store.state.data.animals.length + ' animals')
+                })
+
+              // load animalcategories
+              firestore
+                .collection('animalcategories')
+                .onSnapshot(function(snapshot) {
+                  /* console.log("First animalcategories snapshot? "+ that.$store.state.data.firstanimalcategoriessnapshot)
+                if(that.$store.state.data.firstanimalcategoriessnapshot){
+                  that.$store.state.data.animalcategories = []
+                  that.$store.state.data.firstanimalcategoriessnapshot = 0
+                }*/
+                  snapshot.docChanges().forEach(function(change) {
+                    switch (change.type) {
+                      case 'added':
+                        that.$store.state.data.animalcategories.push({
+                          ...change.doc.data(),
+                          categoryID: change.doc.id
+                        })
+                        break
+                      case 'modified':
+                        var a = that.$store.state.data.animalcategories.find(category => category.categoryID === change.doc.id)
+                        Vue.set(that.$store.state.data.animalcategories,
+                          that.$store.state.data.animalcategories.indexOf(a),
+                          { ...change.doc.data(), ...{ categoryID: change.doc.id }})
+                        break
+                      case 'removed':
+                        var a = that.$store.state.data.animalcategories.find(category => category.categoryID === change.doc.id)
+                        that.$store.state.data.animalcategories.splice(that.$store.state.data.animalcategories.indexOf(a), 1)
+                        break
+                      default:
+                        break
+                    }
+                    console.log(change.type + ' animalcategory: ' + change.doc.data())
+                  })
+                  console.log('Got ' + that.$store.state.data.animalcategories.length + ' animal categories')
+                })
+
+              // load genders
+              firestore
+                .collection('genders')
+                .onSnapshot(function(snapshot) {
+                  /* console.log("First genders snapshot? "+ that.$store.state.data.firstgenderssnapshot)
+                if(that.$store.state.data.firstgenderssnapshot){
+                  that.$store.state.data.genders = []
+                  that.$store.state.data.firstgenderssnapshot = 0
+                }*/
+                  snapshot.docChanges().forEach(function(change) {
+                    switch (change.type) {
+                      case 'added':
+                        that.$store.state.data.genders.push({
+                          ...change.doc.data(),
+                          genderID: change.doc.id
+                        })
+                        break
+                      case 'modified':
+                        var a = that.$store.state.data.genders.find(gen => gen.genderID === change.doc.id)
+                        Vue.set(that.$store.state.data.genders,
+                          that.$store.state.data.genders.indexOf(a),
+                          { ...change.doc.data(), ...{ categoryID: change.doc.id }})
+                        break
+                      case 'removed':
+                        var a = that.$store.state.data.genders.find(gen => gen.gendersID === change.doc.id)
+                        that.$store.state.data.genders.splice(that.$store.state.data.genders.indexOf(a), 1)
+                        break
+                      default:
+                        break
+                    }
+                    console.log(change.type + ' gender: ' + change.doc.data())
+                  })
+                  console.log('Got ' + that.$store.state.data.genders.length + ' genders')
+                })
+
+              // load footages
+              firestore
+                .collection('footages')
+                .onSnapshot(function(snapshot) {
+                  console.log('First footage snapshot? ' + that.$store.state.data.firstfootagesnapshot)
+                  if (that.$store.state.data.firstfootagesnapshot) {
+                    that.$store.state.data.footages = []
+                    // console.log("getters.firstfootages: "+that.$store.getters.firstfootagesnapshot)
+                    that.$store.state.data.firstfootagesnapshot = 0
+                  // console.log("getters.firstfootages: "+that.$store.getters.firstfootagesnapshot)
+                  }
+                  snapshot.docChanges().forEach(function(change) {
+                    if (change.type === 'added') {
+                      that.$store.state.data.footages.push({
+                        ...change.doc.data(),
+                        footageID: change.doc.id
+                      })
+                    }
+                  })
+                  console.log('Got ' + that.$store.state.data.footages.length + ' footages')
+
+                  var logedUser = {
+                    username: '',
+                    password: ''
+                  }
+                  switch (that.role) {
+                    case 'admin':
+                      logedUser.username = 'admin'
+                      break
+                      // case "developer":
+                      //  logedUser.username = 'editor'
+                      //  break;
+                    default:
+                      logedUser.username = 'editor'
+
+                      break
+                  }
+                  console.log(logedUser.username)
+                  that.$store.dispatch('user/login', logedUser)
+                    .then(() => {
+                      that.$router.push('/')
+                      that.loading = false
+                    })
+                    .catch(() => {
+                      that.loading = false
+                    })
+                })
+            })
+            .catch(error => {
+              // this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+              alert(error.message)
+              this.loading = false
+              return false
+            })
+        })
+        .catch(error => {
+          // this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+          alert(error.message)
+          this.loading = false
+          return false
+        })
+
+      // })
+      // .catch((error) => {
+      // Handle Errors here.
+      // const errorCode = error.code;
+      // const errorMessage = error.message;
+      // });
+
+      /* firebase
+      .auth()
+      .signInWithEmailAndPassword('duzhuofeng73@gmail.com', '111111')
+      .then(() => {
+        alert('Successfully logged in database, click to start pulling data');
+
+        firebase.firestore().collection('animals').get().then(docs=>{
+          docs.forEach(doc=>{
+            this.$store.commit("addanimal", ({...doc.data(),...{animalID:doc.id}}))
+          })
+        })
+        firebase.firestore().collection('footages').get().then(docs=>{
+          docs.forEach(doc=>{
+            this.$store.commit("addfootage", ({...doc.data(),...{footageID:doc.id}}))
+          })
+          console.log(this.$store.state.footages.length)
+          this.$store.dispatch('user/login', this.loginForm)
+              .then(() => {
+              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+                this.loading = false
+              })
+              .catch(() => {
+              this.loading = false
+              })
+        })
+      })
+      .catch(error => {
+        //this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+        alert(error.message);
+        this.loading = false
+        return false
+      });*/
+      /* this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm)
@@ -168,8 +557,20 @@ export default {
           console.log('error submit!!')
           return false
         }
-      })
+      })*/
     },
+    handleRegister() {
+      // console.log(firebase.auth())
+      auth.createUserWithEmailAndPassword(this.RegisterForm.email, this.RegisterForm.password)
+        .then(() => {
+          alert('Successfully registered! Please login.')
+          this.$router.push('/')
+        })
+        .catch(error => {
+          alert(error.message)
+        })
+    },
+
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {
         if (cur !== 'redirect') {
@@ -178,6 +579,7 @@ export default {
         return acc
       }, {})
     }
+
     // afterQRScan() {
     //   if (e.key === 'x-admin-oauth-code') {
     //     const code = getQueryObject(e.newValue)
@@ -204,7 +606,7 @@ export default {
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
-$bg:#283443;
+$bg:#1be71b;
 $light_gray:#fff;
 $cursor: #fff;
 
@@ -220,14 +622,18 @@ $cursor: #fff;
     display: inline-block;
     height: 47px;
     width: 85%;
-
+    font-size: 1.25rem;
+    font-weight: 600;
+    background: #c9c9ca;
+    padding: 1px 1px 1px 1px 1px;
+    border-radius: 6px;
+    transition: 0.2s ease;
     input {
-      background: transparent;
-      border: 0px;
+      border: 5px;
       -webkit-appearance: none;
-      border-radius: 0px;
-      padding: 12px 5px 12px 15px;
-      color: $light_gray;
+      border-radius: 2px;
+      padding: 24px 10px 24px 30px;
+      color:rgb(22, 21, 21);
       height: 47px;
       caret-color: $cursor;
 
@@ -239,37 +645,57 @@ $cursor: #fff;
   }
 
   .el-form-item {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(247, 246, 246, 0.993);
+    background: rgb(248, 241, 241);
     border-radius: 5px;
-    color: #454545;
+    color: #5a0afa;
   }
 }
 </style>
 
 <style lang="scss" scoped>
 $bg:#2d3a4b;
-$dark_gray:#889aa4;
-$light_gray:#eee;
+$dark_gray:#141414;
+$light_gray:#0f0f0f;
 
+#wrapper {
+  opacity:1;
+  background: url("~@/assets/background_for_app.jpg") no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  min-height: 100vh;
+  overflow: hidden;
+  /* Height for devices larger than 576px */
+  @media (min-width: 992px) {
+      #intro {
+        margin-top: -58.59px;
+      }
+    }
+
+    .navbar .nav-link {
+      color: #fff !important;
+    }
+}
 .login-container {
   min-height: 100%;
   width: 100%;
-  background-color: $bg;
+  background-color:#f0f2f5;
   overflow: hidden;
 
   .login-form {
     position: relative;
-    width: 520px;
-    max-width: 100%;
-    padding: 160px 35px 0;
+    width: 100%;
+    max-width: 1000px;
+    padding: 300px 35px 0;
     margin: 0 auto;
     overflow: hidden;
   }
 
   .tips {
-    font-size: 14px;
-    color: #fff;
+    font-size: 4rem;
+    color: #0a0a0a;
     margin-bottom: 10px;
 
     span {
@@ -281,7 +707,7 @@ $light_gray:#eee;
 
   .svg-container {
     padding: 6px 5px 6px 15px;
-    color: $dark_gray;
+    color:#0a0a0a;
     vertical-align: middle;
     width: 30px;
     display: inline-block;
@@ -292,7 +718,7 @@ $light_gray:#eee;
 
     .title {
       font-size: 26px;
-      color: $light_gray;
+      color:#0a0a0a;
       margin: 0px auto 40px auto;
       text-align: center;
       font-weight: bold;
@@ -304,7 +730,7 @@ $light_gray:#eee;
     right: 10px;
     top: 7px;
     font-size: 16px;
-    color: $dark_gray;
+    color:#0a0a0a;
     cursor: pointer;
     user-select: none;
   }

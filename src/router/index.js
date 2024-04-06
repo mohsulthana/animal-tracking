@@ -7,10 +7,11 @@ Vue.use(Router)
 import Layout from '@/layout'
 
 /* Router Modules */
-import componentsRouter from './modules/components'
-import chartsRouter from './modules/charts'
-import tableRouter from './modules/table'
-import nestedRouter from './modules/nested'
+// import componentsRouter from './modules/components'
+// import chartsRouter from './modules/charts'
+// import tableRouter from './modules/table'
+// import nestedRouter from './modules/nested'
+// import bottomnav from './modules/nav'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -79,11 +80,11 @@ export const constantRoutes = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
+        meta: { title: 'Dashbo\ard', icon: 'dashboard', affix: true }
       }
     ]
-  },
-  {
+  }
+  /* {
     path: '/documentation',
     component: Layout,
     children: [
@@ -91,11 +92,11 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/documentation/index'),
         name: 'Documentation',
-        meta: { title: 'Documentation', icon: 'documentation', affix: true }
+        meta: { title: 'Documentation', icon: 'documentation', affix: false }
       }
     ]
-  },
-  {
+  },*/
+/*  {
     path: '/guide',
     component: Layout,
     redirect: '/guide/index',
@@ -104,7 +105,7 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/guide/index'),
         name: 'Guide',
-        meta: { title: 'Guide', icon: 'guide', noCache: true }
+        meta: { title: 'Guide', icon: 'guide', affix: false }
       }
     ]
   },
@@ -118,10 +119,10 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/profile/index'),
         name: 'Profile',
-        meta: { title: 'Profile', icon: 'user', noCache: true }
+        meta: { title: 'Profile', icon: 'user', affix: false }
       }
     ]
-  }
+  }*/
 ]
 
 /**
@@ -172,6 +173,59 @@ export const asyncRoutes = [
   },
 
   {
+    path: '/animalonmap',
+    name: 'animalonmap',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/animalonmap/index'),
+        name: 'animalonmap',
+        meta: { title: 'AnimalOnMap', roles: ['admin'], icon: 'animalonmap', affix: true }
+      }
+    ]
+  },
+  {
+    path: '/animalregister',
+    component: Layout,
+    name: 'animalregister',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/animalregister/index'),
+        name: 'animalregister',
+        meta: { title: 'Animalregister', roles: ['admin'], icon: 'animalregister', affix: true }
+      }
+    ]
+  },
+  {
+    path: '/AnimalRecordManage',
+    name: 'animalRecordManage',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/animalmanagement/index'),
+        name: 'AnimalRecordManage',
+        meta: { title: 'AnimalRecordManage', roles: ['admin'], icon: 'AnimalRecordManage', affix: true }
+      }
+    ]
+  },
+  {
+    path: '/UserManage',
+    name: 'userManage',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/usermanagement/index'),
+        name: 'UserManage',
+        meta: { title: 'UserManage', roles: ['admin'], icon: 'UserManage', affix: true }
+      }
+    ]
+  },
+  /*
+  {
     path: '/icon',
     component: Layout,
     children: [
@@ -182,15 +236,15 @@ export const asyncRoutes = [
         meta: { title: 'Icons', icon: 'icon', noCache: true }
       }
     ]
-  },
+  },*/
 
   /** when your routing map is too long, you can split it into small modules **/
-  componentsRouter,
-  chartsRouter,
-  nestedRouter,
-  tableRouter,
+  // componentsRouter,
+  // chartsRouter,
+  // nestedRouter,
+  // tableRouter,
 
-  {
+  /* {
     path: '/example',
     component: Layout,
     redirect: '/example/list',
@@ -381,7 +435,7 @@ export const asyncRoutes = [
         meta: { title: 'External Link', icon: 'link' }
       }
     ]
-  },
+  },*/
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }

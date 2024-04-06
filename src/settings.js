@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'Vue Element Admin',
+  title: 'Smart Farm Management',
 
   /**
    * @type {boolean} true | false
@@ -11,19 +11,19 @@ module.exports = {
    * @type {boolean} true | false
    * @description Whether need tagsView
    */
-  tagsView: true,
+  // tagsView: true,
 
   /**
    * @type {boolean} true | false
    * @description Whether fix the header
    */
-  fixedHeader: false,
+  // fixedHeader: false,
 
   /**
    * @type {boolean} true | false
    * @description Whether show the logo in sidebar
    */
-  sidebarLogo: false,
+  // sidebarLogo: false,
 
   /**
    * @type {string | array} 'production' | ['production', 'development']

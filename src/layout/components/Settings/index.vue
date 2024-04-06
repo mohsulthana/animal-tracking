@@ -28,6 +28,9 @@
 </template>
 
 <script>
+
+console.log('layout:components:Settings:index.vue' + (+new Date()))
+
 import ThemePicker from '@/components/ThemePicker'
 
 export default {

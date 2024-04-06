@@ -13,6 +13,9 @@
 </template>
 
 <script>
+
+console.log('src:components:GoogleMap.vue' + (+new Date()))
+
 export default {
   name: 'GoogleMap',
   data() {

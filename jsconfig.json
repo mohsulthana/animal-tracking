@@ -7,3 +7,7 @@
   },
   "exclude": ["node_modules", "dist"]
 }
+
+"scripts": {
+  "serve": "vue-cli-service serve"
+}
