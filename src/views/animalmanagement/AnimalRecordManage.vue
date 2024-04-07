@@ -1,10 +1,5 @@
 <template>
   <div>
-    <!-- <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-        <div class="container">
-            <div class="row">
-               <div style="text-align:center"><h1  text-align="center">Manage animal records </h1></div>
-            </div>-->
     <div>
       <b-container class="bv-example-row">
         <select v-model="searchmode">
@@ -40,7 +35,7 @@
       </b-container>
     </div>
 
-    <div v-if="this.searchmode === 'MutipleSearch'">
+    <div v-if="searchmode === 'MutipleSearch'">
       <b-form @submit.prevent="onSearchfromVuexStoreSubmit" @reset="onSearchReset">
         <b-container class="bv-example-row" fluid="sm">
           <b-row class="mb-2">
@@ -63,42 +58,9 @@
 
             </span>
           </b-row>
-          <!--     <div class="row">
-                <div >
-                    <label style="color: red">*</label><label >Category   </label><br>
-                    <span v-for="(animcategory,index) in animalcategories" :key="index">
-                      <input type="radio" id="animcategory.name" :value="animcategory.name" v-model="category">
-                      <label for="animcategory.name"> {{animcategory.name}}  </label>
-                      <span style="background-color:red; cursor:pointer; margin-right: 1em" v-on:click ="deleteAnimalCategory(animcategory.categoryID)">  X  </span>
-                    </span>
-                    <input type="text" id="newcategorybox" placeholder="Enter a new category" style="text-transform: uppercase;" v-model="newcategory">
-                    <button v-on:click ="addAnimalCategory(newcategory)"  type="button" class="btn btn-primary">Add Category</button>
-                </div><br>
-              </div>
-
-            <b-row class="mb-2">
-                <b-col sm="auto">Gender</b-col>
-                 <b-col sm="auto">
-                    <b-form-group
-                      id="input-group-2" >
-                        <b-form-checkbox-group
-                                v-model="searchform.checkedgender"
-                                id="checkboxes-4"
-                                style="column-count: 2;"
-                              >
-                          <b-form-checkbox value="M">Male</b-form-checkbox>
-                          <b-form-checkbox value="F">Female</b-form-checkbox>
-                      </b-form-checkbox-group>
-                    </b-form-group>
-                 </b-col>
-              </b-row> -->
           <div class="row">
             <div>
               <label style="color: red">*</label><label>Gender   </label><br>
-              <!--<input type="radio" id="Female" value="F" v-model="gender">
-            <label for="Female">F  </label> &nbsp;&nbsp;&nbsp;&nbsp;
-            <input type="radio" id="Male" value="M" v-model="gender">
-            <label for="Male">M   </label> &nbsp;&nbsp;&nbsp;&nbsp;  -->
               <span v-for="(gen,index) in genders" :key="index">
                 <input id="gen.name" v-model="gender" type="radio" :value="gen.name">
                 <label for="gen.name"> {{ gen.name }}  </label>
@@ -394,25 +356,54 @@
               {{ c.name }} ({{ animals.filter(a => a.category === c.name).length }}),
             </span>
           </label>
-          <!--<input class="form-control" v-model="obtainedanimals" type="number" disabled> animals found<input />-->
 
-          <table border="3" name="animaltable" style="table-layout: fixed; width: 100%">
-            <thead>
-              <tr>
+          <el-table
+            :data="animals"
+            style="width: 100%"
+          >
+            <el-table-column
+              prop="category"
+              label="Category"
+            />
+            <el-table-column
+              prop="gender"
+              label="Gender"
+            />
+            <el-table-column
+              prop="age"
+              label="Age"
+            />
+            <el-table-column
+              prop="alias"
+              label="Alias"
+            />
+            <el-table-column
+              prop="photo"
+              label="Photo"
+            />
+            <el-table-column
+              prop="ip"
+              label="IP"
+            />
+            <el-table-column
+              prop="qrcode"
+              label="QR Code"
+            />
+            <el-table-column
+              prop="createddate"
+              label="Created"
+            />
+            <el-table-column
+              prop="deleted"
+              label="Deleted"
+            />
+            <el-table-column
+              prop="action"
+              label="Action"
+            />
+          </el-table>
 
-                <th style="word-wrap: break-word" scope="col" @click="sort('category')">Category</th>
-                <th style="word-wrap: break-word" scope="col" @click="sort('gender')">Gender</th>
-                <th style="word-wrap: break-word" scope="col" @click="sort('monthage')">Age</th>
-                <th style="word-wrap: break-word" scope="col" @click="sort('alias')">Alias</th>
-                <th style="word-wrap: break-word" scope="col" @click="sort('photolink')">Photo</th>
-                <th style="word-wrap: break-word" scope="col" @click="sort('ip')">IP</th>
-                <th style="word-wrap: break-word; width: 20%" scope="col" @click="sort('qrcode')">Qrcode</th>
-                <th style="word-wrap: break-word" scope="col" @click="sort('createddate')">Created</th>
-                <th style="word-wrap: break-word" scope="col" @click="sort('deleteddate')">Deleted </th>
-
-                <th scope="col">Action</th>
-              </tr>
-            </thead>
+          <!-- <table border="3" name="animaltable" style="table-layout: fixed; width: 100%">
             <tbody>
               <tr v-for="(animal,index) in animals" :key="index">
 
@@ -431,7 +422,7 @@
 
               </tr>
             </tbody>
-          </table>
+          </table> -->
         </div>
       </div>
     </div>

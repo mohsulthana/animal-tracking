@@ -84,11 +84,11 @@ export default {
       await this.$store.dispatch('user/logout')
 
       this.$store.state.tagsView.visitedViews = []
-      this.$store.state.data.footages = [],
-      this.$store.state.data.animals = [],
-      this.$store.state.data.animalcategories = [],
-      this.$store.state.data.genders = [],
-      this.$store.state.data.users = [],
+      this.$store.state.data.footages = []
+      this.$store.state.data.animals = []
+      this.$store.state.data.animalcategories = []
+      this.$store.state.data.genders = []
+      this.$store.state.data.users = []
       /* this.$router.removeRoute('animalonmap')
       this.$router.removeRoute('animalRecordManage')
       this.$router.removeRoute('animalregister')*/

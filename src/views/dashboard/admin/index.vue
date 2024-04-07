@@ -1,23 +1,17 @@
 <template>
   <div class="dashboard-editor-container">
 
-    <!--<el-row>
-      <div>
-        <HereMap />
-      </div>
-    </el-row>-->
-
-    <!--      <el-row>
-      <div><AnimalRecordManage />
-      </div>
-    </el-row>-->
-
     <panel-group @handleSetLineChartData="handleSetLineChartData" @handleSetPieChartData="handleSetPieChartData" />
 
-    <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <div class="chart-wrapper">
-        <pie-chart :chart-data="pieChartData" />
-      </div>
+    <el-row class="p-6">
+      <el-col :span="12">
+        <div class="chart-wrapper">
+          <pie-chart :chart-data="pieChartData" />
+        </div>
+      </el-col>
+      <el-col :span="12">
+        <line-chart :chart-data="lineChartData" />
+      </el-col>
     </el-row>
     <el-row>
       <button :style="[selected===1 ? {'background': 'blue','color': 'white'}: {'background': '#FFF'}]" @click="selected=1, handleSetLineChartData('footagein7days')">7 days</button>
@@ -28,56 +22,6 @@
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <line-chart :chart-data="lineChartData" />
     </el-row>
-    <!--    <el-row>
-        <button :style="[selected===11 ? {'background': 'blue','color': 'white'}: {'background': '#FFF'}]" @click="selected=11, handleSetLineChartData1('footagein7days')">7 days</button>
-        <button :style="[selected===12 ? {'background': 'blue','color': 'white'}: {'background': '#FFF'}]" @click="selected=12, handleSetLineChartData1('footagein1month')">1 month</button>
-        <button :style="[selected===13 ? {'background': 'blue','color': 'white'}: {'background': '#FFF'}]" @click="selected=13, handleSetLineChartData1('footagein6months')">6 months</button>
-        <button :style="[selected===14 ? {'background': 'blue','color': 'white'}: {'background': '#FFF'}]" @click="selected=14, handleSetLineChartData1('footagein1year')">1 year</button>
-      </el-row>
-    <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <line-chart1 v-bind:chartData="lineChartData1" />
-    </el-row>
-   <el-row>
-      <Qrcoderscanner />
-      <AnimalRegister/>
-
-    </el-row>
--->
-
-    <!--   <el-row>
-      <div><GoogleMap />
-      </div>
-    </el-row>
-
-    <el-row :gutter="32">
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <raddar-chart />
-        </div>
-      </el-col>
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <pie-chart />
-        </div>
-      </el-col>
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <bar-chart />
-        </div>
-      </el-col>
-    </el-row>
-
-    <el-row :gutter="8">
-      <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 12}" :xl="{span: 12}" style="padding-right:8px;margin-bottom:30px;">
-        <transaction-table />
-      </el-col>
-      //      <el-col :xs="{span: 24}" :sm="{span: 12}" :md="{span: 12}" :lg="{span: 6}" :xl="{span: 6}" style="margin-bottom:30px;">
-      //       <todo-list />
-      //      </el-col>
-      <el-col :xs="{span: 24}" :sm="{span: 12}" :md="{span: 12}" :lg="{span: 6}" :xl="{span: 6}" style="margin-bottom:30px;">
-        <box-card />
-      </el-col>
-    </el-row> -->
   </div>
 </template>
 

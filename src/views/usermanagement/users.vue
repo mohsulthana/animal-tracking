@@ -7,6 +7,17 @@
             </div>-->
     <div>
       <b-container class="bv-example-row">
+        <el-dropdown>
+          <span class="el-dropdown-link">
+            Dropdown List<i class="el-icon-arrow-down el-icon--right" />
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item :value="'RegisterOrSearch'">Register or Search Users</el-dropdown-item>
+            <el-dropdown-item value="'registerUser'">Register a new user</el-dropdown-item>
+            <el-dropdown-item :value="'emailSearch'">Search user by email</el-dropdown-item>
+            <el-dropdown-item :value="'nameSearch'">Search user by names</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
         <select v-model="searchmode">
           <option :value="'RegisterOrSearch'">
             Register or Search Users
@@ -21,7 +32,7 @@
             Search user by names
           </option>
         </select>
-        <!-- </el-row>   -->
+
         <div v-if="this.searchmode === 'registerUser'" class="row">
           <label>Email address:   </label><br>
           <span>
@@ -82,7 +93,6 @@
           </span>
         </div>
       </b-container>
-
     </div>
     <div style="text-align:right">
       <vue-excel-xlsx
@@ -95,8 +105,8 @@
         Export to Excel
       </vue-excel-xlsx>
     </div>
-    <b-modal
 
+    <b-modal
       id="modal-Edit-user"
       ref="modal"
       title="Edit user information"
@@ -114,15 +124,16 @@
 
           <b-row class="mb-1"><b-col cols="12"><label style="color: red">*</label><label>First name</label></b-col></b-row>
           <b-row class="mb-2">
-            <b-col cols="12"><input
-              v-model="firstname"
-              class="form-control"
-              type="text"
-              placeholder="First name"
-              aria-label="default input example"
-              autocomplete="off"
-              @change="onchanged()"
-            >  </b-col>
+            <b-col cols="12">
+              <input
+                v-model="firstname"
+                class="form-control"
+                type="text"
+                placeholder="First name"
+                aria-label="default input example"
+                autocomplete="off"
+                @change="onchanged()"
+              ></b-col>
           </b-row>
           <b-row class="mb-2"><b-col cols="4">Surname</b-col></b-row>
           <b-row class="mb-2">
@@ -184,11 +195,6 @@
         </b-container>
       </b-form>
     </b-modal>
-    <!-- <div class="row">
-         <div class="col-md-4">
-          <button type="button"  v-on:click="modifyData" class="btn btn-primary" :disabled="confirmdisabled == 1">Confirm the Changes</button>
-        </div>
-      </div> -->
 
     <!--users Data/Table-->
     <div class="row">
@@ -203,7 +209,6 @@
           <table border="3" name="animaltable" style="table-layout: fixed; width: 100%">
             <thead>
               <tr>
-
                 <th style="word-wrap: break-word" scope="col" @click="sort('email')">Email</th>
                 <th style="word-wrap: break-word" scope="col" @click="sort('firstname')">First Name</th>
                 <th style="word-wrap: break-word" scope="col" @click="sort('surname')">Surname</th>
@@ -269,6 +274,23 @@ export default {
     const searchmode = 'emailSearch'
 
     return {
+      tableData: [{
+        date: '2016-05-03',
+        name: 'Tom',
+        address: 'No. 189, Grove St, Los Angeles'
+      }, {
+        date: '2016-05-02',
+        name: 'Tom',
+        address: 'No. 189, Grove St, Los Angeles'
+      }, {
+        date: '2016-05-04',
+        name: 'Tom',
+        address: 'No. 189, Grove St, Los Angeles'
+      }, {
+        date: '2016-05-01',
+        name: 'Tom',
+        address: 'No. 189, Grove St, Los Angeles'
+      }],
       alias: '',
       admin: '',
       users: [],

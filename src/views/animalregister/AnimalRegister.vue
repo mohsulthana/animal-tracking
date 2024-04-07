@@ -1,7 +1,6 @@
 <template>
   <div>
     <div>
-
       <camera @handleSetPhotoData="handleSetPhotoData" /><br>
     </div>
     <div><label>Photo name: </label>{{ imageName }}</div>
@@ -218,7 +217,7 @@ import { collection, query, where, getDocs,doc} from "firebase/firestore"*/
 // import { QUEUED } from 'dropzone'
 
 export default {
-  name: 'Animalregister',
+  name: 'AnimalRegister',
   components: { QrcodeStream, QrcodeDropZone, QrcodeCapture, Camera },
 
   data: () => {

@@ -39,12 +39,3 @@ export default {
   }
 }
 </script>
-<style>
-
-body{
-  background-color: rgb(80, 220, 255);
-  background: cover;
-    /* Other background properties here */
-}
-
-</style>

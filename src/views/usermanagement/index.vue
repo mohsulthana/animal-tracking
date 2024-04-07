@@ -1,29 +1,98 @@
 <template>
-  <div class="dashboard-editor-container">
-
-    <el-row>
-      <div style="text-align:center"><h1>Users  Management</h1></div>
-      <div>
-        <usersmanage />
-      </div>
+  <div id="users-management">
+    <el-row :span="24">
+      <el-col>
+        <el-card class="box-card">
+          <div slot="header" class="d-flex justify-content-between">
+            <span>Users Management</span>
+            <el-button type="primary" @click="isDialogRegisterUserVisible = !isDialogRegisterUserVisible">Register a new User</el-button>
+          </div>
+          <div class="px-4">
+            <el-table
+              :data="showusers"
+              style="width: 100%"
+            >
+              <el-table-column
+                prop="email"
+                label="Email"
+              />
+              <el-table-column
+                prop="first_name"
+                label="First Name"
+              />
+              <el-table-column
+                prop="surname"
+                label="Surname"
+              />
+              <el-table-column
+                prop="role"
+                label="Role"
+              />
+              <el-table-column
+                prop="photo"
+                label="Photo"
+              />
+              <el-table-column
+                align="right"
+              >
+                <template slot="header" slot-scope="scope">
+                  <el-input
+                    v-model="search"
+                    placeholder="Type to search by email or name"
+                  />
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+        </el-card>
+      </el-col>
     </el-row>
 
+    <el-dialog
+      title="Register new User"
+      :visible.sync="isDialogRegisterUserVisible"
+      width="30%"
+      :before-close="handleClose"
+    >
+      <el-form ref="form" :model="form" label-width="120px">
+        <el-form-item label="Email address">
+          <el-input v-model="form.name" />
+        </el-form-item>
+
+        <el-form-item label="First name">
+          <el-input v-model="form.name" />
+        </el-form-item>
+
+        <el-form-item label="Last name">
+          <el-input v-model="form.name" />
+        </el-form-item>
+
+        <el-form-item label="Role">
+          <el-input v-model="form.name" />
+        </el-form-item>
+
+        <el-form-item label="Password">
+          <el-input v-model="form.name" />
+        </el-form-item>
+      </el-form>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="isDialogRegisterUserVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="isDialogRegisterUserVisible = false">Confirm</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-
-import Usersmanage from '@/views/usermanagement/users'
-
 export default {
   name: 'Users',
-  components: {
-    Usersmanage
-
-  },
-
   data: () => {
     return {
+      isDialogRegisterUserVisible: false,
+      form: {
+        name: ''
+      }
     }
   },
 
@@ -36,17 +105,5 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.dashboard-editor-container {
-  padding: 32px;
-  background-color: rgb(240, 242, 245);
-  position: relative;
-}
-
-@media (max-width:1024px) {
-  .chart-wrapper {
-    padding: 8px;
-  }
-}
-
+<style lang="scss">
 </style>

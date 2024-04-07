@@ -80,7 +80,7 @@ export const constantRoutes = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: 'Dashbo\ard', icon: 'dashboard', affix: true }
+        meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
       }
     ]
   }
@@ -96,33 +96,33 @@ export const constantRoutes = [
       }
     ]
   },*/
-/*  {
-    path: '/guide',
-    component: Layout,
-    redirect: '/guide/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/guide/index'),
-        name: 'Guide',
-        meta: { title: 'Guide', icon: 'guide', affix: false }
-      }
-    ]
-  },
-  {
-    path: '/profile',
-    component: Layout,
-    redirect: '/profile/index',
-    hidden: true,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/profile/index'),
-        name: 'Profile',
-        meta: { title: 'Profile', icon: 'user', affix: false }
-      }
-    ]
-  }*/
+  /*  {
+      path: '/guide',
+      component: Layout,
+      redirect: '/guide/index',
+      children: [
+        {
+          path: 'index',
+          component: () => import('@/views/guide/index'),
+          name: 'Guide',
+          meta: { title: 'Guide', icon: 'guide', affix: false }
+        }
+      ]
+    },
+    {
+      path: '/profile',
+      component: Layout,
+      redirect: '/profile/index',
+      hidden: true,
+      children: [
+        {
+          path: 'index',
+          component: () => import('@/views/profile/index'),
+          name: 'Profile',
+          meta: { title: 'Profile', icon: 'user', affix: false }
+        }
+      ]
+    }*/
 ]
 
 /**
@@ -174,14 +174,14 @@ export const asyncRoutes = [
 
   {
     path: '/animalonmap',
-    name: 'animalonmap',
+    name: 'Animal On Map',
     component: Layout,
     children: [
       {
         path: 'index',
         component: () => import('@/views/animalonmap/index'),
-        name: 'animalonmap',
-        meta: { title: 'AnimalOnMap', roles: ['admin'], icon: 'animalonmap', affix: true }
+        name: 'Animal On Map',
+        meta: { title: 'Animal On Map', roles: ['admin'], icon: 'animalonmap', affix: true }
       }
     ]
   },

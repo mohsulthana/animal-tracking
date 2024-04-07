@@ -22,7 +22,7 @@ export default {
   },
   // below created() solves the problem of lossing $store data when refresh a page by clicking the refresh button
   created() {
-    var that = this
+    const that = this
 
     // Read sessionStorage on page load
     console.log('App.vue:created' + (+new Date()))
@@ -49,7 +49,7 @@ export default {
 
                 // clear store to pull in firestore data and establish snapshot listener
                 // that.$store.state.tagsView.visitedViews = []
-                that.$store.state.data.footages = [],
+                that.$store.state.data.footages = []
                 that.$store.state.data.animals = [],
                 that.$store.state.data.animalcategories = [],
                 that.$store.state.data.genders = [],
@@ -296,20 +296,12 @@ export default {
 }
 </script>
 <style lang ="scss">
-/* body{
-  background-image: url('~@/assets/background.webp');
-  background-color: rgb(80, 220, 255);
-  background: cover;
-  background-size: cover;
-    Other background properties here
-}*/
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #050001;
-  background-color: rgb(77, 125, 228);
   background-size: cover;
   // min-height:130vh;
 }

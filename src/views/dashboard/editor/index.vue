@@ -1,23 +1,14 @@
 <template>
   <div class="dashboard-editor-container">
 
-    <!--<el-row>
-      <div>
-        <HereMap />
-      </div>
-    </el-row>-->
-
-    <!--      <el-row>
-      <div><AnimalRecordManage />
-      </div>
-    </el-row>-->
-
     <panel-group @handleSetLineChartData="handleSetLineChartData" @handleSetPieChartData="handleSetPieChartData" />
 
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <div class="chart-wrapper">
-        <pie-chart :chart-data="pieChartData" />
-      </div>
+      <el-col>
+        <div class="chart-wrapper">
+          <pie-chart :chart-data="pieChartData" />
+        </div>
+      </el-col>
     </el-row>
     <el-row>
       <button :style="[selected===1 ? {'background': 'blue','color': 'white'}: {'background': '#FFF'}]" @click="selected=1, handleSetLineChartData('footagein7days')">7 days</button>

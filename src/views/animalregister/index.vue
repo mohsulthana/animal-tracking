@@ -16,7 +16,7 @@
 import AnimalRegister from '@/views/animalregister/AnimalRegister'
 
 export default {
-  name: 'Animalonmap',
+  name: 'AnimalOnMap',
   components: {
     AnimalRegister
 
