@@ -5,9 +5,10 @@
 
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <el-col>
-        <div class="chart-wrapper">
+        <el-card class="box-card">
           <pie-chart :chart-data="pieChartData" />
-        </div>
+        </el-card>
+        <div class="chart-wrapper" />
       </el-col>
     </el-row>
     <el-row>

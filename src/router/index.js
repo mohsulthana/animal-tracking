@@ -188,13 +188,13 @@ export const asyncRoutes = [
   {
     path: '/animalregister',
     component: Layout,
-    name: 'animalregister',
+    name: 'animal-register',
     children: [
       {
         path: 'index',
         component: () => import('@/views/animalregister/index'),
-        name: 'animalregister',
-        meta: { title: 'Animalregister', roles: ['admin'], icon: 'animalregister', affix: true }
+        name: 'Animal Register',
+        meta: { title: 'Animal Register', roles: ['admin'], icon: 'animalregister', affix: true }
       }
     ]
   },

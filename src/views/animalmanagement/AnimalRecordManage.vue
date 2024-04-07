@@ -1,5 +1,131 @@
 <template>
-  <div>
+  <div id="users-management">
+    <el-row :span="24">
+      <el-col>
+        <el-card class="box-card">
+          <div slot="header" class="d-flex justify-content-between">
+            <h5>Animals records management</h5>
+            <div class="action-button">
+              <el-button type="secondary" @click="isSearchMultipleAnimalDialogVisible = !isSearchMultipleAnimalDialogVisible">Search multiple animals</el-button>
+              <el-button type="secondary" @click="isSearchByQRCodeDialogVisible = !isSearchByQRCodeDialogVisible">Search by QR Code</el-button>
+              <el-button type="secondary">Export to Excel</el-button>
+            </div>
+          </div>
+          <div class="px-4">
+            <el-table
+              :data="animals"
+              style="width: 100%"
+            >
+              <el-table-column
+                prop="category"
+                label="Category"
+              />
+              <el-table-column
+                prop="gender"
+                label="Gender"
+              />
+              <el-table-column
+                prop="age"
+                label="Age"
+              />
+              <el-table-column
+                prop="alias"
+                label="Alias"
+              />
+              <el-table-column
+                prop="photo"
+                label="Photo"
+              />
+              <el-table-column
+                prop="ip"
+                label="IP"
+              />
+              <el-table-column
+                prop="qrcode"
+                label="QR Code"
+              />
+              <el-table-column
+                prop="createddate"
+                label="Created"
+              />
+              <el-table-column
+                prop="deleted"
+                label="Deleted"
+              />
+              <el-table-column
+                prop="action"
+                label="Action"
+              />
+            </el-table>
+            <div>
+              <div>
+
+                <!-- <table border="3" name="animaltable" style="table-layout: fixed; width: 100%">
+    <tbody>
+      <tr v-for="(animal,index) in animals" :key="index">
+
+        <td style="word-wrap: break-word">{{ animal.category }}</td>
+        <td style="word-wrap: break-word">{{ animal.gender }}</td>
+        <td style="word-wrap: break-word">{{ calculateAge(animal) }}</td>
+        <td style="word-wrap: break-word">{{ animal.alias }}</td>
+        <td style="word-wrap: break-word"><span v-if="animal.photolink!=null && animal.photolink!=''"><label v-b-modal.modal-animal-photo size="sm" type="button" class="btn btn-primary" @click="boundDataToPhotoModal(animal.photolink)">Photo</label></span></td>
+        <td style="word-wrap: break-word">{{ animal.ip }}</td>
+        <td style="word-wrap: break-word">{{ animal.qrcode }}</td>
+        <td style="word-wrap: break-word">{{ animal.createddate }}</td>
+        <td style="word-wrap: break-word">{{ animal.deleteddate }}</td>
+
+        <td><button v-b-modal.modal-Edit-animal type="button" class="btn btn-warning" @click="boundDataToEditModal(animal.animalID)">Edit</button></td>
+        <td><button type="button" class="btn btn-danger" @click="deleteData(animal.animalID)">Delete</button></td>
+
+      </tr>
+    </tbody>
+  </table> -->
+              </div>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+
+    <!-- Search multiple animal dialog -->
+    <el-dialog title="Search multiple animals" :visible.sync="isSearchMultipleAnimalDialogVisible">
+      <el-row :gutters="20">
+        <el-col>
+          <div class="d-flex flex-row gap-8">
+            <label for="registered-date">Registered Date</label>
+            <el-date-picker
+              id="registered-date"
+              v-model="value1"
+              type="daterange"
+              range-separator="To"
+              start-placeholder="Start date"
+              end-placeholder="End date"
+            />
+          </div>
+        </el-col>
+        <el-col>
+          <div class="d-flex flex-row gap-8">
+            <label for="deleted-date">Deleted Date</label>
+            <el-date-picker
+              id="deleted-date"
+              v-model="value1"
+              type="daterange"
+              range-separator="To"
+              start-placeholder="Start date"
+              end-placeholder="End date"
+            />
+          </div>
+        </el-col>
+      </el-row>
+      <div class="block">
+        <span class="demonstration">Month Age</span>
+      </div>
+    </el-dialog>
+
+    <!-- Search by QR Code dialog -->
+    <el-dialog :visible.sync="isSearchByQRCodeDialogVisible">
+      hello world
+    </el-dialog>
     <div>
       <b-container class="bv-example-row">
         <select v-model="searchmode">
@@ -10,7 +136,6 @@
             Search multiple animals
           </option>
         </select>
-        <!-- </el-row>   -->
         <div v-if="this.searchmode === 'QRcodeSearch'" class="row">
           <div class="col-md-4">
             <label>Scan Qrcode from Files or Camera:   </label><br>
@@ -346,86 +471,7 @@
     <!-- animals Form-->
     <div class="row p-3" style="background-colour:#fafafa" />
     <!--animals Data/Table-->
-    <div class="row">
-
-      <div ref="tablearea" class="content scrollable">
-
-        <div class="col-md-12">
-          <label> Found {{ animals.length }} animals:
-            <span v-for="(c,index) in animalcategories" :key="index">
-              {{ c.name }} ({{ animals.filter(a => a.category === c.name).length }}),
-            </span>
-          </label>
-
-          <el-table
-            :data="animals"
-            style="width: 100%"
-          >
-            <el-table-column
-              prop="category"
-              label="Category"
-            />
-            <el-table-column
-              prop="gender"
-              label="Gender"
-            />
-            <el-table-column
-              prop="age"
-              label="Age"
-            />
-            <el-table-column
-              prop="alias"
-              label="Alias"
-            />
-            <el-table-column
-              prop="photo"
-              label="Photo"
-            />
-            <el-table-column
-              prop="ip"
-              label="IP"
-            />
-            <el-table-column
-              prop="qrcode"
-              label="QR Code"
-            />
-            <el-table-column
-              prop="createddate"
-              label="Created"
-            />
-            <el-table-column
-              prop="deleted"
-              label="Deleted"
-            />
-            <el-table-column
-              prop="action"
-              label="Action"
-            />
-          </el-table>
-
-          <!-- <table border="3" name="animaltable" style="table-layout: fixed; width: 100%">
-            <tbody>
-              <tr v-for="(animal,index) in animals" :key="index">
-
-                <td style="word-wrap: break-word">{{ animal.category }}</td>
-                <td style="word-wrap: break-word">{{ animal.gender }}</td>
-                <td style="word-wrap: break-word">{{ calculateAge(animal) }}</td>
-                <td style="word-wrap: break-word">{{ animal.alias }}</td>
-                <td style="word-wrap: break-word"><span v-if="animal.photolink!=null && animal.photolink!=''"><label v-b-modal.modal-animal-photo size="sm" type="button" class="btn btn-primary" @click="boundDataToPhotoModal(animal.photolink)">Photo</label></span></td>
-                <td style="word-wrap: break-word">{{ animal.ip }}</td>
-                <td style="word-wrap: break-word">{{ animal.qrcode }}</td>
-                <td style="word-wrap: break-word">{{ animal.createddate }}</td>
-                <td style="word-wrap: break-word">{{ animal.deleteddate }}</td>
-
-                <td><button v-b-modal.modal-Edit-animal type="button" class="btn btn-warning" @click="boundDataToEditModal(animal.animalID)">Edit</button></td>
-                <td><button type="button" class="btn btn-danger" @click="deleteData(animal.animalID)">Delete</button></td>
-
-              </tr>
-            </tbody>
-          </table> -->
-        </div>
-      </div>
-    </div>
+    <div class="row" />
   </div>
 </template>
 
@@ -516,8 +562,9 @@ export default {
       },
       searchmode,
       selected,
-      selectedcategoryforsearch
-
+      selectedcategoryforsearch,
+      isSearchMultipleAnimalDialogVisible: false,
+      isSearchByQRCodeDialogVisible: false
       // foods: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
 
     }

@@ -1,26 +1,25 @@
 <template>
   <div class="dashboard-editor-container">
-
     <panel-group @handleSetLineChartData="handleSetLineChartData" @handleSetPieChartData="handleSetPieChartData" />
-
-    <el-row class="p-6">
-      <el-col :span="12">
-        <div class="chart-wrapper">
+    <el-row :gutter="20">
+      <el-col :span="12" :sm="24" :xs="24" :md="12" :lg="12" :xl="12">
+        <el-card shadow="never">
           <pie-chart :chart-data="pieChartData" />
-        </div>
+        </el-card>
       </el-col>
-      <el-col :span="12">
-        <line-chart :chart-data="lineChartData" />
+      <el-col :span="12" :sm="24" :xs="24" :md="12" :lg="12" :xl="12">
+        <el-card shadow="never">
+          <el-row>
+            <el-button-group>
+              <el-button :type="selected === 1 ? 'primary' : ''" @click="selected=1, handleSetLineChartData('footagein7days')">7 days</el-button>
+              <el-button :type="selected === 2 ? 'primary' : ''" @click="selected=2, handleSetLineChartData('footagein1month')">1 month</el-button>
+              <el-button :type="selected === 3 ? 'primary' : ''" @click="selected=3, handleSetLineChartData('footagein6months')">6 months</el-button>
+              <el-button :type="selected === 4 ? 'primary' : ''" @click="selected=4, handleSetLineChartData('footagein1year')">1 year</el-button>
+            </el-button-group>
+          </el-row>
+          <line-chart :chart-data="lineChartData" />
+        </el-card>
       </el-col>
-    </el-row>
-    <el-row>
-      <button :style="[selected===1 ? {'background': 'blue','color': 'white'}: {'background': '#FFF'}]" @click="selected=1, handleSetLineChartData('footagein7days')">7 days</button>
-      <button :style="[selected===2 ? {'background': 'blue','color': 'white'}: {'background': '#FFF'}]" @click="selected=2, handleSetLineChartData('footagein1month')">1 month</button>
-      <button :style="[selected===3 ? {'background': 'blue','color': 'white'}: {'background': '#FFF'}]" @click="selected=3, handleSetLineChartData('footagein6months')">6 months</button>
-      <button :style="[selected===4 ? {'background': 'blue','color': 'white'}: {'background': '#FFF'}]" @click="selected=4, handleSetLineChartData('footagein1year')">1 year</button>
-    </el-row>
-    <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <line-chart :chart-data="lineChartData" />
     </el-row>
   </div>
 </template>
@@ -58,7 +57,6 @@ export default {
   components: {
     PanelGroup,
     LineChart,
-    LineChart1,
     PieChart
   },
 

@@ -4,7 +4,7 @@
       <el-col>
         <el-card class="box-card">
           <div slot="header" class="d-flex justify-content-between">
-            <span>Users Management</span>
+            <h5>Users Management</h5>
             <el-button type="primary" @click="isDialogRegisterUserVisible = !isDialogRegisterUserVisible">Register a new User</el-button>
           </div>
           <div class="px-4">
