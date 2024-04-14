@@ -1,149 +1,32 @@
 <template>
+  <div class="login-container wrapper">
 
-  <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
+    <el-form ref="loginForm" :model="loginForm" :inline="false" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
+      <el-card>
+        <h3 class="title my-3">Livestock Monitoring Login Page</h3>
 
-      <div class="title-container">
-        <h3 class="title">Livestock Monitoring Login Page</h3>
-        <link rel="stylesheet" href="style.css">
-      </div>
-
-      <el-form-item prop="username">
-        <span class="svg-container">
-          <svg-icon icon-class="user" />
-        </span>
-        <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="Username"
-          name="username"
-          type="text"
-          tabindex="1"
-          autocomplete="on"
-        />
-      </el-form-item>
-
-      <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
-        <el-form-item prop="password">
-          <span class="svg-container">
-            <svg-icon icon-class="password" />
-          </span>
-          <el-input
-            :key="passwordType"
-            ref="password"
-            v-model="loginForm.password"
-            :type="passwordType"
-            placeholder="Password"
-            name="password"
-            tabindex="2"
-            autocomplete="on"
-            @keyup.native="checkCapslock"
-            @blur="capsTooltip = false"
-            @keyup.enter.native="handleLogin"
-          />
-          <span class="show-pwd" @click="showPwd">
-            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-          </span>
+        <el-form-item>
+          <el-input v-model="loginForm.username" prefix-icon="el-icon-user" placeholder="Email" />
         </el-form-item>
-      </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
-
-      <div style="position:relative">
-        <!---        <div class="tips">
-          <span>Username : </span>
-          <span>Password : any</span>
-        </div>
-        <div class="tips">
-          <span style="margin-right:18px;">Username : editor</span>
-          <span>Password : any</span>
-        </div>
-
-        <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
-          Or connect with
-        </el-button>-->
-      </div>
-    </el-form>
-    <!--
-    <el-form ref="RegisterForm" :model="RegisterForm" :rules="RegisterRules" class="Register-form" autocomplete="on" label-position="left">
-
-      <div class="title-container">
-        <h3 class="title">Register Form</h3>
-      </div>
-
-      <el-form-item prop="email">
-        <span class="svg-container">
-          <svg-icon icon-class="user" />
-        </span>
-        <el-input
-          ref="email"
-          v-model="RegisterForm.email"
-          placeholder="email"
-          name="email"
-          type="text"
-          tabindex="1"
-          autocomplete="on"
-        />
-      </el-form-item>
-
-      <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
-        <el-form-item prop="password">
-          <span class="svg-container">
-            <svg-icon icon-class="password" />
-          </span>
-          <el-input
-            :key="passwordType"
-            ref="password"
-            v-model="RegisterForm.password"
-            :type="passwordType"
-            placeholder="Password"
-            name="password"
-            tabindex="2"
-            autocomplete="on"
-            @keyup.native="checkCapslock"
-            @blur="capsTooltip = false"
-            @keyup.enter.native="handleRegister"
-          />
-          <span class="show-pwd" @click="showPwd">
-            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-          </span>
+        <el-form-item>
+          <el-input v-model="loginForm.password" prefix-icon="el-icon-key" type="password" placeholder="Type your password" />
         </el-form-item>
-      </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleRegister">Register</el-button>
-
+        <el-button :loading="loading" type="primary" style="width:100%;" size="large" @click.native.prevent="handleLogin">Login</el-button>
+      </el-card>
     </el-form>
-
-    <el-dialog title="Or connect with" :visible.sync="showDialog">
-      Can not be simulated on local, so please combine you own business simulation! ! !
-      <br>
-      <br>
-      <br>
-      <social-sign />
-    </el-dialog>-->
-
-    <!-- Background image -->
-    <div id="wrapper" />
-    <div
-      class="bg-image"
-    >
-      <h1 class="text-white">Page title</h1>
-    </div>
-    <!-- Background image -->
   </div>
 </template>
 
 <script>
 import { auth } from '../dashboard/admin/components/Config/firebase'
 import { firestore } from '../dashboard/admin/components/Config/firebase'
-import { validUsername } from '@/utils/validate'
-import SocialSign from './components/SocialSignin'
 import { validEmail } from '@/utils/validate'
 import Vue from 'vue'
 
 export default {
   name: 'Login',
-  components: { SocialSign },
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validEmail(value)) {
@@ -267,11 +150,11 @@ export default {
                 console.log(this.$store)
         })
       })*/
-      this.$store.state.data.footages = [],
-      this.$store.state.data.animals = [],
-      this.$store.state.data.animalcategories = [],
-      this.$store.state.data.genders = [],
-      this.$store.state.data.users = [],
+      this.$store.state.data.footages = []
+      this.$store.state.data.animals = []
+      this.$store.state.data.animalcategories = []
+      this.$store.state.data.genders = []
+      this.$store.state.data.users = []
 
       auth.setPersistence('local')
         .then(() => {
@@ -279,7 +162,6 @@ export default {
           auth.signInWithEmailAndPassword(this.loginForm.username, this.loginForm.password)
             .then(() => {
               alert('Successfully logged in, click to start pulling data')
-              var role = ''
               var that = this
               that.$store.state.data.logedinEmail = that.loginForm.username
               that.$store.state.data.password = that.loginForm.password
@@ -313,8 +195,8 @@ export default {
                           { ...change.doc.data(), ...{ userID: change.doc.id }})
                         break
                       case 'removed':
-                        var a = that.$store.state.data.users.find(user => user.userID === change.doc.id)
-                        that.$store.state.data.users.splice(that.$store.state.data.users.indexOf(a), 1)
+                        var b = that.$store.state.data.users.find(user => user.userID === change.doc.id)
+                        that.$store.state.data.users.splice(that.$store.state.data.users.indexOf(b), 1)
                         break
                       default:
                         break
@@ -360,8 +242,8 @@ export default {
                           { ...change.doc.data(), ...{ animalID: change.doc.id }})
                         break
                       case 'removed':
-                        var a = that.$store.state.data.animals.find(animal => animal.animalID === change.doc.id)
-                        that.$store.state.data.animals.splice(that.$store.state.data.animals.indexOf(a), 1)
+                        var b = that.$store.state.data.animals.find(animal => animal.animalID === change.doc.id)
+                        that.$store.state.data.animals.splice(that.$store.state.data.animals.indexOf(b), 1)
                         break
                       default:
                         break
@@ -395,8 +277,8 @@ export default {
                           { ...change.doc.data(), ...{ categoryID: change.doc.id }})
                         break
                       case 'removed':
-                        var a = that.$store.state.data.animalcategories.find(category => category.categoryID === change.doc.id)
-                        that.$store.state.data.animalcategories.splice(that.$store.state.data.animalcategories.indexOf(a), 1)
+                        var b = that.$store.state.data.animalcategories.find(category => category.categoryID === change.doc.id)
+                        that.$store.state.data.animalcategories.splice(that.$store.state.data.animalcategories.indexOf(b), 1)
                         break
                       default:
                         break
@@ -430,8 +312,8 @@ export default {
                           { ...change.doc.data(), ...{ categoryID: change.doc.id }})
                         break
                       case 'removed':
-                        var a = that.$store.state.data.genders.find(gen => gen.gendersID === change.doc.id)
-                        that.$store.state.data.genders.splice(that.$store.state.data.genders.indexOf(a), 1)
+                        var b = that.$store.state.data.genders.find(gen => gen.gendersID === change.doc.id)
+                        that.$store.state.data.genders.splice(that.$store.state.data.genders.indexOf(b), 1)
                         break
                       default:
                         break
@@ -621,17 +503,13 @@ $cursor: #fff;
   .el-input {
     display: inline-block;
     height: 47px;
-    width: 85%;
     font-size: 1.25rem;
     font-weight: 600;
-    background: #c9c9ca;
     padding: 1px 1px 1px 1px 1px;
     border-radius: 6px;
     transition: 0.2s ease;
     input {
-      border: 5px;
-      -webkit-appearance: none;
-      border-radius: 2px;
+      border-radius: 4px;
       padding: 24px 10px 24px 30px;
       color:rgb(22, 21, 21);
       height: 47px;
@@ -643,13 +521,6 @@ $cursor: #fff;
       }
     }
   }
-
-  .el-form-item {
-    border: 1px solid rgba(247, 246, 246, 0.993);
-    background: rgb(248, 241, 241);
-    border-radius: 5px;
-    color: #5a0afa;
-  }
 }
 </style>
 
@@ -658,7 +529,7 @@ $bg:#2d3a4b;
 $dark_gray:#141414;
 $light_gray:#0f0f0f;
 
-#wrapper {
+.wrapper {
   opacity:1;
   background: url("~@/assets/background_for_app.jpg") no-repeat center center fixed;
   -webkit-background-size: cover;
@@ -678,6 +549,7 @@ $light_gray:#0f0f0f;
       color: #fff !important;
     }
 }
+
 .login-container {
   min-height: 100%;
   width: 100%;
