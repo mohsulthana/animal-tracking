@@ -8,6 +8,8 @@
 import { firestore } from './views/dashboard/admin/components/Config/firebase'
 import { auth } from './views/dashboard/admin/components/Config/firebase'
 import Vue from 'vue'
+import axios from './utils/axios'
+
 export default {
 
   name: 'App',
@@ -17,8 +19,10 @@ export default {
     return {
     }
   },
-  mounted() {
+  async mounted() {
+    const request = await axios.get('api/categories')
 
+    console.log(request, 'Hello world')
   },
   // below created() solves the problem of lossing $store data when refresh a page by clicking the refresh button
   created() {

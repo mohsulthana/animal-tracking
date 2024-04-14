@@ -1,146 +1,37 @@
 <template>
   <div>
-    <b-container class="bv-example-row">
-      <b-row class="mb-4">
-        <b-col v-for="(c,ind) in $store.state.data.animalcategories" :key="ind" cols="3">
-          <svg height="50" xmlns="http://www.w3.org/2000/svg" @click="handleSetPieChartData(c.name)">
-            <text
-              x="50"
-              y="18"
-              font-size="8pt"
-              font-family="Arial"
-              font-weight="100"
-              text-anchor="middle"
-              stroke="black"
-              fill="black"
-            > {{ c.name }} </text><br>
-              <text
-                x="50"
-                y="40"
-                font-size="16pt"
-                font-family="Arial"
-                font-weight="100"
-                text-anchor="middle"
-                stroke="blue"
-                fill="blue"
-              > {{ $store.state.data.animals.filter(a => a.category === c.name).length }} </text>
-          </svg>
-        </b-col>
-      </b-row>
-    </b-container>
-
-    <!--                   : {{$store.state.data.animals.filter(a => a.category === c.name).length}}
-     <svg viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg" stroke="red" fill="grey">
-        +
-            '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
-            'text-anchor="middle" fill="${STROKE}" >' + letters + '</text>
-
-        <svg viewBox="0 0 10 10" x="200" width="100">
-          <circle cx="5" cy="5" r="4" />
-        </svg>
-      </svg>
-      <div class="card-panel"  @click="handleSetPieChartData('cattleGenderAge')">
-        <div class="card-panel-icon-wrapper icon-cattle">
-          <svg-icon icon-class="cattle" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Cattle
-          </div>
-          <count-to :start-val="0" :end-val="this.$store.getters.cattlelistcount" :duration="2600" class="card-panel-num" />
-        </div>
-      </div>-->
-
-  <!--  <el-col :xs="12" :sm="12" :lg="4" class="card-panel-col">
-      <div class="card-panel" @click="handleSetPieChartData('sheepGenderAge')">
-        <div class="card-panel-icon-wrapper icon-sheep">
-          <svg-icon icon-class="sheep" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Sheep
-          </div>
-          <count-to :start-val="0" :end-val="this.$store.getters.sheeplistcount" :duration="2600" class="card-panel-num" />
-        </div>
-      </div>
-    </el-col>
-    <el-col :xs="12" :sm="12" :lg="4" class="card-panel-col">
-      <div class="card-panel" @click="handleSetPieChartData('goatGenderAge')">
-        <div class="card-panel-icon-wrapper icon-goat">
-          <svg-icon icon-class="goat" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Goats
-          </div>
-          <count-to :start-val="0" :end-val="this.$store.getters.goatlistcount" :duration="3000" class="card-panel-num" />
-        </div>
-      </div>
-    </el-col>
-    <el-col :xs="12" :sm="12" :lg="4" class="card-panel-col">
-      <div class="card-panel" @click="handleSetPieChartData('bokGenderAge')">
-        <div class="card-panel-icon-wrapper icon-bok">
-          <svg-icon icon-class="bok" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Bok
-          </div>
-          <count-to :start-val="0" :end-val="this.$store.getters.boklistcount" :duration="2600" class="card-panel-num" />
-        </div>
-      </div>
-    </el-col>-->
-
-  <!-- <el-row :gutter="40" class="panel-group">
-      <el-col :xs="12" :sm="12" :lg="4" class="footage-card-panel-col">
-        <div class="card-panel" @click="handleSetLineChartData('footagein7days')">
-          <div class="card-panel-icon-wrapper icon-footage">
-            <svg-icon icon-class="7days" class-name="footage-card-panel-icon" />
-          </div>
-        </div>
-      </el-col>
-      <el-col :xs="12" :sm="12" :lg="4" class="footage-card-panel-col">
-        <div class="card-panel" @click="handleSetLineChartData('footagein1month')">
-          <div class="card-panel-icon-wrapper icon-footage">
-            <svg-icon icon-class="1month" class-name="footage-card-panel-icon" />
-          </div>
-        </div>
-      </el-col>
-      <el-col :xs="12" :sm="12" :lg="4" class="footage-card-panel-col">
-        <div class="card-panel" @click="handleSetLineChartData('footagein6months')">
-          <div class="card-panel-icon-wrapper icon-footage">
-            <svg-icon icon-class="6months" class-name="footage-card-panel-icon" />
-          </div>
-        </div>
-      </el-col>
-      <el-col :xs="12" :sm="12" :lg="4" class="footage-card-panel-col">
-        <div class="card-panel" @click="handleSetLineChartData('footagein1year')">
-          <div class="card-panel-icon-wrapper icon-footage">
-            <svg-icon size="200, 100" icon-class="1year" class-name="footage-card-panel-icon" />
-          </div>
-        </div>
-      </el-col>
-  </el-row>-->
+    <h4>Animal categories</h4>
+    <div style="width: 100%; display: inline-block;">
+      <el-row :gutter="20">
+        <el-col v-for="(category, index) in categoryList" :key="index" :span="2" class="mb-2">
+          <el-card shadow="hover" style="width: 100%; ">
+            <div>
+              <el-statistic
+                group-separator=","
+                :precision="2"
+                :value="totalAnimals(category)"
+                :title="category.name"
+              />
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+    </div>
   </div>
-
 </template>
 
 <script>
-import CountTo from 'vue-count-to'
+// import CountTo from 'vue-count-to'
 // import store from '@/store'
 // import firebase from '../dashboard/admin/components/Config/firebase'
 // import { date } from 'jszip/lib/defaults'
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+import { BootstrapVue } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import Vue from 'vue'
 Vue.use(BootstrapVue)
-// Optionally install the
-export default {
 
-  components: {
-    CountTo
-  },
+export default {
   data() {
     return {
       totalgoat: 0,
@@ -150,7 +41,11 @@ export default {
       selected: 1
     }
   },
-
+  computed: {
+    categoryList() {
+      return this.$store.state.data.animalcategories
+    }
+  },
   mounted() {
     this.$nextTick(() => {
       this.handleSetLineChartData('footagein7days')
@@ -164,6 +59,9 @@ export default {
     },
     handleSetPieChartData(type) {
       this.$emit('handleSetPieChartData', type)
+    },
+    totalAnimals(category) {
+      return this.$store.state.data.animals.filter(a => a.category === category.name).length
     }
   }
 }

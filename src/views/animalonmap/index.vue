@@ -7,12 +7,20 @@
             <h5>Animals on map</h5>
           </div>
           <div class="px-4">
-            <b-form-checkbox-group
+            <el-select v-model="animalsSelected" multiple placeholder="Select animals to display on the map" style="width: 100%;" size="large" clearable>
+              <el-option
+                v-for="(item, index) in animalcategories"
+                :key="index"
+                :label="item"
+                :value="item"
+              />
+            </el-select>
+            <!-- <b-form-checkbox-group
               id="checkboxes-4"
               v-model="checkedcategories"
               style="column-count: 4;"
               :options="animalcategories"
-            />
+            /> -->
             <el-button-group class="my-2">
               <el-button plain type="primary" @click="map.removeObjects(map.getObjects()), createFarmBoundaryPolygon(map), addMarkersfromVueXStore(map, checkedcategories)">Selected</el-button>
               <el-button plain type="danger" @click="map.removeObjects(map.getObjects()), createFarmBoundaryPolygon(map)">Clear</el-button>
@@ -27,11 +35,6 @@
 </template>
 
 <script>
-// import polygon from 'vue2-google-maps/dist/components/polygon';
-// import firebase from '../dashboard/admin/components/Config/firebase'
-// import firebase from 'firebase'
-// import { date } from 'jszip/lib/defaults'
-// import { collection, query, where, getDocs,doc} from "firebase/firestore"
 import { firestore } from '../dashboard/admin/components/Config/firebase'
 import { BootstrapVue } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
@@ -71,7 +74,8 @@ export default {
       GoatIconYellow: null,
       SheepIconRed: null,
       SheepIconGreen: null,
-      SheepIconYellow: null
+      SheepIconYellow: null,
+      animalsSelected: []
       // You can get the API KEY from developer.here.com
     }
   },
@@ -94,7 +98,6 @@ export default {
     this.animalcategories = []
     this.markers = []
     this.$store.getters.animalcategories.forEach(cat => this.animalcategories.push(cat.name))
-    console.log(this.animalcategories)
     this.initializeHereMap()
     // this.initializeIcons();
 
@@ -210,8 +213,8 @@ export default {
 
     initializeIcons() {
       var svgletterC = '<svg  width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
-          '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
-          'text-anchor="middle" fill="${STROKE}" >C</text></svg>'
+        '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
+        'text-anchor="middle" fill="${STROKE}" >C</text></svg>'
       this.CattleIconRed = new H.map.Icon(
         svgletterC.replace('${STROKE}', 'red')),
       this.CattleIconGreen = new H.map.Icon(
@@ -220,8 +223,8 @@ export default {
         svgletterC.replace('${STROKE}', 'blue'))
 
       var svgletterB = '<svg  width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
-          '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
-          'text-anchor="middle" fill="${STROKE}" >B</text></svg>'
+        '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
+        'text-anchor="middle" fill="${STROKE}" >B</text></svg>'
       this.BokIconRed = new H.map.Icon(
         svgletterB.replace('${STROKE}', 'red')),
       this.BokIconGreen = new H.map.Icon(
@@ -230,8 +233,8 @@ export default {
         svgletterB.replace('${STROKE}', 'blue'))
 
       var svgletterG = '<svg  width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
-          '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
-          'text-anchor="middle" fill="${STROKE}" >G</text></svg>'
+        '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
+        'text-anchor="middle" fill="${STROKE}" >G</text></svg>'
       this.GoatIconRed = new H.map.Icon(
         svgletterG.replace('${STROKE}', 'red')),
       this.GoatIconGreen = new H.map.Icon(
@@ -240,8 +243,8 @@ export default {
         svgletterG.replace('${STROKE}', 'yellow'))
 
       var svgletterS = '<svg  width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
-          '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
-          'text-anchor="middle" fill="${STROKE}" >S</text></svg>'
+        '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
+        'text-anchor="middle" fill="${STROKE}" >S</text></svg>'
       this.SheepIconRed = new H.map.Icon(
         svgletterS.replace('${STROKE}', 'red')),
       this.SheepIconGreen = new H.map.Icon(
@@ -273,8 +276,8 @@ export default {
             var is_in = this.ray_casting(amimalmarker.getGeometry(), this.farmbounderies)
 
             var svgletter = '<svg  width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
-            '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
-            'text-anchor="middle" fill="${STROKE}" >' + letters + '</text></svg>'
+              '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
+              'text-anchor="middle" fill="${STROKE}" >' + letters + '</text></svg>'
 
             var iconGreen = new H.map.Icon(
               svgletter.replace('${STROKE}', 'green'))
@@ -425,8 +428,8 @@ export default {
 
       var polygonTimeout = null
       var svgCircle = '<svg width="20" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg">' +
-          '<circle cx="10" cy="10" r="7" fill="transparent" stroke="red" stroke-width="4"/>' +
-          '</svg>'
+        '<circle cx="10" cy="10" r="7" fill="transparent" stroke="red" stroke-width="4"/>' +
+        '</svg>'
       var polygon = new H.map.Polygon(
         // new H.geo.Polygon(new H.geo.LineString([-25.7, 28.2, 0, -24.7, 29.2, 0, -24.7, 30.2, 0, -25.7, 31.2, 0, -26.7, 30.2, 0, -26.7, 29.2, 0 ])),
         // new H.geo.Polygon(new H.geo.LineString.fromLatLngArray([-26.520111, 20.221591, -26.540428, 20.213576, -26.574163, 20.289141, -26.555104, 20.302489])),
@@ -581,8 +584,8 @@ export default {
       // -25.731340, lng:28.2293
       var polygonTimeout = null
       var svgCircle = '<svg width="20" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg">' +
-          '<circle cx="10" cy="10" r="7" fill="transparent" stroke="red" stroke-width="4"/>' +
-          '</svg>'
+        '<circle cx="10" cy="10" r="7" fill="transparent" stroke="red" stroke-width="4"/>' +
+        '</svg>'
       var verticeGroup = new H.map.Group({
         visibility: true
       })
@@ -845,9 +848,9 @@ export default {
         var coord = map.screenToGeo(evt.currentPointer.viewportX,
           evt.currentPointer.viewportY)
         this.clickedlatlanstr = 'Clicked at ' + Math.abs(coord.lat.toFixed(4)) +
-                ((coord.lat > 0) ? 'N' : 'S') +
-                ' ' + Math.abs(coord.lng.toFixed(4)) +
-                ((coord.lng > 0) ? 'E' : 'W')
+          ((coord.lat > 0) ? 'N' : 'S') +
+          ' ' + Math.abs(coord.lng.toFixed(4)) +
+          ((coord.lng > 0) ? 'E' : 'W')
         // console.log(this.clickedlatlanstr)
       })
     },
@@ -997,9 +1000,9 @@ export default {
           4000,
           function(coord) {
             var svgMarkup = '<svg  width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
-        '<rect stroke="black" fill="${FILL}" x="1" y="1" width="22" height="22" />' +
-        '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
-        'text-anchor="middle" fill="${STROKE}" >C</text></svg>'
+              '<rect stroke="black" fill="${FILL}" x="1" y="1" width="22" height="22" />' +
+              '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
+              'text-anchor="middle" fill="${STROKE}" >C</text></svg>'
             if (scope.ray_casting(coord, scope.farmbounderies)) {
               var cubsIcon = new H.map.Icon(
                 svgMarkup.replace('${FILL}', 'white').replace('${STROKE}', 'orange'))
@@ -1018,7 +1021,7 @@ export default {
           endCoord = { lat: 1, lng: 1 },
           durationMs = 200,
           onStep = console.log,
-          onComplete = function() {}
+          onComplete = function() { }
         ) {
           var raf = window.requestAnimationFrame || function(f) { window.setTimeout(f, 16) }
           var stepCount = durationMs / 16

@@ -8,9 +8,6 @@
 import { mapGetters } from 'vuex'
 import adminDashboard from './admin'
 import editorDashboard from './editor'
-// import {firestore} from '../dashboard/admin/components/Config/firebase'
-// import {auth} from '../dashboard/admin/components/Config/firebase'
-// import Vue from 'vue'
 
 export default {
   name: 'Dashboard',

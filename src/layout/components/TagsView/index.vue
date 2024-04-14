@@ -209,6 +209,7 @@ export default {
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12), 0 0 3px 0 rgba(0, 0, 0, .04);
   .tags-view-wrapper {
     .tags-view-item {
+      font-size: .90rem;
       display: inline-block;
       position: relative;
       cursor: pointer;
@@ -218,7 +219,6 @@ export default {
       color: #495060;
       background: #fff;
       padding: 0 8px;
-      font-size: 12px;
       margin-left: 5px;
       margin-top: 4px;
       &:first-of-type {
