@@ -51,6 +51,7 @@ export default {
         }
         return data
       }())
+
       this.chart.setOption({
         backgroundColor: '#344b58',
         title: {

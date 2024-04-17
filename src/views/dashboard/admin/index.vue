@@ -46,15 +46,8 @@ import PieChart from '@/views/animalstatistic/PieChart'
 // import Qrcoderscanner from './components/Qrcodescanner'
 // import HereMap from "@/views/animalonmap/HereMap.vue"
 // import auth from '@/views/dashboard/admin/components/Config/firebase'
-import firebase from 'firebase'
 // import QRCanvas from './components/QRCanvas'
-
-const lineChartData = {
-  goatNumber: [80, 199, 130, 140, 90, 100, 110],
-  sheepNumber: [100, 99, 230, 240, 190, 200, 210],
-  cattleNumber: [1000, 99, 230, 240, 290, 100, 180],
-  bokNumber: [280, 199, 170, 190, 150, 140, 170]
-}
+import firebase from 'firebase'
 
 export default {
   name: 'DashboardAdmin',

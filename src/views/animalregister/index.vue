@@ -213,6 +213,7 @@
       </div>
 
     </el-row> -->
+
     <!-- Animal photo Form-->
     <b-modal
       id="modal-animal-photo"
@@ -222,7 +223,7 @@
     >
 
       <b-container class="bv-example-row" fluid="lg">
-        <img :src="photolink">
+        <img :src="photolink" alt="image description">
       </b-container>
 
     </b-modal>
@@ -231,18 +232,12 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import { firestore } from '../dashboard/admin/components/Config/firebase'
 import { QrcodeStream, QrcodeDropZone, QrcodeCapture } from 'vue-qrcode-reader'
 import Camera from '../Camera.vue'
-import { RouterLinkStub } from '@vue/test-utils'
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
+// import { RouterLinkStub } from '@vue/test-utils'
 // Make BootstrapVue available throughout your project
-Vue.use(BootstrapVue)
 // Optionally install the BootstrapVue icon components plugin
-Vue.use(IconsPlugin)
 
 /* import firebase from 'firebase'
 import { date } from 'jszip/lib/defaults'
@@ -323,7 +318,7 @@ export default {
   },
 
   mounted() {
-    this.fetchData()
+    this.fetchAnimalData()
   },
 
   methods: {
@@ -406,10 +401,6 @@ export default {
             case 'photolink':
               x = a.photolink ? a.photolink : ''
               y = b.photolink ? b.photolink : ''
-              break
-            case 'photolink':
-              x = a.photolink
-              y = b.photolink
               break
             case 'deleteddate':
               x = a.deleteddate
@@ -696,6 +687,24 @@ export default {
         })
       })
       this.$forceUpdate()*/
+    },
+
+    async fetchAnimalData() {
+      const { data } = await this.$http.get('api/animals')
+      data.data.forEach((value) => {
+        this.animals.push({
+          alias: value.alias,
+          category: value.category,
+          created_date: value.created_date,
+          deleted_date: value.deleted_date,
+          gender: value.gender,
+          id: value.id,
+          ip: value.ip,
+          month_age: value.month_age,
+          photo_link: value.photo_link,
+          qr_code: value.qr_code
+        })
+      })
     },
 
     deleteData(docid) {
