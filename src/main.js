@@ -1,7 +1,6 @@
 import Vue from 'vue'
 
 import Cookies from 'js-cookie'
-
 import 'normalize.css/normalize.css' // a modern alternative to CSS resets
 
 import Element from 'element-ui'
@@ -18,11 +17,10 @@ import './icons' // icon
 import './permission' // permission control
 import './utils/error-log' // error log
 
-import * as filters from './filters' // global filters
-// import * as VueGoogleMaps from 'vue2-google-maps'
-// import VueBottomNavigation from 'bottom-navigation-vue'
-// QR code:
-// import './indes.css'
+// import * as filters from './filters'
+import axios from './utils/axios'
+
+Vue.use(axios)
 
 /**
  * If you don't want to use mock-server
@@ -32,11 +30,11 @@ import * as filters from './filters' // global filters
  * Currently MockJs will be used in the production environment,
  * please remove it before going online ! ! !
  */
-console.log('main.js after import' + (+new Date()))
-if (process.env.NODE_ENV === 'production') {
-  const { mockXHR } = require('../mock')
-  mockXHR()
-}
+// console.log('main.js after import' + (+new Date()))
+// if (process.env.NODE_ENV === 'production') {
+//   const { mockXHR } = require('../mock')
+//   mockXHR()
+// }
 
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium', // set element-ui default size
@@ -52,9 +50,9 @@ Vue.use(Element, {
 })*/
 
 // register global utility filters
-Object.keys(filters).forEach(key => {
-  Vue.filter(key, filters[key])
-})
+// Object.keys(filters).forEach(key => {
+//   Vue.filter(key, filters[key])
+// })
 
 Vue.config.productionTip = false
 

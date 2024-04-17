@@ -505,15 +505,13 @@ $cursor: #fff;
     height: 47px;
     font-size: 1.25rem;
     font-weight: 600;
-    padding: 1px 1px 1px 1px 1px;
     border-radius: 6px;
     transition: 0.2s ease;
+
     input {
       border-radius: 4px;
-      padding: 24px 10px 24px 30px;
       color:rgb(22, 21, 21);
       height: 47px;
-      caret-color: $cursor;
 
       &:-webkit-autofill {
         box-shadow: 0 0 0px 1000px $bg inset !important;

@@ -20,24 +20,18 @@ export default {
     }
   },
   async mounted() {
-    const request = await axios.get('api/categories')
-
-    console.log(request, 'Hello world')
   },
   // below created() solves the problem of lossing $store data when refresh a page by clicking the refresh button
   created() {
     const that = this
 
     // Read sessionStorage on page load
-    console.log('App.vue:created' + (+new Date()))
     if (sessionStorage.getItem('store')) {
-      console.log('App.vue: before load store.state')
       // console.log(that.$store.state)
 
       // load state from sessionStorage
       that.$store.replaceState(Object.assign({}, that.$store.state, JSON.parse(sessionStorage.getItem('store'))))
       // console.log(that.$store.state)
-      console.log('App.vue: after load store.state')
 
       // setup the snapshot of database
       if (that.$store.state.data.logedinEmail) {
@@ -46,24 +40,21 @@ export default {
             // console.log(that.loginForm.username)
             auth.signInWithEmailAndPassword(that.$store.state.data.logedinEmail, that.$store.state.data.password)
               .then(() => {
-                console.log('App.vue: Successfully logged in database, start pulling data')
-
                 // that.$store.state.data.logedinEmail = that.loginForm.username
                 // that.$store.state.data.password = that.loginForm.password
 
                 // clear store to pull in firestore data and establish snapshot listener
                 // that.$store.state.tagsView.visitedViews = []
                 that.$store.state.data.footages = []
-                that.$store.state.data.animals = [],
-                that.$store.state.data.animalcategories = [],
-                that.$store.state.data.genders = [],
-                that.$store.state.data.users = [],
+                that.$store.state.data.animals = []
+                that.$store.state.data.animalcategories = []
+                that.$store.state.data.genders = []
+                that.$store.state.data.users = []
 
                 // load users
                 firestore
                   .collection('users')
                   .onSnapshot(function(snapshot) {
-                    console.log('get in users loading')
                     /* console.log("First user snapshot? "+ that.$store.state.data.firstusersnapshot)
                   if(that.$store.state.data.firstusersnapshot){
                     that.$store.state.data.users = []
@@ -72,8 +63,6 @@ export default {
                     //console.log("getters.firstfootages: "+that.$store.getters.firstfootagesnapshot)
                   }*/
                     snapshot.docChanges().forEach(function(change) {
-                      console.log(change.doc.data().email)
-
                       switch (change.type) {
                         case 'added':
                           that.$store.state.data.users.push({

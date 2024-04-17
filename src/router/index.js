@@ -220,7 +220,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/usermanagement/index'),
         name: 'UserManage',
-        meta: { title: 'UserManage', roles: ['admin'], icon: 'UserManage', affix: true }
+        meta: { title: 'User Manage', roles: ['admin'], icon: 'UserManage', affix: true }
       }
     ]
   },

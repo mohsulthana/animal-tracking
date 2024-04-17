@@ -9,7 +9,7 @@
           </div>
           <div class="px-4">
             <el-table
-              :data="showusers"
+              :data="users"
               style="width: 100%"
             >
               <el-table-column
@@ -52,7 +52,6 @@
       title="Register new User"
       :visible.sync="isDialogRegisterUserVisible"
       width="30%"
-      :before-close="handleClose"
     >
       <el-form ref="form" :model="form" label-width="120px">
         <el-form-item label="Email address">
@@ -85,6 +84,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'Users',
   data: () => {
@@ -92,11 +92,23 @@ export default {
       isDialogRegisterUserVisible: false,
       form: {
         name: ''
-      }
+      },
+      search: '',
+      users: []
     }
   },
 
-  mounted() {
+  async mounted() {
+    const { data } = await this.$http.get('api/users')
+    data.data.forEach((value) => {
+      this.users.push({
+        email: value.email,
+        first_name: value.firstname,
+        surname: value.surname,
+        role: value.role,
+        photo: 'No photo for now'
+      })
+    })
   },
 
   methods: {

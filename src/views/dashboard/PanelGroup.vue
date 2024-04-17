@@ -3,12 +3,12 @@
     <h4>Animal categories</h4>
     <div style="width: 100%; display: inline-block;">
       <el-row :gutter="20">
-        <el-col v-for="(category, index) in categoryList" :key="index" :span="2" class="mb-2">
+        <el-col v-for="(category, index) in categories" :key="index" :sm="12" :md="2" class="mb-2">
           <el-card shadow="hover" style="width: 100%; ">
             <div>
               <el-statistic
                 group-separator=","
-                :precision="2"
+                :precision="0"
                 :value="totalAnimals(category)"
                 :title="category.name"
               />
@@ -21,10 +21,6 @@
 </template>
 
 <script>
-// import CountTo from 'vue-count-to'
-// import store from '@/store'
-// import firebase from '../dashboard/admin/components/Config/firebase'
-// import { date } from 'jszip/lib/defaults'
 import { BootstrapVue } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -38,7 +34,8 @@ export default {
       totalbok: 0,
       totalsheep: 0,
       totalcattle: 0,
-      selected: 1
+      selected: 1,
+      categories: []
     }
   },
   computed: {
@@ -46,7 +43,15 @@ export default {
       return this.$store.state.data.animalcategories
     }
   },
-  mounted() {
+  async mounted() {
+    const { data } = await this.$http.get('api/categories')
+    data.data.forEach((value) => {
+      this.categories.push({
+        id: value.id,
+        name: value.name
+      })
+    })
+
     this.$nextTick(() => {
       this.handleSetLineChartData('footagein7days')
       this.handleSetPieChartData('')
@@ -61,7 +66,7 @@ export default {
       this.$emit('handleSetPieChartData', type)
     },
     totalAnimals(category) {
-      return this.$store.state.data.animals.filter(a => a.category === category.name).length
+      return this.categories.filter(a => a.name === category.name).length
     }
   }
 }
