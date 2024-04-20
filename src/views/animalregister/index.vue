@@ -23,16 +23,24 @@
                 label="Gender"
               />
               <el-table-column
-                prop="age"
+                prop="month_age"
                 label="Age"
-              />
+              >
+                <template slot-scope="scope">
+                  {{ scope.row.month_age }} months
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="photo_link"
+                label="Photo Link"
+              >
+                <template slot-scope="scope">
+                  <img :src="scope.row.photo_link" :height="200" width="100%" :alt="scope.row.alias" style="object-fit: contain;">
+                </template>
+              </el-table-column>
               <el-table-column
                 prop="alias"
                 label="Alias"
-              />
-              <el-table-column
-                prop="photo"
-                label="Photo"
               />
               <el-table-column
                 prop="ip"
@@ -41,10 +49,18 @@
               <el-table-column
                 prop="qrcode"
                 label="QR Code"
+              >
+                <template slot-scope="scope">
+                  <img :src="scope.row.qr_code" :height="200" width="100%" :alt="scope.row.alias" style="object-fit: contain;">
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="created_at"
+                label="Created"
               />
               <el-table-column
-                prop="createddate"
-                label="Created"
+                prop="updated_at"
+                label="Updated"
               />
               <el-table-column
                 prop="action"
@@ -58,161 +74,40 @@
 
     <!-- Register animal dialog -->
     <el-dialog title="Register animal" :visible.sync="isRegisterAnimalModalVisible">
-      <el-form label-position="left" label-width="150px" :model="form">
-        <el-form-item label="Alias">
+      <el-form ref="ruleForm" label-position="left" label-width="150px" :model="form" :rules="rules">
+        <el-form-item label="Alias" prop="alias">
           <el-input v-model="form.alias" />
         </el-form-item>
-        <el-form-item label="Age (in months)">
-          <el-input v-model="form.age" />
+        <el-form-item label="Age (in months)" prop="age">
+          <el-input v-model.number="form.age" />
         </el-form-item>
-        <el-form-item label="Category">
-          <el-select v-model="form.category" placeholder="Select category">
-            <!-- <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            /> -->
+        <el-form-item label="Category" prop="category">
+          <el-select v-model="form.category" placeholder="Select category" style="width: 100%;">
+            <el-option
+              v-for="(item, index) in animalcategories"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+            />
           </el-select>
         </el-form-item>
-        <el-form-item label="Gender">
-          <el-select v-model="form.gender" placeholder="Select gender">
-            <!-- <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            /> -->
+        <el-form-item label="Gender" prop="gender">
+          <el-select v-model="form.gender" placeholder="Select gender" style="width: 100%;">
+            <el-option
+              v-for="(item, index) in gender"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+            />
           </el-select>
         </el-form-item>
       </el-form>
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="isRegisterAnimalModalVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="isRegisterAnimalModalVisible = false">Register</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">Register</el-button>
       </span>
     </el-dialog>
-
-    <!-- <div>
-      <camera @handleSetPhotoData="handleSetPhotoData" /><br>
-    </div>
-    <div><label>Photo name: </label>{{ imageName }}</div> -->
-    <!-- <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12" />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4">
-          <label>Scan Qrcode from Files or Camera:   </label><br>
-          <select v-model="selected">
-            <option v-for="option in options" :key="option.text" :value="option">
-              {{ option.text }}
-            </option>
-          </select>
-          <div v-if="selected === options[0]" />
-          <div v-else>
-            <div v-if="selected === options[2] ">
-              <QrcodeCapture :capture="selected.value" @detect="onQrDetect" />
-            </div>
-            <div v-else>
-              <p class="error">{{ error }}</p>
-              <QrcodeStream @detect="onQrDetect" @init="onInit" />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div>
-          <div><label style="color: red">*</label><label>Qrcode:   </label> {{ this.$store.getters.qrcode }}</div>
-        </div>
-      </div>
-      <div class="row">
-        <div>
-          <label style="color: red">*</label><label>Category   </label><br>
-          <span v-for="(animcategory,index) in animalcategories" :key="index">
-            <input id="animcategory.name" v-model="category" type="radio" :value="animcategory.name">
-            <label for="animcategory.name"> {{ animcategory.name }}  </label>
-            <span style="background-color:red; cursor:pointer; margin-right: 1em" @click="deleteAnimalCategory(animcategory.categoryID)">  X  </span>
-          </span>
-          <input id="newcategorybox" v-model="newcategory" type="text" placeholder="Enter a new category" style="text-transform: uppercase;">
-          <button type="button" class="btn btn-primary" @click="addAnimalCategory(newcategory)">Add Category</button>
-        </div><br>
-      </div>
-      <div class="row">
-        <div>
-          <label style="color: red">*</label><label>Gender   </label><br>
-          <span v-for="(gen,index) in genders" :key="index">
-            <input id="gen.name" v-model="gender" type="radio" :value="gen.name">
-            <label for="gen.name"> {{ gen.name }}  </label>
-            <span style="background-color:red; cursor:pointer; margin-right: 1em" @click="deleteAnimalGender(gen.genderID)"> X </span>
-          </span>
-          <input id="newgenderbox" v-model="newgender" type="text" placeholder="Enter a new gender" style="text-transform: uppercase;">
-          <button type="button" class="btn btn-primary" @click="addAnimalGender(newgender)">Add Category</button>
-
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4">
-          <label>Registered date   </label><br>
-          <input
-            v-model="createddate"
-            class="form-control"
-            type="datetime-local"
-            placeholder="Created date"
-            aria-label="default input example"
-            autocomplete="off"
-          >
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4">
-          <label style="color: red">*</label><label>Age in months  </label><br>
-          <input
-            v-model="monthage"
-            class="form-control"
-            type="number"
-            placeholder="Age in months"
-            aria-label="default input example"
-            autocomplete="off"
-          >
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4">
-          <label>Alias  </label><br>
-          <input
-            v-model="alias"
-            class="form-control"
-            type="text"
-            placeholder="Input an alias"
-            aria-label="default input example"
-            autocomplete="off"
-          >
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4">
-          <label>Photolink  </label><br>
-          <input
-            v-model="photolink"
-            class="form-control"
-            disabled="true"
-            type="text"
-            placeholder="Take a photo for a link"
-            aria-label="default input example"
-            autocomplete="off"
-          >
-        </div>
-      </div>
-    </el-row> -->
-    <!-- <el-row>
-      <div style="text-align:center">
-        <button type="button" class="btn btn-primary" @click="saveData">Register</button>
-      </div>
-
-    </el-row> -->
 
     <!-- Animal photo Form-->
     <b-modal
@@ -233,8 +128,8 @@
 
 <script>
 import { firestore } from '../dashboard/admin/components/Config/firebase'
-import { QrcodeStream, QrcodeDropZone, QrcodeCapture } from 'vue-qrcode-reader'
-import Camera from '../Camera.vue'
+// import { QrcodeStream, QrcodeDropZone, QrcodeCapture } from 'vue-qrcode-reader'
+// import Camera from '../Camera.vue'
 // import { RouterLinkStub } from '@vue/test-utils'
 // Make BootstrapVue available throughout your project
 // Optionally install the BootstrapVue icon components plugin
@@ -249,7 +144,7 @@ import { collection, query, where, getDocs,doc} from "firebase/firestore"*/
 
 export default {
   name: 'AnimalRegister',
-  components: { QrcodeStream, QrcodeDropZone, QrcodeCapture, Camera },
+  // components: { QrcodeStream, QrcodeDropZone, QrcodeCapture, Camera },
 
   data: () => {
     const options = [
@@ -268,6 +163,7 @@ export default {
       alias: '',
       animals: [],
       animalcategories: [],
+      animalgender: [],
       category: '',
       confirmdisabled: 1,
       count: 5,
@@ -280,8 +176,7 @@ export default {
       deleteddate: '',
       docid: '',
       error: 'No error',
-      gender: '',
-      genders: [],
+      gender: [],
       imageName: '',
       ip: '',
       monthage: '',
@@ -298,6 +193,21 @@ export default {
         age: '',
         gender: '',
         category: ''
+      },
+      rules: {
+        alias: [
+          { required: true, message: 'Please input alias', trigger: 'blur' }
+        ],
+        age: [
+          { required: true, message: 'Please input age', trigger: 'change' },
+          { type: 'number', message: 'Age must be a number', trigger: 'change' }
+        ],
+        category: [
+          { required: true, message: 'Please input category', trigger: 'change' }
+        ],
+        gender: [
+          { required: true, message: 'Please input gender', trigger: 'change' }
+        ]
       }
     }
   },
@@ -319,9 +229,22 @@ export default {
 
   mounted() {
     this.fetchAnimalData()
+    this.fetchAnimalCategories()
+    this.fetchAnimalGender()
   },
 
   methods: {
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        console.log(this.form)
+        if (valid) {
+          alert('submit!')
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
     boundDataToPhotoModal(photolink) {
       this.photolink = photolink
     },
@@ -689,14 +612,34 @@ export default {
       this.$forceUpdate()*/
     },
 
+    async fetchAnimalGender() {
+      const { data } = await this.$http.get('api/gender')
+      data.data.data.forEach((value) => {
+        this.gender.push({
+          id: value.GID,
+          name: value.name
+        })
+      })
+    },
+
+    async fetchAnimalCategories() {
+      const { data } = await this.$http.get('api/categories')
+      data.data.data.forEach((value) => {
+        this.animalcategories.push({
+          id: value.id,
+          name: value.name
+        })
+      })
+    },
+
     async fetchAnimalData() {
       const { data } = await this.$http.get('api/animals')
-      data.data.forEach((value) => {
+      data.data.data.forEach((value) => {
         this.animals.push({
           alias: value.alias,
           category: value.category,
-          created_date: value.created_date,
-          deleted_date: value.deleted_date,
+          created_at: value.created_at,
+          updated_at: value.updated_at,
           gender: value.gender,
           id: value.id,
           ip: value.ip,
