@@ -74,7 +74,7 @@
 
     <!-- Register animal dialog -->
     <el-dialog title="Register animal" :visible.sync="isRegisterAnimalModalVisible">
-      <el-form ref="ruleForm" label-position="left" label-width="150px" :model="form" :rules="rules">
+      <el-form ref="ruleForm" label-position="top" label-width="50px" :model="form" :rules="rules" size="mini" style="text-align: left;">
         <el-form-item label="Alias" prop="alias">
           <el-input v-model="form.alias" />
         </el-form-item>
@@ -101,6 +101,39 @@
             />
           </el-select>
         </el-form-item>
+
+        <el-row :gutter="24">
+          <el-col :span="12">
+            <el-form-item label="Photo link" prop="photo_link">
+              <el-upload
+                class="upload-demo"
+                :on-preview="handlePreview"
+                :on-remove="handleRemove"
+                :file-list="fileList"
+                list-type="list"
+                :auto-upload="false"
+              >
+                <el-button size="small" type="primary">Click to upload</el-button>
+                <div slot="tip" class="el-upload__tip">jpg/png files with a size less than 500kb</div>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="QR Code" prop="qr_code">
+              <el-upload
+                class="upload-demo"
+                :on-preview="handlePreview"
+                :on-remove="handleRemove"
+                :file-list="fileList"
+                list-type="list"
+                :auto-upload="false"
+              >
+                <el-button size="small" type="primary">Click to upload</el-button>
+                <div slot="tip" class="el-upload__tip">jpg/png files with a size less than 500kb</div>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
 
       <span slot="footer" class="dialog-footer">
@@ -208,7 +241,8 @@ export default {
         gender: [
           { required: true, message: 'Please input gender', trigger: 'change' }
         ]
-      }
+      },
+      fileList: []
     }
   },
   watch: {
@@ -234,6 +268,12 @@ export default {
   },
 
   methods: {
+    handleRemove(file, fileList) {
+      console.log(file, fileList)
+    },
+    handlePreview(file) {
+      console.log(file)
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         console.log(this.form)

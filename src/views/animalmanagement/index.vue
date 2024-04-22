@@ -25,16 +25,24 @@
                 label="Gender"
               />
               <el-table-column
-                prop="age"
+                prop="month_age"
                 label="Age"
-              />
+              >
+                <template slot-scope="scope">
+                  {{ scope.row.month_age }} months
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="photo_link"
+                label="Photo Link"
+              >
+                <template slot-scope="scope">
+                  <img :src="scope.row.photo_link" :height="200" width="100%" :alt="scope.row.alias" style="object-fit: contain;">
+                </template>
+              </el-table-column>
               <el-table-column
                 prop="alias"
                 label="Alias"
-              />
-              <el-table-column
-                prop="photo"
-                label="Photo"
               />
               <el-table-column
                 prop="ip"
@@ -43,14 +51,18 @@
               <el-table-column
                 prop="qrcode"
                 label="QR Code"
-              />
+              >
+                <template slot-scope="scope">
+                  <img :src="scope.row.qr_code" :height="200" width="100%" :alt="scope.row.alias" style="object-fit: contain;">
+                </template>
+              </el-table-column>
               <el-table-column
-                prop="createddate"
+                prop="created_at"
                 label="Created"
               />
               <el-table-column
-                prop="deleted"
-                label="Deleted"
+                prop="updated_at"
+                label="Updated"
               />
               <el-table-column
                 prop="action"
@@ -585,7 +597,8 @@ export default {
   },
 
   mounted() {
-    this.fetchData()
+    // this.fetchData()
+    this.fetchAnimalData()
   },
 
   function() {
@@ -595,6 +608,24 @@ export default {
   },
 
   methods: {
+    async fetchAnimalData() {
+      const { data } = await this.$http.get('api/animals')
+      data.data.data.forEach((value) => {
+        this.animals.push({
+          alias: value.alias,
+          category: value.category,
+          created_at: value.created_at,
+          updated_at: value.updated_at,
+          gender: value.gender,
+          id: value.id,
+          ip: value.ip,
+          month_age: value.month_age,
+          photo_link: value.photo_link,
+          qr_code: value.qr_code
+        })
+      })
+    },
+
     deleteAnimalGender(docid) {
       console.log(docid)
       if (confirm('Are you sure you will delete this?')) {
