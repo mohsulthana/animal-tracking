@@ -53,31 +53,35 @@
       :visible.sync="isDialogRegisterUserVisible"
       width="30%"
     >
-      <el-form ref="form" :model="form" label-width="120px">
-        <el-form-item label="Email address">
-          <el-input v-model="form.name" />
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+        <el-form-item label="Email address" prop="email">
+          <el-input v-model="form.email" />
         </el-form-item>
 
-        <el-form-item label="First name">
-          <el-input v-model="form.name" />
+        <el-form-item label="First name" prop="firstname">
+          <el-input v-model="form.firstname" />
         </el-form-item>
 
-        <el-form-item label="Last name">
-          <el-input v-model="form.name" />
+        <el-form-item label="Surname" prop="surname">
+          <el-input v-model="form.surname" />
         </el-form-item>
 
-        <el-form-item label="Role">
-          <el-input v-model="form.name" />
-        </el-form-item>
-
-        <el-form-item label="Password">
-          <el-input v-model="form.name" />
+        <el-form-item label="Role" prop="role_id">
+          <el-select v-model="form.role_id" placeholder="Select role" style="width: 100%;">
+            <el-option
+              v-for="(item, index) in role"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
         </el-form-item>
       </el-form>
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="isDialogRegisterUserVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="isDialogRegisterUserVisible = false">Confirm</el-button>
+        <el-button @click="resetForm('ruleForm')">Reset</el-button>
+        <el-button type="primary" @click="submitForm('form')">Create</el-button>
       </span>
     </el-dialog>
   </div>
@@ -91,28 +95,78 @@ export default {
     return {
       isDialogRegisterUserVisible: false,
       form: {
-        name: ''
+        firstname: '',
+        surname: '',
+        email: '',
+        role_id: ''
       },
       search: '',
-      users: []
+      users: [],
+      role: [],
+      rules: {
+        firstname: [
+          { required: true, message: 'Please input First Name', trigger: 'blur' }
+        ],
+        surname: [
+          { required: true, message: 'Please input Surname', trigger: 'blur' }
+        ],
+        email: [
+          { required: true, message: 'Please input email', trigger: 'change' },
+          { type: 'email', message: 'Email is not valid', trigger: 'change' }
+        ],
+        role_id: [
+          { required: true, message: 'Please select user role', trigger: 'blur' }
+        ]
+      }
     }
   },
 
   async mounted() {
-    const { data } = await this.$http.get('api/users')
-    data.data.forEach((value) => {
-      this.users.push({
-        email: value.email,
-        first_name: value.firstname,
-        surname: value.surname,
-        role: value.role,
-        photo: 'No photo for now'
-      })
-    })
+    this.fetchRole()
+    this.fetchUsers()
   },
 
   methods: {
+    submitForm(formName) {
+      this.$refs[formName].validate(async(valid) => {
+        if (valid) {
+          const request = await this.$http.post('api/users', this.form)
 
+          if (request.status === 201) {
+            alert('Success')
+          } else {
+            alert('Not success')
+          }
+
+          this.isDialogRegisterUserVisible = false
+          this.$refs[formName].resetFields()
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    async fetchRole() {
+      const { data } = await this.$http.get('api/role')
+      data.data.data.forEach((value) => {
+        this.role.push({
+          id: value.id,
+          name: value.name
+        })
+      })
+    },
+    async fetchUsers() {
+      const { data } = await this.$http.get('api/users')
+      data.data.data.forEach((value) => {
+        this.users.push({
+          email: value.email,
+          first_name: value.firstname,
+          surname: value.surname,
+          role: value.role,
+          photo: 'No photo for now'
+        })
+      })
+    }
   }
 }
 </script>

@@ -11,16 +11,10 @@
               <el-option
                 v-for="(item, index) in animalcategories"
                 :key="index"
-                :label="item"
-                :value="item"
+                :label="item.name"
+                :value="item.id"
               />
             </el-select>
-            <!-- <b-form-checkbox-group
-              id="checkboxes-4"
-              v-model="checkedcategories"
-              style="column-count: 4;"
-              :options="animalcategories"
-            /> -->
             <el-button-group class="my-2">
               <el-button plain type="primary" @click="map.removeObjects(map.getObjects()), createFarmBoundaryPolygon(map), addMarkersfromVueXStore(map, checkedcategories)">Selected</el-button>
               <el-button plain type="danger" @click="map.removeObjects(map.getObjects()), createFarmBoundaryPolygon(map)">Clear</el-button>
@@ -95,9 +89,7 @@ export default {
     this.platform = new window.H.service.Platform({
       apikey: this.apikey
     })
-    this.animalcategories = []
     this.markers = []
-    this.$store.getters.animalcategories.forEach(cat => this.animalcategories.push(cat.name))
     this.initializeHereMap()
     // this.initializeIcons();
 
@@ -120,8 +112,20 @@ export default {
     // this.removemarkers();
 
     // this.createDraggableShapes(this.map)
+
+    this.fetchAnimalCategories()
   },
   methods: {
+
+    async fetchAnimalCategories() {
+      const { data } = await this.$http.get('api/categories')
+      data.data.data.forEach((value) => {
+        this.animalcategories.push({
+          id: value.id,
+          name: value.name
+        })
+      })
+    },
 
     addfakefootage() {
       var geoPoint = new H.geo.Point(this.lat, this.lng)

@@ -206,8 +206,8 @@ export const asyncRoutes = [
       {
         path: 'index',
         component: () => import('@/views/animalmanagement/index'),
-        name: 'AnimalRecordManage',
-        meta: { title: 'AnimalRecordManage', roles: ['admin'], icon: 'AnimalRecordManage', affix: true }
+        name: 'Manage Animal Record',
+        meta: { title: 'Manage Animal Record', roles: ['admin'], icon: 'AnimalRecordManage', affix: true }
       }
     ]
   },

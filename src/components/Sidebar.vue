@@ -21,7 +21,7 @@
       </router-link>
       <router-link to="/animalRecordManage" active-class="active" tag="button" exact class="side-btn">
         <div class="link-container">
-          AnimalRecordManage
+          Manage Animal Record
         </div>
       </router-link>
     </div>
