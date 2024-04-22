@@ -44,14 +44,7 @@ export default {
     }
   },
   async mounted() {
-    const { data } = await this.$http.get('api/categories')
-    data.data.forEach((value) => {
-      this.categories.push({
-        id: value.id,
-        name: value.name
-      })
-    })
-
+    this.fetchCategories()
     this.$nextTick(() => {
       this.handleSetLineChartData('footagein7days')
       this.handleSetPieChartData('')
@@ -59,6 +52,15 @@ export default {
   },
 
   methods: {
+    async fetchCategories() {
+      const { data } = await this.$http.get('api/categories')
+      data.data.data.forEach((value) => {
+        this.categories.push({
+          id: value.id,
+          name: value.name
+        })
+      })
+    },
     handleSetLineChartData(type) {
       this.$emit('handleSetLineChartData', type)
     },
