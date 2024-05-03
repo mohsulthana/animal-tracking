@@ -69,19 +69,7 @@ export default {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
-      // auth.signOut();
-
       await this.$store.dispatch('auth/logout')
-
-      // this.$store.state.tagsView.visitedViews = []
-      // this.$store.state.data.footages = []
-      // this.$store.state.data.animals = []
-      // this.$store.state.data.animalcategories = []
-      // this.$store.state.data.genders = []
-      // this.$store.state.data.users = []
-      /* this.$router.removeRoute('animalonmap')
-      this.$router.removeRoute('animalRecordManage')
-      this.$router.removeRoute('animalregister')*/
       this.$router.push({ name: 'login' })
     }
   }

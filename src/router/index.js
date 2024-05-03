@@ -61,21 +61,14 @@ export const routes = [
         component: () => import('@/views/animalmanagement/index'),
         name: 'manage-animal-record',
         meta: { title: 'Manage Animal Record', roles: ['admin'], icon: 'AnimalRecordManage', affix: true, requiresAuth: true }
+      },
+      {
+        path: '/user-manage',
+        name: 'user-manage',
+        component: () => import('@/views/usermanagement/index'),
+        meta: { title: 'User Manage', roles: ['admin'], icon: 'UserManage', affix: true }
       }
     ]
-    // {
-    //   path: '/UserManage',
-    //   name: 'userManage',
-    //   component: Layout,
-    //   children: [
-    //     {
-    //       path: 'index',
-    //       component: () => import('@/views/usermanagement/index'),
-    //       name: 'UserManage',
-    //       meta: { title: 'User Manage', roles: ['admin'], icon: 'UserManage', affix: true }
-    //     }
-    //   ]
-    // }
   },
   {
     path: '/login',
@@ -83,7 +76,8 @@ export const routes = [
     hidden: true,
     name: 'login',
     meta: {
-      requiresAuth: false
+      requiresAuth: false,
+      title: 'Login'
     }
   },
   {
@@ -91,7 +85,8 @@ export const routes = [
     component: () => import('@/views/login/auth-redirect'),
     hidden: true,
     meta: {
-      requiresAuth: false
+      requiresAuth: false,
+      title: 'Auth Redirect'
     }
   },
   {
@@ -99,7 +94,8 @@ export const routes = [
     component: () => import('@/views/error-page/404'),
     hidden: true,
     meta: {
-      requiresAuth: false
+      requiresAuth: false,
+      title: '404'
     }
   },
   {
@@ -107,7 +103,8 @@ export const routes = [
     component: () => import('@/views/error-page/401'),
     hidden: true,
     meta: {
-      requiresAuth: false
+      requiresAuth: false,
+      title: '401'
     }
   }
 ]
@@ -121,6 +118,8 @@ router.beforeEach((to, from, next) => {
   if (to.name === 'login') {
     if (store.getters.access_token) {
       next({ name: 'dashboard' })
+    } else {
+      next()
     }
   }
 
