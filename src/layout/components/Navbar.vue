@@ -24,16 +24,6 @@
           <!--<i class="el-icon-caret-bottom" />-->
         </div>
         <el-dropdown-menu slot="dropdown">
-          <!-- <router-link to="/profile/index">
-            <el-dropdown-item>Profile</el-dropdown-item>
-          </router-link>
-           <a target="_blank" href="https://github.com/PanJiaChen/vue-element-admin/">
-            <el-dropdown-item>Github</el-dropdown-item>
-          </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
-            <el-dropdown-item>Docs</el-dropdown-item>
-          </a>
-          -->
           <router-link to="/">
             <el-dropdown-item>Dashboard</el-dropdown-item>
           </router-link>
@@ -81,18 +71,18 @@ export default {
     async logout() {
       // auth.signOut();
 
-      await this.$store.dispatch('user/logout')
+      await this.$store.dispatch('auth/logout')
 
-      this.$store.state.tagsView.visitedViews = []
-      this.$store.state.data.footages = []
-      this.$store.state.data.animals = []
-      this.$store.state.data.animalcategories = []
-      this.$store.state.data.genders = []
-      this.$store.state.data.users = []
+      // this.$store.state.tagsView.visitedViews = []
+      // this.$store.state.data.footages = []
+      // this.$store.state.data.animals = []
+      // this.$store.state.data.animalcategories = []
+      // this.$store.state.data.genders = []
+      // this.$store.state.data.users = []
       /* this.$router.removeRoute('animalonmap')
       this.$router.removeRoute('animalRecordManage')
       this.$router.removeRoute('animalregister')*/
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      this.$router.push({ name: 'login' })
     }
   }
 }

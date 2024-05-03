@@ -114,8 +114,14 @@ export default {
     // this.createDraggableShapes(this.map)
 
     this.fetchAnimalCategories()
+    this.fetchUplinkMessages()
   },
   methods: {
+
+    async fetchUplinkMessages() {
+      const { data } = await this.$http.get('api/uplink-message')
+      console.log(data)
+    },
 
     async fetchAnimalCategories() {
       const { data } = await this.$http.get('api/categories')

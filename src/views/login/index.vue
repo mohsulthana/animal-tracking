@@ -5,8 +5,10 @@
       <el-card>
         <h3 class="title my-3">Livestock Monitoring Login Page</h3>
 
+        <p v-if="errorMessage != ''" class="text-danger">{{ errorMessage }}</p>
+
         <el-form-item>
-          <el-input v-model="loginForm.username" prefix-icon="el-icon-user" placeholder="Email" />
+          <el-input v-model="loginForm.email" prefix-icon="el-icon-user" placeholder="Email" />
         </el-form-item>
 
         <el-form-item>
@@ -23,7 +25,6 @@
 import { auth } from '../dashboard/admin/components/Config/firebase'
 import { firestore } from '../dashboard/admin/components/Config/firebase'
 import { validEmail } from '@/utils/validate'
-import Vue from 'vue'
 
 export default {
   name: 'Login',
@@ -51,7 +52,7 @@ export default {
     }
     return {
       loginForm: {
-        username: 'duc@tut.ac.za',
+        email: 'duc@tut.ac.za',
         password: 'aaaaaa'
       },
       loginRules: {
@@ -73,7 +74,8 @@ export default {
       redirect: undefined,
       otherQuery: {},
       auth,
-      firestore
+      firestore,
+      errorMessage: ''
     }
   },
   watch: {
@@ -93,7 +95,6 @@ export default {
     // window.addEventListener('storage', this.afterQRScan)
   },
   mounted() {
-    console.log('Login form: mounted' + (+new Date()))
     /* this.$store.state.data.firstanimalsnapshot = 1
     this.$store.state.data.firstanimalcategoriessnapshot = 1
     this.$store.state.data.firstfootagesnapshot = 1
@@ -123,8 +124,27 @@ export default {
         this.$refs.password.focus()
       })
     },
-    handleLogin() {
+    async handleLogin() {
       this.loading = true
+
+      await this.$http.post('api/login', this.loginForm)
+        .then((response) => {
+          const token = response.data.access_token
+          this.$store.dispatch('auth/setToken', token)
+          this.$router.push({ name: 'dashboard' })
+          this.$message({
+            message: 'You have successfully authrozied. Directing you to the dashboard',
+            type: 'success'
+          })
+        })
+        .catch((error) => {
+          const { data } = error
+          this.errorMessage = data.message
+        })
+        .finally(() => {
+          this.loading = false
+        })
+
       /* this.$store.dispatch('user/login', this.loginForm)
           .then(() => {
           this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
@@ -150,240 +170,240 @@ export default {
                 console.log(this.$store)
         })
       })*/
-      this.$store.state.data.footages = []
-      this.$store.state.data.animals = []
-      this.$store.state.data.animalcategories = []
-      this.$store.state.data.genders = []
-      this.$store.state.data.users = []
+      // this.$store.state.data.footages = []
+      // this.$store.state.data.animals = []
+      // this.$store.state.data.animalcategories = []
+      // this.$store.state.data.genders = []
+      // this.$store.state.data.users = []
 
-      auth.setPersistence('local')
-        .then(() => {
-          // console.log(this.loginForm.username)
-          auth.signInWithEmailAndPassword(this.loginForm.username, this.loginForm.password)
-            .then(() => {
-              alert('Successfully logged in, click to start pulling data')
-              var that = this
-              that.$store.state.data.logedinEmail = that.loginForm.username
-              that.$store.state.data.password = that.loginForm.password
+      // auth.setPersistence('local')
+      //   .then(() => {
+      //     // console.log(this.loginForm.username)
+      //     auth.signInWithEmailAndPassword(this.loginForm.username, this.loginForm.password)
+      //       .then(() => {
+      //         alert('Successfully logged in, click to start pulling data')
+      //         var that = this
+      //         that.$store.state.data.logedinEmail = that.loginForm.username
+      //         that.$store.state.data.password = that.loginForm.password
 
-              // load users
-              firestore
-                .collection('users')
-                .onSnapshot(function(snapshot) {
-                  console.log('get in users loading')
-                  /* console.log("First user snapshot? "+ that.$store.state.data.firstusersnapshot)
-                if(that.$store.state.data.firstusersnapshot){
-                  that.$store.state.data.users = []
-                  //console.log("getters.firstfootages: "+that.$store.getters.firstfootagesnapshot)
-                  that.$store.state.data.firstusersnapshot = 0
-                  //console.log("getters.firstfootages: "+that.$store.getters.firstfootagesnapshot)
-                }*/
-                  snapshot.docChanges().forEach(function(change) {
-                    console.log(change.doc.data().email)
+      //         // load users
+      //         firestore
+      //           .collection('users')
+      //           .onSnapshot(function(snapshot) {
+      //             console.log('get in users loading')
+      //             /* console.log("First user snapshot? "+ that.$store.state.data.firstusersnapshot)
+      //           if(that.$store.state.data.firstusersnapshot){
+      //             that.$store.state.data.users = []
+      //             //console.log("getters.firstfootages: "+that.$store.getters.firstfootagesnapshot)
+      //             that.$store.state.data.firstusersnapshot = 0
+      //             //console.log("getters.firstfootages: "+that.$store.getters.firstfootagesnapshot)
+      //           }*/
+      //             snapshot.docChanges().forEach(function(change) {
+      //               console.log(change.doc.data().email)
 
-                    switch (change.type) {
-                      case 'added':
-                        that.$store.state.data.users.push({
-                          ...change.doc.data(),
-                          userID: change.doc.id
-                        })
-                        break
-                      case 'modified':
-                        var a = that.$store.state.data.users.find(user => user.userID === change.doc.id)
-                        Vue.set(that.$store.state.data.users,
-                          that.$store.state.data.users.indexOf(a),
-                          { ...change.doc.data(), ...{ userID: change.doc.id }})
-                        break
-                      case 'removed':
-                        var b = that.$store.state.data.users.find(user => user.userID === change.doc.id)
-                        that.$store.state.data.users.splice(that.$store.state.data.users.indexOf(b), 1)
-                        break
-                      default:
-                        break
-                    }
-                  })
+      //               switch (change.type) {
+      //                 case 'added':
+      //                   that.$store.state.data.users.push({
+      //                     ...change.doc.data(),
+      //                     userID: change.doc.id
+      //                   })
+      //                   break
+      //                 case 'modified':
+      //                   var a = that.$store.state.data.users.find(user => user.userID === change.doc.id)
+      //                   Vue.set(that.$store.state.data.users,
+      //                     that.$store.state.data.users.indexOf(a),
+      //                     { ...change.doc.data(), ...{ userID: change.doc.id }})
+      //                   break
+      //                 case 'removed':
+      //                   var b = that.$store.state.data.users.find(user => user.userID === change.doc.id)
+      //                   that.$store.state.data.users.splice(that.$store.state.data.users.indexOf(b), 1)
+      //                   break
+      //                 default:
+      //                   break
+      //               }
+      //             })
 
-                  console.log('Got ' + that.$store.state.data.users.length + ' users')
-                  console.log(that.$store.state.data.users)
-                  var user = that.$store.getters.users.find(user => user.email === that.loginForm.username)
-                  console.log(user)
+      //             console.log('Got ' + that.$store.state.data.users.length + ' users')
+      //             console.log(that.$store.state.data.users)
+      //             var user = that.$store.getters.users.find(user => user.email === that.loginForm.username)
+      //             console.log(user)
 
-                  if (user) {
-                    that.role = user.role
-                    console.log('Login Email:' + that.loginForm.username + ' role: ' + that.role)
-                  } else {
-                    alert('The login email does not have permission to access data')
-                    this.$router.push('/')
-                    return
-                  }
-                })
+      //             if (user) {
+      //               that.role = user.role
+      //               console.log('Login Email:' + that.loginForm.username + ' role: ' + that.role)
+      //             } else {
+      //               alert('The login email does not have permission to access data')
+      //               this.$router.push('/')
+      //               return
+      //             }
+      //           })
 
-              // load animals
-              firestore
-                .collection('animals')
-                .onSnapshot(function(snapshot) {
-                  console.log('First animal snapshot? ' + that.$store.state.data.firstanimalsnapshot)
-                  /* if(that.$store.state.data.firstanimalsnapshot){
-                  that.$store.state.data.animals = []
-                  that.$store.state.data.firstanimalsnapshot = 0
-                }*/
-                  snapshot.docChanges().forEach(function(change) {
-                    switch (change.type) {
-                      case 'added':
-                        that.$store.state.data.animals.push({
-                          ...change.doc.data(),
-                          animalID: change.doc.id
-                        })
-                        break
-                      case 'modified':
-                        var a = that.$store.state.data.animals.find(animal => animal.animalID === change.doc.id)
-                        Vue.set(that.$store.state.data.animals,
-                          that.$store.state.data.animals.indexOf(a),
-                          { ...change.doc.data(), ...{ animalID: change.doc.id }})
-                        break
-                      case 'removed':
-                        var b = that.$store.state.data.animals.find(animal => animal.animalID === change.doc.id)
-                        that.$store.state.data.animals.splice(that.$store.state.data.animals.indexOf(b), 1)
-                        break
-                      default:
-                        break
-                    }
-                    console.log(change.type + ' animal: ' + change.doc.data())
-                  })
-                  console.log('Got ' + that.$store.state.data.animals.length + ' animals')
-                })
+      //         // load animals
+      //         firestore
+      //           .collection('animals')
+      //           .onSnapshot(function(snapshot) {
+      //             console.log('First animal snapshot? ' + that.$store.state.data.firstanimalsnapshot)
+      //             /* if(that.$store.state.data.firstanimalsnapshot){
+      //             that.$store.state.data.animals = []
+      //             that.$store.state.data.firstanimalsnapshot = 0
+      //           }*/
+      //             snapshot.docChanges().forEach(function(change) {
+      //               switch (change.type) {
+      //                 case 'added':
+      //                   that.$store.state.data.animals.push({
+      //                     ...change.doc.data(),
+      //                     animalID: change.doc.id
+      //                   })
+      //                   break
+      //                 case 'modified':
+      //                   var a = that.$store.state.data.animals.find(animal => animal.animalID === change.doc.id)
+      //                   Vue.set(that.$store.state.data.animals,
+      //                     that.$store.state.data.animals.indexOf(a),
+      //                     { ...change.doc.data(), ...{ animalID: change.doc.id }})
+      //                   break
+      //                 case 'removed':
+      //                   var b = that.$store.state.data.animals.find(animal => animal.animalID === change.doc.id)
+      //                   that.$store.state.data.animals.splice(that.$store.state.data.animals.indexOf(b), 1)
+      //                   break
+      //                 default:
+      //                   break
+      //               }
+      //               console.log(change.type + ' animal: ' + change.doc.data())
+      //             })
+      //             console.log('Got ' + that.$store.state.data.animals.length + ' animals')
+      //           })
 
-              // load animalcategories
-              firestore
-                .collection('animalcategories')
-                .onSnapshot(function(snapshot) {
-                  /* console.log("First animalcategories snapshot? "+ that.$store.state.data.firstanimalcategoriessnapshot)
-                if(that.$store.state.data.firstanimalcategoriessnapshot){
-                  that.$store.state.data.animalcategories = []
-                  that.$store.state.data.firstanimalcategoriessnapshot = 0
-                }*/
-                  snapshot.docChanges().forEach(function(change) {
-                    switch (change.type) {
-                      case 'added':
-                        that.$store.state.data.animalcategories.push({
-                          ...change.doc.data(),
-                          categoryID: change.doc.id
-                        })
-                        break
-                      case 'modified':
-                        var a = that.$store.state.data.animalcategories.find(category => category.categoryID === change.doc.id)
-                        Vue.set(that.$store.state.data.animalcategories,
-                          that.$store.state.data.animalcategories.indexOf(a),
-                          { ...change.doc.data(), ...{ categoryID: change.doc.id }})
-                        break
-                      case 'removed':
-                        var b = that.$store.state.data.animalcategories.find(category => category.categoryID === change.doc.id)
-                        that.$store.state.data.animalcategories.splice(that.$store.state.data.animalcategories.indexOf(b), 1)
-                        break
-                      default:
-                        break
-                    }
-                    console.log(change.type + ' animalcategory: ' + change.doc.data())
-                  })
-                  console.log('Got ' + that.$store.state.data.animalcategories.length + ' animal categories')
-                })
+      //         // load animalcategories
+      //         firestore
+      //           .collection('animalcategories')
+      //           .onSnapshot(function(snapshot) {
+      //             /* console.log("First animalcategories snapshot? "+ that.$store.state.data.firstanimalcategoriessnapshot)
+      //           if(that.$store.state.data.firstanimalcategoriessnapshot){
+      //             that.$store.state.data.animalcategories = []
+      //             that.$store.state.data.firstanimalcategoriessnapshot = 0
+      //           }*/
+      //             snapshot.docChanges().forEach(function(change) {
+      //               switch (change.type) {
+      //                 case 'added':
+      //                   that.$store.state.data.animalcategories.push({
+      //                     ...change.doc.data(),
+      //                     categoryID: change.doc.id
+      //                   })
+      //                   break
+      //                 case 'modified':
+      //                   var a = that.$store.state.data.animalcategories.find(category => category.categoryID === change.doc.id)
+      //                   Vue.set(that.$store.state.data.animalcategories,
+      //                     that.$store.state.data.animalcategories.indexOf(a),
+      //                     { ...change.doc.data(), ...{ categoryID: change.doc.id }})
+      //                   break
+      //                 case 'removed':
+      //                   var b = that.$store.state.data.animalcategories.find(category => category.categoryID === change.doc.id)
+      //                   that.$store.state.data.animalcategories.splice(that.$store.state.data.animalcategories.indexOf(b), 1)
+      //                   break
+      //                 default:
+      //                   break
+      //               }
+      //               console.log(change.type + ' animalcategory: ' + change.doc.data())
+      //             })
+      //             console.log('Got ' + that.$store.state.data.animalcategories.length + ' animal categories')
+      //           })
 
-              // load genders
-              firestore
-                .collection('genders')
-                .onSnapshot(function(snapshot) {
-                  /* console.log("First genders snapshot? "+ that.$store.state.data.firstgenderssnapshot)
-                if(that.$store.state.data.firstgenderssnapshot){
-                  that.$store.state.data.genders = []
-                  that.$store.state.data.firstgenderssnapshot = 0
-                }*/
-                  snapshot.docChanges().forEach(function(change) {
-                    switch (change.type) {
-                      case 'added':
-                        that.$store.state.data.genders.push({
-                          ...change.doc.data(),
-                          genderID: change.doc.id
-                        })
-                        break
-                      case 'modified':
-                        var a = that.$store.state.data.genders.find(gen => gen.genderID === change.doc.id)
-                        Vue.set(that.$store.state.data.genders,
-                          that.$store.state.data.genders.indexOf(a),
-                          { ...change.doc.data(), ...{ categoryID: change.doc.id }})
-                        break
-                      case 'removed':
-                        var b = that.$store.state.data.genders.find(gen => gen.gendersID === change.doc.id)
-                        that.$store.state.data.genders.splice(that.$store.state.data.genders.indexOf(b), 1)
-                        break
-                      default:
-                        break
-                    }
-                    console.log(change.type + ' gender: ' + change.doc.data())
-                  })
-                  console.log('Got ' + that.$store.state.data.genders.length + ' genders')
-                })
+      //         // load genders
+      //         firestore
+      //           .collection('genders')
+      //           .onSnapshot(function(snapshot) {
+      //             /* console.log("First genders snapshot? "+ that.$store.state.data.firstgenderssnapshot)
+      //           if(that.$store.state.data.firstgenderssnapshot){
+      //             that.$store.state.data.genders = []
+      //             that.$store.state.data.firstgenderssnapshot = 0
+      //           }*/
+      //             snapshot.docChanges().forEach(function(change) {
+      //               switch (change.type) {
+      //                 case 'added':
+      //                   that.$store.state.data.genders.push({
+      //                     ...change.doc.data(),
+      //                     genderID: change.doc.id
+      //                   })
+      //                   break
+      //                 case 'modified':
+      //                   var a = that.$store.state.data.genders.find(gen => gen.genderID === change.doc.id)
+      //                   Vue.set(that.$store.state.data.genders,
+      //                     that.$store.state.data.genders.indexOf(a),
+      //                     { ...change.doc.data(), ...{ categoryID: change.doc.id }})
+      //                   break
+      //                 case 'removed':
+      //                   var b = that.$store.state.data.genders.find(gen => gen.gendersID === change.doc.id)
+      //                   that.$store.state.data.genders.splice(that.$store.state.data.genders.indexOf(b), 1)
+      //                   break
+      //                 default:
+      //                   break
+      //               }
+      //               console.log(change.type + ' gender: ' + change.doc.data())
+      //             })
+      //             console.log('Got ' + that.$store.state.data.genders.length + ' genders')
+      //           })
 
-              // load footages
-              firestore
-                .collection('footages')
-                .onSnapshot(function(snapshot) {
-                  console.log('First footage snapshot? ' + that.$store.state.data.firstfootagesnapshot)
-                  if (that.$store.state.data.firstfootagesnapshot) {
-                    that.$store.state.data.footages = []
-                    // console.log("getters.firstfootages: "+that.$store.getters.firstfootagesnapshot)
-                    that.$store.state.data.firstfootagesnapshot = 0
-                  // console.log("getters.firstfootages: "+that.$store.getters.firstfootagesnapshot)
-                  }
-                  snapshot.docChanges().forEach(function(change) {
-                    if (change.type === 'added') {
-                      that.$store.state.data.footages.push({
-                        ...change.doc.data(),
-                        footageID: change.doc.id
-                      })
-                    }
-                  })
-                  console.log('Got ' + that.$store.state.data.footages.length + ' footages')
+      //         // load footages
+      //         firestore
+      //           .collection('footages')
+      //           .onSnapshot(function(snapshot) {
+      //             console.log('First footage snapshot? ' + that.$store.state.data.firstfootagesnapshot)
+      //             if (that.$store.state.data.firstfootagesnapshot) {
+      //               that.$store.state.data.footages = []
+      //               // console.log("getters.firstfootages: "+that.$store.getters.firstfootagesnapshot)
+      //               that.$store.state.data.firstfootagesnapshot = 0
+      //             // console.log("getters.firstfootages: "+that.$store.getters.firstfootagesnapshot)
+      //             }
+      //             snapshot.docChanges().forEach(function(change) {
+      //               if (change.type === 'added') {
+      //                 that.$store.state.data.footages.push({
+      //                   ...change.doc.data(),
+      //                   footageID: change.doc.id
+      //                 })
+      //               }
+      //             })
+      //             console.log('Got ' + that.$store.state.data.footages.length + ' footages')
 
-                  var logedUser = {
-                    username: '',
-                    password: ''
-                  }
-                  switch (that.role) {
-                    case 'admin':
-                      logedUser.username = 'admin'
-                      break
-                      // case "developer":
-                      //  logedUser.username = 'editor'
-                      //  break;
-                    default:
-                      logedUser.username = 'editor'
+      //             var logedUser = {
+      //               username: '',
+      //               password: ''
+      //             }
+      //             switch (that.role) {
+      //               case 'admin':
+      //                 logedUser.username = 'admin'
+      //                 break
+      //                 // case "developer":
+      //                 //  logedUser.username = 'editor'
+      //                 //  break;
+      //               default:
+      //                 logedUser.username = 'editor'
 
-                      break
-                  }
-                  console.log(logedUser.username)
-                  that.$store.dispatch('user/login', logedUser)
-                    .then(() => {
-                      that.$router.push('/')
-                      that.loading = false
-                    })
-                    .catch(() => {
-                      that.loading = false
-                    })
-                })
-            })
-            .catch(error => {
-              // this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-              alert(error.message)
-              this.loading = false
-              return false
-            })
-        })
-        .catch(error => {
-          // this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-          alert(error.message)
-          this.loading = false
-          return false
-        })
+      //                 break
+      //             }
+      //             console.log(logedUser.username)
+      //             that.$store.dispatch('user/login', logedUser)
+      //               .then(() => {
+      //                 that.$router.push('/')
+      //                 that.loading = false
+      //               })
+      //               .catch(() => {
+      //                 that.loading = false
+      //               })
+      //           })
+      //       })
+      //       .catch(error => {
+      //         // this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+      //         alert(error.message)
+      //         this.loading = false
+      //         return false
+      //       })
+      //   })
+      //   .catch(error => {
+      //     // this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+      //     alert(error.message)
+      //     this.loading = false
+      //     return false
+      //   })
 
       // })
       // .catch((error) => {

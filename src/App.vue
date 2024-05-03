@@ -8,19 +8,14 @@
 import { firestore } from './views/dashboard/admin/components/Config/firebase'
 import { auth } from './views/dashboard/admin/components/Config/firebase'
 import Vue from 'vue'
-import axios from './utils/axios'
 
 export default {
-
   name: 'App',
-  components: {
-  },
+  components: {},
   data() {
-    return {
-    }
+    return {}
   },
-  async mounted() {
-  },
+  async mounted() {},
   // below created() solves the problem of lossing $store data when refresh a page by clicking the refresh button
   created() {
     const that = this
@@ -30,15 +25,26 @@ export default {
       // console.log(that.$store.state)
 
       // load state from sessionStorage
-      that.$store.replaceState(Object.assign({}, that.$store.state, JSON.parse(sessionStorage.getItem('store'))))
+      that.$store.replaceState(
+        Object.assign(
+          {},
+          that.$store.state,
+          JSON.parse(sessionStorage.getItem('store'))
+        )
+      )
       // console.log(that.$store.state)
 
       // setup the snapshot of database
       if (that.$store.state.data.logedinEmail) {
-        auth.setPersistence('local')
+        auth
+          .setPersistence('local')
           .then(() => {
             // console.log(that.loginForm.username)
-            auth.signInWithEmailAndPassword(that.$store.state.data.logedinEmail, that.$store.state.data.password)
+            auth
+              .signInWithEmailAndPassword(
+                that.$store.state.data.logedinEmail,
+                that.$store.state.data.password
+              )
               .then(() => {
                 // that.$store.state.data.logedinEmail = that.loginForm.username
                 // that.$store.state.data.password = that.loginForm.password
@@ -52,41 +58,50 @@ export default {
                 that.$store.state.data.users = []
 
                 // load users
-                firestore
-                  .collection('users')
-                  .onSnapshot(function(snapshot) {
-                    /* console.log("First user snapshot? "+ that.$store.state.data.firstusersnapshot)
+                firestore.collection('users').onSnapshot(function(snapshot) {
+                  /* console.log("First user snapshot? "+ that.$store.state.data.firstusersnapshot)
                   if(that.$store.state.data.firstusersnapshot){
                     that.$store.state.data.users = []
                     //console.log("getters.firstfootages: "+that.$store.getters.firstfootagesnapshot)
                     that.$store.state.data.firstusersnapshot = 0
                     //console.log("getters.firstfootages: "+that.$store.getters.firstfootagesnapshot)
                   }*/
-                    snapshot.docChanges().forEach(function(change) {
-                      switch (change.type) {
-                        case 'added':
-                          that.$store.state.data.users.push({
-                            ...change.doc.data(),
-                            userID: change.doc.id
-                          })
-                          break
-                        case 'modified':
-                          var a = that.$store.state.data.users.find(user => user.userID === change.doc.id)
-                          Vue.set(that.$store.state.data.users,
-                            that.$store.state.data.users.indexOf(a),
-                            { ...change.doc.data(), ...{ userID: change.doc.id }})
-                          break
-                        case 'removed':
-                          var a = that.$store.state.data.users.find(user => user.userID === change.doc.id)
-                          that.$store.state.data.users.splice(that.$store.state.data.users.indexOf(a), 1)
-                          break
-                        default:
-                          break
-                      }
-                    })
+                  snapshot.docChanges().forEach(function(change) {
+                    switch (change.type) {
+                      case 'added':
+                        that.$store.state.data.users.push({
+                          ...change.doc.data(),
+                          userID: change.doc.id
+                        })
+                        break
+                      case 'modified':
+                        var a = that.$store.state.data.users.find(
+                          (user) => user.userID === change.doc.id
+                        )
+                        Vue.set(
+                          that.$store.state.data.users,
+                          that.$store.state.data.users.indexOf(a),
+                          { ...change.doc.data(), ...{ userID: change.doc.id }}
+                        )
+                        break
+                      case 'removed':
+                        var a = that.$store.state.data.users.find(
+                          (user) => user.userID === change.doc.id
+                        )
+                        that.$store.state.data.users.splice(
+                          that.$store.state.data.users.indexOf(a),
+                          1
+                        )
+                        break
+                      default:
+                        break
+                    }
+                  })
 
-                    console.log('Got ' + that.$store.state.data.users.length + ' users')
-                    console.log(that.$store.state.data.users)
+                  console.log(
+                    'Got ' + that.$store.state.data.users.length + ' users'
+                  )
+                  console.log(that.$store.state.data.users)
                   /* var user = that.$store.getters.users.find(user => user.email === that.$store.state.data.logedinEmail)
                   console.log(user)
                   var role = ''
@@ -123,42 +138,57 @@ export default {
                     alert('The login email does not have permission to access data')
                     that.$router.push('/');
                   }*/
-                  })
+                })
 
                 // load animals
-                firestore
-                  .collection('animals')
-                  .onSnapshot(function(snapshot) {
-                    console.log('First animal snapshot? ' + that.$store.state.data.firstanimalsnapshot)
-                    /* if(that.$store.state.data.firstanimalsnapshot){
+                firestore.collection('animals').onSnapshot(function(snapshot) {
+                  console.log(
+                    'First animal snapshot? ' +
+                      that.$store.state.data.firstanimalsnapshot
+                  )
+                  /* if(that.$store.state.data.firstanimalsnapshot){
                     that.$store.state.data.animals = []
                     that.$store.state.data.firstanimalsnapshot = 0
                   }*/
-                    snapshot.docChanges().forEach(function(change) {
-                      switch (change.type) {
-                        case 'added':
-                          that.$store.state.data.animals.push({
+                  snapshot.docChanges().forEach(function(change) {
+                    switch (change.type) {
+                      case 'added':
+                        that.$store.state.data.animals.push({
+                          ...change.doc.data(),
+                          animalID: change.doc.id
+                        })
+                        break
+                      case 'modified':
+                        var a = that.$store.state.data.animals.find(
+                          (animal) => animal.animalID === change.doc.id
+                        )
+                        Vue.set(
+                          that.$store.state.data.animals,
+                          that.$store.state.data.animals.indexOf(a),
+                          {
                             ...change.doc.data(),
-                            animalID: change.doc.id
-                          })
-                          break
-                        case 'modified':
-                          var a = that.$store.state.data.animals.find(animal => animal.animalID === change.doc.id)
-                          Vue.set(that.$store.state.data.animals,
-                            that.$store.state.data.animals.indexOf(a),
-                            { ...change.doc.data(), ...{ animalID: change.doc.id }})
-                          break
-                        case 'removed':
-                          var a = that.$store.state.data.animals.find(animal => animal.animalID === change.doc.id)
-                          that.$store.state.data.animals.splice(that.$store.state.data.animals.indexOf(a), 1)
-                          break
-                        default:
-                          break
-                      }
-                      console.log(change.type + ' animal: ' + change.doc.data())
-                    })
-                    console.log('Got ' + that.$store.state.data.animals.length + ' animals')
+                            ...{ animalID: change.doc.id }
+                          }
+                        )
+                        break
+                      case 'removed':
+                        var a = that.$store.state.data.animals.find(
+                          (animal) => animal.animalID === change.doc.id
+                        )
+                        that.$store.state.data.animals.splice(
+                          that.$store.state.data.animals.indexOf(a),
+                          1
+                        )
+                        break
+                      default:
+                        break
+                    }
+                    console.log(change.type + ' animal: ' + change.doc.data())
                   })
+                  console.log(
+                    'Got ' + that.$store.state.data.animals.length + ' animals'
+                  )
+                })
 
                 // load animalcategories
                 firestore
@@ -178,68 +208,101 @@ export default {
                           })
                           break
                         case 'modified':
-                          var a = that.$store.state.data.animalcategories.find(category => category.categoryID === change.doc.id)
-                          Vue.set(that.$store.state.data.animalcategories,
+                          var a = that.$store.state.data.animalcategories.find(
+                            (category) => category.categoryID === change.doc.id
+                          )
+                          Vue.set(
+                            that.$store.state.data.animalcategories,
                             that.$store.state.data.animalcategories.indexOf(a),
-                            { ...change.doc.data(), ...{ categoryID: change.doc.id }})
+                            {
+                              ...change.doc.data(),
+                              ...{ categoryID: change.doc.id }
+                            }
+                          )
                           break
                         case 'removed':
-                          var a = that.$store.state.data.animalcategories.find(category => category.categoryID === change.doc.id)
-                          that.$store.state.data.animalcategories.splice(that.$store.state.data.animalcategories.indexOf(a), 1)
+                          var a = that.$store.state.data.animalcategories.find(
+                            (category) => category.categoryID === change.doc.id
+                          )
+                          that.$store.state.data.animalcategories.splice(
+                            that.$store.state.data.animalcategories.indexOf(a),
+                            1
+                          )
                           break
                         default:
                           break
                       }
-                      console.log(change.type + ' animalcategory: ' + change.doc.data())
+                      console.log(
+                        change.type + ' animalcategory: ' + change.doc.data()
+                      )
                     })
-                    console.log('Got ' + that.$store.state.data.animalcategories.length + ' animal categories')
+                    console.log(
+                      'Got ' +
+                        that.$store.state.data.animalcategories.length +
+                        ' animal categories'
+                    )
                   })
 
                 // load genders
-                firestore
-                  .collection('genders')
-                  .onSnapshot(function(snapshot) {
-                    /* console.log("First genders snapshot? "+ that.$store.state.data.firstgenderssnapshot)
+                firestore.collection('genders').onSnapshot(function(snapshot) {
+                  /* console.log("First genders snapshot? "+ that.$store.state.data.firstgenderssnapshot)
                   if(that.$store.state.data.firstgenderssnapshot){
                     that.$store.state.data.genders = []
                     that.$store.state.data.firstgenderssnapshot = 0
                   }*/
-                    snapshot.docChanges().forEach(function(change) {
-                      switch (change.type) {
-                        case 'added':
-                          that.$store.state.data.genders.push({
+                  snapshot.docChanges().forEach(function(change) {
+                    switch (change.type) {
+                      case 'added':
+                        that.$store.state.data.genders.push({
+                          ...change.doc.data(),
+                          genderID: change.doc.id
+                        })
+                        break
+                      case 'modified':
+                        var a = that.$store.state.data.genders.find(
+                          (gen) => gen.genderID === change.doc.id
+                        )
+                        Vue.set(
+                          that.$store.state.data.genders,
+                          that.$store.state.data.genders.indexOf(a),
+                          {
                             ...change.doc.data(),
-                            genderID: change.doc.id
-                          })
-                          break
-                        case 'modified':
-                          var a = that.$store.state.data.genders.find(gen => gen.genderID === change.doc.id)
-                          Vue.set(that.$store.state.data.genders,
-                            that.$store.state.data.genders.indexOf(a),
-                            { ...change.doc.data(), ...{ categoryID: change.doc.id }})
-                          break
-                        case 'removed':
-                          var a = that.$store.state.data.genders.find(gen => gen.gendersID === change.doc.id)
-                          that.$store.state.data.genders.splice(that.$store.state.data.genders.indexOf(a), 1)
-                          break
-                        default:
-                          break
-                      }
-                      console.log(change.type + ' gender: ' + change.doc.data())
-                    })
-                    console.log('Got ' + that.$store.state.data.genders.length + ' genders')
+                            ...{ categoryID: change.doc.id }
+                          }
+                        )
+                        break
+                      case 'removed':
+                        var a = that.$store.state.data.genders.find(
+                          (gen) => gen.gendersID === change.doc.id
+                        )
+                        that.$store.state.data.genders.splice(
+                          that.$store.state.data.genders.indexOf(a),
+                          1
+                        )
+                        break
+                      default:
+                        break
+                    }
+                    console.log(change.type + ' gender: ' + change.doc.data())
                   })
+                  console.log(
+                    'Got ' + that.$store.state.data.genders.length + ' genders'
+                  )
+                })
 
                 // load footages
                 firestore
                   .collection('footages')
                   .onSnapshot(function(snapshot) {
-                    console.log('First footage snapshot? ' + that.$store.state.data.firstfootagesnapshot)
+                    console.log(
+                      'First footage snapshot? ' +
+                        that.$store.state.data.firstfootagesnapshot
+                    )
                     if (that.$store.state.data.firstfootagesnapshot) {
                       that.$store.state.data.footages = []
                       // console.log("getters.firstfootages: "+that.$store.getters.firstfootagesnapshot)
                       that.$store.state.data.firstfootagesnapshot = 0
-                    // console.log("getters.firstfootages: "+that.$store.getters.firstfootagesnapshot)
+                      // console.log("getters.firstfootages: "+that.$store.getters.firstfootagesnapshot)
                     }
                     snapshot.docChanges().forEach(function(change) {
                       if (change.type === 'added') {
@@ -249,17 +312,21 @@ export default {
                         })
                       }
                     })
-                    console.log('Got ' + that.$store.state.data.footages.length + ' footages')
+                    console.log(
+                      'Got ' +
+                        that.$store.state.data.footages.length +
+                        ' footages'
+                    )
                   })
               })
-              .catch(error => {
+              .catch((error) => {
                 // that.$router.push({ path: that.redirect || '/', query: that.otherQuery })
                 alert(error.message)
                 that.loading = false
                 return false
               })
           })
-          .catch(error => {
+          .catch((error) => {
             // that.$router.push({ path: that.redirect || '/', query: that.otherQuery })
             alert(error.message)
             that.loading = false
@@ -284,11 +351,10 @@ export default {
     console.log('App.vue: after remove store from the sessionStorage')
     console.log(that.$store.state)
   },
-  methods: {
-  }
+  methods: {}
 }
 </script>
-<style lang ="scss">
+<style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

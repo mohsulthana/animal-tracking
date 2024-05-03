@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import createPersistedState from 'vuex-persistedstate'
 
 import getters from './getters'
 
@@ -33,6 +34,7 @@ export default new Vuex.Store({
     changeQrcode(qrc) {
       state.qrcode.Qrcode = qrc
     }
-  }
+  },
+  plugins: [createPersistedState()]
   // actions:{}
 })

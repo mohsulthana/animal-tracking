@@ -1,6 +1,7 @@
 // import firebase from 'firebase'
 
 const getters = {
+  access_token: state => state.auth.access_token,
   animals: state => state.data.animals,
   animalcategories: state => state.data.animalcategories,
   animalcount(state, getters) { return getters.animals.length },

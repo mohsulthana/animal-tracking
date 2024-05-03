@@ -9,6 +9,15 @@
               <el-button type="secondary" @click="isSearchMultipleAnimalDialogVisible = !isSearchMultipleAnimalDialogVisible">Search multiple animals</el-button>
               <el-button type="secondary" @click="isSearchByQRCodeDialogVisible = !isSearchByQRCodeDialogVisible">Search by QR Code</el-button>
               <el-button type="secondary">Export to Excel</el-button>
+              <!-- <vue-excel-xlsx
+                :data="animals"
+                :columns="columns"
+                :file-name="'exportedanimalrecorders'"
+                :file-type="'xlsx'"
+                :sheet-name="'animalinformation'"
+              >
+                Export to Excel
+              </vue-excel-xlsx> -->`
             </div>
           </div>
           <div class="px-4">
@@ -138,7 +147,7 @@
     <el-dialog :visible.sync="isSearchByQRCodeDialogVisible">
       hello world
     </el-dialog>
-    <div>
+    <!-- <div>
       <b-container class="bv-example-row">
         <select v-model="searchmode">
           <option :value="'QRcodeSearch'">
@@ -170,9 +179,9 @@
           <div>Qrcode: {{ qrcode }}</div>
         </div>
       </b-container>
-    </div>
+    </div> -->
 
-    <div v-if="searchmode === 'MutipleSearch'">
+    <!-- <div v-if="searchmode === 'MutipleSearch'">
       <b-form @submit.prevent="onSearchfromVuexStoreSubmit" @reset="onSearchReset">
         <b-container class="bv-example-row" fluid="sm">
           <b-row class="mb-2">
@@ -337,8 +346,8 @@
       >
         Export to Excel
       </vue-excel-xlsx>
-    </div>
-    <b-modal
+    </div> -->
+    <!-- <b-modal
 
       id="modal-Edit-animal"
       ref="modal"
@@ -362,7 +371,6 @@
             <b-col cols="9"><input id="newcategorybox" v-model="newcategory" type="text" placeholder="Enter a new category" style="text-transform: uppercase;"></b-col>
             <b-col cols="1"><span style="background-color:green; color:white; font-weight:bold; cursor:pointer; padding-right:0.25em; padding-left:0.25em; margin-right: 1em" @click="addAnimalCategory(newcategory)">  +  </span></b-col>
           </b-row>
-          <!--<button v-on:click ="addAnimalCategory(newcategory)"  type="button" class="btn btn-primary">Add Category</button> -->
 
           <b-row class="mb-1"><b-col cols="12"><label style="color: red">*</label><label>Gender</label></b-col></b-row>
           <div v-for="(gen,index) in genders" :key="index">
@@ -376,17 +384,6 @@
             <b-col cols="9"><input id="newgenderbox" v-model="newgender" type="text" placeholder="Enter a new gender" style="text-transform: uppercase;"></b-col>
             <b-col cols="1"><span style="background-color:green; color:white; font-weight:bold; cursor:pointer; padding-right:0.25em; padding-left:0.25em; margin-right: 1em" @click="addAnimalGender(newgender)">  +  </span> </b-col>
           </b-row>
-          <!-- <b-row  class="mb-2">
-              <b-form-group
-                label-for="name-input"
-                invalid-feedback="Name is required"
-                style="column-count: 8"
-              >
-                <b-col cols="3">Gender</b-col>
-                <b-col cols="3"><input type="radio" id="Male" value="M" v-model="gender" v-on:change="onchanged()" >Male</b-col>
-                <b-col cols="3"><input type="radio" id="Female" value="F" v-model="gender" v-on:change="onchanged()" > Female</b-col>
-             </b-form-group>
-            </b-row>       -->
           <b-row class="mb-1"><b-col cols="12"><label style="color: red">*</label><label>Created date</label></b-col></b-row>
           <b-row class="mb-2">
             <b-col cols="12"><input
@@ -459,7 +456,7 @@
           </b-row>
         </b-container>
       </b-form>
-    </b-modal>
+    </b-modal> -->
 
     <!-- Animal photo Form-->
     <b-modal
