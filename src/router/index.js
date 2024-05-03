@@ -45,6 +45,12 @@ export const routes = [
         }
       },
       {
+        path: '/animal-on-map',
+        name: 'animal-on-map',
+        component: () => import('@/views/animalonmap/index'),
+        meta: { title: 'Animal on Map', roles: ['admin'], icon: 'animalonmap', affix: true, requiresAuth: true }
+      },
+      {
         path: '/animal-register',
         name: 'animal-register',
         component: () => import('@/views/animalregister/index'),
@@ -66,7 +72,7 @@ export const routes = [
         path: '/user-manage',
         name: 'user-manage',
         component: () => import('@/views/usermanagement/index'),
-        meta: { title: 'User Manage', roles: ['admin'], icon: 'UserManage', affix: true }
+        meta: { title: 'User Manage', roles: ['admin'], icon: 'UserManage', affix: true, requiresAuth: true }
       }
     ]
   },
