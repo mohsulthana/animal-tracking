@@ -51,18 +51,6 @@ export const routes = [
         meta: { title: 'Animal on Map', roles: ['admin'], icon: 'animalonmap', affix: true, requiresAuth: true }
       },
       {
-        path: '/animal-register',
-        name: 'animal-register',
-        component: () => import('@/views/animalregister/index'),
-        meta: {
-          title: 'Animal Register',
-          roles: ['admin'],
-          icon: 'animalregister',
-          affix: true,
-          requiresAuth: true
-        }
-      },
-      {
         path: '/animal-record-manage',
         component: () => import('@/views/animalmanagement/index'),
         name: 'manage-animal-record',
