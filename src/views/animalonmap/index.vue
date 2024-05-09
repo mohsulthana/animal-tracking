@@ -12,7 +12,7 @@
                 v-for="(item, index) in animalcategories"
                 :key="index"
                 :label="item.name"
-                :value="item.id"
+                :value="item.name"
               />
             </el-select>
             <el-button-group class="my-2">
@@ -30,11 +30,6 @@
 
 <script>
 import { firestore } from '../dashboard/admin/components/Config/firebase'
-import { BootstrapVue } from 'bootstrap-vue'
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
-import Vue from 'vue'
-Vue.use(BootstrapVue)
 
 export default {
   name: 'HereMap',
@@ -69,7 +64,8 @@ export default {
       SheepIconRed: null,
       SheepIconGreen: null,
       SheepIconYellow: null,
-      animalsSelected: []
+      animalsSelected: [],
+      uplinkMessages: []
       // You can get the API KEY from developer.here.com
     }
   },
@@ -90,6 +86,7 @@ export default {
       apikey: this.apikey
     })
     this.markers = []
+    await this.fetchUplinkMessages()
     this.initializeHereMap()
     // this.initializeIcons();
 
@@ -107,20 +104,16 @@ export default {
     // this.connectmarkers(this.map)
     // setTimeout(this.animationmarkers, 500);
     // setInterval(this.animationmarkers, 5000);
-    // this.animationmarkers(this.map)
-
-    // this.removemarkers();
 
     // this.createDraggableShapes(this.map)
 
     this.fetchAnimalCategories()
-    this.fetchUplinkMessages()
   },
   methods: {
 
     async fetchUplinkMessages() {
       const { data } = await this.$http.get('api/uplink-message')
-      console.log(data)
+      this.uplinkMessages = data.data
     },
 
     async fetchAnimalCategories() {
@@ -128,7 +121,8 @@ export default {
       data.data.data.forEach((value) => {
         this.animalcategories.push({
           id: value.id,
-          name: value.name
+          name: value.name,
+          alias: value.alias
         })
       })
     },
@@ -182,32 +176,14 @@ export default {
       this.map = new H.Map(mapContainer, this.defaultLayers.vector.normal.map, {
         zoom: 13,
         center: this.center
-        // center object { lat: 40.730610, lng: -73.935242 }
       })
 
       this.farmbounderies = new H.map.Polygon(
-        // new H.geo.Polygon(new H.geo.LineString([-25.7, 28.2, 0, -24.7, 29.2, 0, -24.7, 30.2, 0, -25.7, 31.2, 0, -26.7, 30.2, 0, -26.7, 29.2, 0 ])),
-        // new H.geo.Polygon(new H.geo.LineString.fromLatLngArray([-26.555104, 20.302489, 0, -26.520111, 20.221591, 0, -26.540428, 20.213576, 0, -26.574163, 20.289141, 0])),
         new H.geo.Polygon(new H.geo.LineString.fromLatLngArray([-25.734747, 28.160192, -25.735070, 28.159608, -25.735979, 28.159718, -25.735944, 28.160767, -25.735460, 28.160824, -25.734944, 28.160698])),
         {
           style: { fillColor: 'rgba(0, 100, 0, .3)', lineWidth: 0 }
         }
       )
-
-      /* var box = this.farmbounderies.getBoundingBox();
-      var topleft = box.getTopLeft();
-      var x1 = topleft.lng;
-      var y1 = topleft.lat;
-      var bottomright = box.getBottomRight();
-      var x2 = bottomright.lng;
-      var y2 = bottomright.lat;
-      var orientation = Math.atan2(y1-y2, x2-x1)*180/Math.PI;
-      if ((x2-x1) > (y1-y2)) {
-        orientation += 90
-      }
-
-      this.map.getViewModel().setLookAtData({tilt: 0, heading: orientation}, true);
-*/
       addEventListener('resize', () => this.map.getViewPort().resize())
 
       // add behavior control
@@ -216,9 +192,34 @@ export default {
       // this.map.getPositionIndicator().setVisible(true);
       // add UI
       this.ui = H.ui.UI.createDefault(this.map, this.defaultLayers)
-      // ui.getControl('zoom').setDisabled(false)
-      // ui.getControl('scalebar').setDisabled(false)
-      // End rendering the initial map
+
+      var group = new H.map.Group()
+
+      this.map.addObject(group)
+
+      group.addEventListener('tap', function(evt) {
+        var bubble = this.ui.InfoBubble(evt.target.getGeometry(), {
+          content: evt.target.getData()
+        })
+        this.ui.addBubble(bubble)
+      }, false)
+
+      this.uplinkMessages.forEach((uplink) => {
+        if (uplink.MessageMode === 'GPS_OK') {
+          const marker = new H.map.Marker({ lat: uplink.Var1, lng: uplink.Var2 })
+          this.map.addObject(marker)
+
+          this.addMarkerToGroup(group, { lat: uplink.Var1, lng: uplink.Var2 },
+            `<div>Animal information: ${uplink.AnimalID}</div>`)
+        }
+      })
+    },
+
+    addMarkerToGroup(group, coordinate, html) {
+      var marker = new H.map.Marker(coordinate)
+      // add custom data to the marker
+      marker.setData(html)
+      group.addObject(marker)
     },
 
     initializeIcons() {

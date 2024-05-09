@@ -33,6 +33,31 @@
                 label="Photo"
               />
               <el-table-column
+                prop="password"
+                label="Password Is Set"
+              >
+                <template slot-scope="scope">
+                  {{ scope.row.password === null ? 'No' : 'Yes' }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="action" label="Action">
+                <template slot-scope="scope">
+                  <el-button
+                    type="primary"
+                    icon="el-icon-edit"
+                    plain
+                    circle
+                  />
+                  <el-button
+                    type="danger"
+                    icon="el-icon-delete"
+                    plain
+                    circle
+                    @click="openDeleteConfirmationModal"
+                  />
+                </template>
+              </el-table-column>
+              <el-table-column
                 align="right"
               >
                 <template slot="header" slot-scope="scope">
@@ -127,6 +152,42 @@ export default {
   },
 
   methods: {
+    openDeleteConfirmationModal() {
+      const h = this.$createElement
+
+      this.$msgbox({
+        title: 'Delete user',
+        message: h('p', null, [
+          h('span', null, 'Are you sure to delete this user? This action cannot be undone')
+        ]),
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        beforeClose: async(action, instance, done) => {
+          if (action === 'confirm') {
+            const { data } = await this.$http.delete('api/users')
+            console.log(data)
+
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = 'Loading...'
+            setTimeout(() => {
+              done()
+              setTimeout(() => {
+                instance.confirmButtonLoading = false
+              }, 300)
+            }, 3000)
+          } else {
+            done()
+          }
+        }
+      }).then(action => {
+        this.$message({
+          type: 'info',
+          message: 'action: ' + action
+        })
+      })
+    },
     submitForm(formName) {
       this.$refs[formName].validate(async(valid) => {
         if (valid) {
@@ -157,12 +218,13 @@ export default {
     },
     async fetchUsers() {
       const { data } = await this.$http.get('api/users')
-      data.data.data.forEach((value) => {
+      data.users.data.forEach((value) => {
         this.users.push({
           email: value.email,
           first_name: value.firstname,
           surname: value.surname,
           role: value.role,
+          password: value.password,
           photo: 'No photo for now'
         })
       })

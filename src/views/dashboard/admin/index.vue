@@ -14,7 +14,7 @@
             <el-card shadow="never">
               <el-row>
                 <el-button-group>
-                  <el-button :type="selected === 1 ? 'primary' : ''" @click="selected=1, handleSetLineChartData('footagein7days')">7 days</el-button>
+                  <el-button plain :type="selected === 1 ? 'primary' : ''" @click="selected=1, handleSetLineChartData('footagein7days')">7 days</el-button>
                   <el-button :type="selected === 2 ? 'primary' : ''" @click="selected=2, handleSetLineChartData('footagein1month')">1 month</el-button>
                   <el-button :type="selected === 3 ? 'primary' : ''" @click="selected=3, handleSetLineChartData('footagein6months')">6 months</el-button>
                   <el-button :type="selected === 4 ? 'primary' : ''" @click="selected=4, handleSetLineChartData('footagein1year')">1 year</el-button>

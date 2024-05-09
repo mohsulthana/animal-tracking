@@ -6,8 +6,9 @@
           <div slot="header" class="d-flex justify-content-between">
             <h5>Animals records management</h5>
             <div class="action-button">
-              <el-button type="secondary" @click="isSearchMultipleAnimalDialogVisible = !isSearchMultipleAnimalDialogVisible">Search multiple animals</el-button>
-              <el-button type="secondary" @click="isSearchByQRCodeDialogVisible = !isSearchByQRCodeDialogVisible">Search by QR Code</el-button>
+              <!-- <el-button type="secondary" @click="isSearchMultipleAnimalDialogVisible = !isSearchMultipleAnimalDialogVisible">Search multiple animals</el-button> -->
+              <!-- <el-button type="secondary" @click="isSearchByQRCodeDialogVisible = !isSearchByQRCodeDialogVisible">Search by QR Code</el-button> -->
+              <el-button type="primary" @click="isRegisterAnimalModalVisible = !isRegisterAnimalModalVisible">Register animal</el-button>
               <el-button type="secondary">Export to Excel</el-button>
               <!-- <vue-excel-xlsx
                 :data="animals"
@@ -21,66 +22,60 @@
             </div>
           </div>
           <div class="px-4">
-            <el-table
-              :data="animals"
-              style="width: 100%"
-            >
-              <el-table-column
-                prop="category"
-                label="Category"
-              />
-              <el-table-column
-                prop="gender"
-                label="Gender"
-              />
-              <el-table-column
-                prop="month_age"
-                label="Age"
-              >
+            <el-table :data="animals" style="width: 100%">
+              <el-table-column prop="category" label="Category" />
+              <el-table-column prop="gender" label="Gender" />
+              <el-table-column prop="month_age" label="Age">
                 <template slot-scope="scope">
                   {{ scope.row.month_age }} months
                 </template>
               </el-table-column>
-              <el-table-column
-                prop="photo_link"
-                label="Photo Link"
-              >
+              <el-table-column prop="photo_link" label="Photo Link">
                 <template slot-scope="scope">
-                  <img :src="scope.row.photo_link" :height="200" width="100%" :alt="scope.row.alias" style="object-fit: contain;">
+                  <img
+                    :src="scope.row.photo_link"
+                    :height="200"
+                    width="100%"
+                    :alt="scope.row.alias"
+                    style="object-fit: contain"
+                  >
                 </template>
               </el-table-column>
-              <el-table-column
-                prop="alias"
-                label="Alias"
-              />
-              <el-table-column
-                prop="ip"
-                label="IP"
-              />
-              <el-table-column
-                prop="qrcode"
-                label="QR Code"
-              >
+              <el-table-column prop="alias" label="Alias" />
+              <el-table-column prop="ip" label="IP" />
+              <el-table-column prop="qrcode" label="QR Code">
                 <template slot-scope="scope">
-                  <img :src="scope.row.qr_code" :height="200" width="100%" :alt="scope.row.alias" style="object-fit: contain;">
+                  <img
+                    :src="scope.row.qr_code"
+                    :height="200"
+                    width="100%"
+                    :alt="scope.row.alias"
+                    style="object-fit: contain"
+                  >
                 </template>
               </el-table-column>
-              <el-table-column
-                prop="created_at"
-                label="Created"
-              />
-              <el-table-column
-                prop="updated_at"
-                label="Updated"
-              />
-              <el-table-column
-                prop="action"
-                label="Action"
-              />
+              <el-table-column prop="created_at" label="Created" />
+              <el-table-column prop="updated_at" label="Updated" />
+              <el-table-column prop="action" label="Action">
+                <template slot-scope="scope">
+                  <el-button
+                    type="primary"
+                    icon="el-icon-edit"
+                    plain
+                    circle
+                  />
+                  <el-button
+                    type="danger"
+                    icon="el-icon-delete"
+                    plain
+                    circle
+                    @click="openDeleteConfirmationModal"
+                  />
+                </template>
+              </el-table-column>
             </el-table>
             <div>
               <div>
-
                 <!-- <table border="3" name="animaltable" style="table-layout: fixed; width: 100%">
     <tbody>
       <tr v-for="(animal,index) in animals" :key="index">
@@ -109,7 +104,10 @@
     </el-row>
 
     <!-- Search multiple animal dialog -->
-    <el-dialog title="Search multiple animals" :visible.sync="isSearchMultipleAnimalDialogVisible">
+    <el-dialog
+      title="Search multiple animals"
+      :visible.sync="isSearchMultipleAnimalDialogVisible"
+    >
       <el-row :gutters="20">
         <el-col>
           <div class="d-flex flex-row gap-8">
@@ -181,174 +179,7 @@
       </b-container>
     </div> -->
 
-    <!-- <div v-if="searchmode === 'MutipleSearch'">
-      <b-form @submit.prevent="onSearchfromVuexStoreSubmit" @reset="onSearchReset">
-        <b-container class="bv-example-row" fluid="sm">
-          <b-row class="mb-2">
-            <span> <label style="color: red">*</label><label>Category   </label><br></span>
-            <span>
-              <b-form-group
-                v-slot="{ ariaDescribedby }"
-              >
-                <b-form-checkbox-group
-                  id="checkboxes-4"
-                  v-model="searchform.checkedcategories"
-                  size="sm"
-                  style="column-count: 5;"
-                  :aria-describedby="ariaDescribedby"
-                  :options="animaloptions"
-                />
-                <input id="newcategorybox" v-model="newcategory" type="text" placeholder="Enter a new category" style="text-transform: uppercase;">
-                <button type="button" class="btn btn-primary" @click="addAnimalCategory(newcategory)">Add Category</button>
-              </b-form-group>
-
-            </span>
-          </b-row>
-          <div class="row">
-            <div>
-              <label style="color: red">*</label><label>Gender   </label><br>
-              <span v-for="(gen,index) in genders" :key="index">
-                <input id="gen.name" v-model="gender" type="radio" :value="gen.name">
-                <label for="gen.name"> {{ gen.name }}  </label>
-                <span style="background-color:red; cursor:pointer; margin-right: 1em" @click="deleteAnimalGender(gen.genderID)"> X </span>
-              </span>
-              <input id="newgenderbox" v-model="newgender" type="text" placeholder="Enter a new gender" style="text-transform: uppercase;">
-              <button type="button" class="btn btn-primary" @click="addAnimalGender(newgender)">Add Gender</button>
-
-            </div>
-          </div>
-
-          <b-row class="mb-2">
-            <b-col sm="auto">Registered Date </b-col>
-          </b-row>
-          <b-row class="mb-2">
-            <b-col cols="1"> From</b-col>
-            <b-col cols="6">
-              <input
-                v-model="searchform.createddate1"
-                class="form-control"
-                type="datetime-local"
-                placeholder="Created date"
-                aria-label="default input example"
-                autocomplete="off"
-              >
-            </b-col>
-          </b-row>
-          <b-row class="mb-2">
-            <b-col cols="1">  To</b-col>
-            <b-col cols="6">
-              <input
-                v-model="searchform.createddate2"
-                class="form-control"
-                type="datetime-local"
-                placeholder="Created date"
-                aria-label="default input example"
-                autocomplete="off"
-              >
-            </b-col>
-          </b-row>
-
-          <b-row class="mb-2">
-            <b-col sm="auto">  Deleted Date </b-col>
-          </b-row>
-          <b-row class="mb-2">
-            <b-col cols="1">  From:</b-col>
-            <b-col cols="6">
-              <input
-                v-model="searchform.deleteddate1"
-                class="form-control"
-                type="datetime-local"
-                placeholder="Deleted date"
-                aria-label="default input example"
-                autocomplete="off"
-              >
-            </b-col>
-          </b-row>
-          <b-row class="mb-2">
-            <b-col cols="1">  To :</b-col>
-            <b-col cols="6">
-              <input
-                v-model="searchform.deleteddate2"
-                class="form-control"
-                type="datetime-local"
-                placeholder="Deleted date"
-                aria-label="default input example"
-                autocomplete="off"
-              >
-            </b-col>
-          </b-row>
-
-          <b-row class="mb-2">
-            <b-col sm="auto">Month Age</b-col>
-          </b-row>
-          <b-row class="mb-2">
-            <b-col cols="1">  From:</b-col>
-            <b-col cols="6">
-              <input
-                v-model="searchform.monthage1"
-                class="form-control"
-                type="number"
-                min="1"
-                step="1"
-                placeholder="Age of Month"
-                aria-label="default input example"
-                autocomplete="off"
-              >
-            </b-col>
-          </b-row>
-          <b-row class="mb-2">
-            <b-col cols="1">  To  :</b-col>
-            <b-col cols="6">
-              <input
-                v-model="searchform.monthage2"
-                class="form-control"
-                type="number"
-                min="1"
-                step="1"
-                placeholder="Age of Month"
-                aria-label="default input example"
-                autocomplete="off"
-              >
-            </b-col>
-          </b-row>
-          <b-row class="mb-2">
-            <b-col cols="1">  Alias  :</b-col>
-            <b-col cols="6">
-              <input
-                v-model="searchform.alias"
-                class="form-control"
-                type="text"
-                placeholder="Alias"
-                aria-label="default input example"
-                autocomplete="off"
-              >
-            </b-col>
-          </b-row>
-
-          <b-row align-h="center" class="mb-2">
-            <b-col cols="1" />
-            <b-col cols="6">
-              <b-button type="submit" variant="primary">Search</b-button>
-              <b-button type="reset" variant="danger">Reset</b-button>
-            </b-col>
-            <b-col />
-          </b-row>
-        </b-container>
-      </b-form>
-    </div>
-    <div style="text-align:right">
-      <vue-excel-xlsx
-        :data="animals"
-        :columns="columns"
-        :file-name="'exportedanimalrecorders'"
-        :file-type="'xlsx'"
-        :sheet-name="'animalinformation'"
-      >
-        Export to Excel
-      </vue-excel-xlsx>
-    </div> -->
     <!-- <b-modal
-
       id="modal-Edit-animal"
       ref="modal"
       title="Edit animal information"
@@ -459,28 +290,89 @@
     </b-modal> -->
 
     <!-- Animal photo Form-->
-    <b-modal
-      id="modal-animal-photo"
-      ref="modal"
-      title="Animal photo"
-      size="sm"
-    >
+    <!-- <b-modal id="modal-animal-photo" ref="modal" title="Animal photo" size="sm">
       <b-form>
         <b-container class="bv-example-row" fluid="lg">
           <img :src="photolink">
         </b-container>
       </b-form>
-    </b-modal>
+    </b-modal> -->
+
     <!-- <div class="row">
          <div class="col-md-4">
           <button type="button"  v-on:click="modifyData" class="btn btn-primary" :disabled="confirmdisabled == 1">Confirm the Changes</button>
         </div>
       </div> -->
 
-    <!-- animals Form-->
-    <div class="row p-3" style="background-colour:#fafafa" />
-    <!--animals Data/Table-->
-    <div class="row" />
+    <!-- Register animal dialog -->
+    <el-dialog title="Register animal" :visible.sync="isRegisterAnimalModalVisible">
+      <el-form ref="ruleForm" label-position="top" label-width="50px" :model="form" :rules="rules" size="mini" style="text-align: left;">
+        <el-form-item label="Alias" prop="alias">
+          <el-input v-model="form.alias" />
+        </el-form-item>
+        <el-form-item label="Age (in months)" prop="age">
+          <el-input v-model.number="form.age" />
+        </el-form-item>
+        <el-form-item label="Category" prop="category">
+          <el-select v-model="form.category" placeholder="Select category" style="width: 100%;">
+            <el-option
+              v-for="(item, index) in animalcategories"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="Gender" prop="gender">
+          <el-select v-model="form.gender" placeholder="Select gender" style="width: 100%;">
+            <el-option
+              v-for="(item, index) in gender"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-row :gutter="24">
+          <el-col :span="12">
+            <el-form-item label="Photo link" prop="photo_link">
+              <el-upload
+                class="upload-demo"
+                :on-preview="handlePreview"
+                :on-remove="handleRemove"
+                :file-list="fileList"
+                list-type="list"
+                :auto-upload="false"
+              >
+                <el-button size="small" type="primary">Click to upload</el-button>
+                <div slot="tip" class="el-upload__tip">jpg/png files with a size less than 500kb</div>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="QR Code" prop="qr_code">
+              <el-upload
+                class="upload-demo"
+                :on-preview="handlePreview"
+                :on-remove="handleRemove"
+                :file-list="fileList"
+                list-type="list"
+                :auto-upload="false"
+              >
+                <el-button size="small" type="primary">Click to upload</el-button>
+                <div slot="tip" class="el-upload__tip">jpg/png files with a size less than 500kb</div>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="isRegisterAnimalModalVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">Register</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -489,17 +381,12 @@ import Camera from '../Camera.vue'
 import { QrcodeStream, QrcodeDropZone, QrcodeCapture } from 'vue-qrcode-reader'
 import { firestore } from '../dashboard/admin/components/Config/firebase'
 import Vue from 'vue'
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
+import { IconsPlugin } from 'bootstrap-vue'
 import VueExcelXlsx from 'vue-excel-xlsx'
-// Make BootstrapVue available throughout your project
-Vue.use(BootstrapVue)
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
 Vue.use(VueExcelXlsx)
 export default {
-
   name: 'AnimalRecordManage',
 
   components: { QrcodeStream, QrcodeDropZone, QrcodeCapture, Camera },
@@ -536,7 +423,6 @@ export default {
         { field: 'ip', label: 'IP address' },
         { field: 'ageofMonth', label: 'Age of Month' },
         { field: 'qrcode', label: 'Qrcode' }
-
       ],
       confirmdisabled: 1,
       count: 5,
@@ -573,9 +459,37 @@ export default {
       selected,
       selectedcategoryforsearch,
       isSearchMultipleAnimalDialogVisible: false,
-      isSearchByQRCodeDialogVisible: false
+      isSearchByQRCodeDialogVisible: false,
+      isRegisterAnimalModalVisible: false,
+      form: {
+        alias: '',
+        age: '',
+        gender: '',
+        category: ''
+      },
+      rules: {
+        alias: [
+          { required: true, message: 'Please input alias', trigger: 'blur' }
+        ],
+        age: [
+          { required: true, message: 'Please input age', trigger: 'change' },
+          { type: 'number', message: 'Age must be a number', trigger: 'change' }
+        ],
+        category: [
+          { required: true, message: 'Please input category', trigger: 'change' }
+        ],
+        gender: [
+          { required: true, message: 'Please input gender', trigger: 'change' }
+        ],
+        qr_code: [
+          { required: true, message: 'Please upload QR Code', trigger: 'blur' }
+        ],
+        photo_link: [
+          { required: true, message: 'Please upload photo link', trigger: 'blur' }
+        ]
+      },
+      fileList: []
       // foods: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
-
     }
   },
 
@@ -590,7 +504,16 @@ export default {
 
   created() {
     var today = new Date()
-    this.createddate = '' + today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + (today.getDate())).slice(-2) + ('T' + ('0' + (today.getHours())).slice(-2)) + ':' + ('0' + (today.getMinutes())).slice(-2)
+    this.createddate =
+      '' +
+      today.getFullYear() +
+      '-' +
+      ('0' + (today.getMonth() + 1)).slice(-2) +
+      '-' +
+      ('0' + today.getDate()).slice(-2) +
+      ('T' + ('0' + today.getHours()).slice(-2)) +
+      ':' +
+      ('0' + today.getMinutes()).slice(-2)
   },
 
   mounted() {
@@ -605,9 +528,61 @@ export default {
   },
 
   methods: {
+    handleRemove(file, fileList) {
+      console.log(file, fileList)
+    },
+    handlePreview(file) {
+      console.log(file)
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          alert('submit!')
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    openDeleteConfirmationModal() {
+      const h = this.$createElement
+
+      this.$msgbox({
+        title: 'Delete animal',
+        message: h('p', null, [
+          h('span', null, 'Are you sure to delete this animal? This action cannot be undone')
+        ]),
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        beforeClose: async(action, instance, done) => {
+          if (action === 'confirm') {
+            const { data } = await this.$http.delete('api/animals')
+            console.log(data)
+
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = 'Loading...'
+            setTimeout(() => {
+              done()
+              setTimeout(() => {
+                instance.confirmButtonLoading = false
+              }, 300)
+            }, 3000)
+          } else {
+            done()
+          }
+        }
+      }).then(action => {
+        this.$message({
+          type: 'info',
+          message: 'action: ' + action
+        })
+      })
+    },
     async fetchAnimalData() {
       const { data } = await this.$http.get('api/animals')
-      data.data.data.forEach((value) => {
+      data.animals.data.forEach((value) => {
         this.animals.push({
           alias: value.alias,
           category: value.category,
@@ -626,12 +601,17 @@ export default {
     deleteAnimalGender(docid) {
       console.log(docid)
       if (confirm('Are you sure you will delete this?')) {
-        firestore.collection('genders').doc(docid).delete().then(() => {
-          // alert('Animal Category Removed')
-          this.fetchData()
-        }).catch(e => {
-          console.log(e)
-        })
+        firestore
+          .collection('genders')
+          .doc(docid)
+          .delete()
+          .then(() => {
+            // alert('Animal Category Removed')
+            this.fetchData()
+          })
+          .catch((e) => {
+            console.log(e)
+          })
       }
     },
 
@@ -642,7 +622,7 @@ export default {
         return null
       }
       newgender = newgender.toUpperCase()
-      if (this.genders.find(gen => gen.name === newgender)) {
+      if (this.genders.find((gen) => gen.name === newgender)) {
         alert('Animal gender ' + newgender + ' already exists!')
         return null
       }
@@ -652,39 +632,15 @@ export default {
       }
       // console.log(this.$store.getters.addanimal)
       this.newgender = ''
-      firestore.collection('genders').add(obj).then(() => {
-        // alert('Animal category ' + newcategory + ' added' )
-        this.gender = newgender
-        this.fetchData()
-      })
-        .catch(e => {
-          console.log(e)
+      firestore
+        .collection('genders')
+        .add(obj)
+        .then(() => {
+          // alert('Animal category ' + newcategory + ' added' )
+          this.gender = newgender
+          this.fetchData()
         })
-    },
-
-    addAnimalCategory(newcategory) {
-      newcategory = newcategory.trim()
-      if (!newcategory) {
-        alert('Animal category cannot be empty!')
-        return null
-      }
-      newcategory = newcategory.toUpperCase()
-      if (this.animalcategories.find(cat => cat.name === newcategory)) {
-        alert('Animal category ' + newcategory + ' already exists!')
-        return null
-      }
-
-      const obj = {
-        name: newcategory
-      }
-      // console.log(this.$store.getters.addanimal)
-      this.newcategory = ''
-      firestore.collection('animalcategories').add(obj).then(() => {
-        // alert('Animal category ' + newcategory + ' added' )
-        this.category = newcategory
-        this.fetchData()
-      })
-        .catch(e => {
+        .catch((e) => {
           console.log(e)
         })
     },
@@ -692,12 +648,17 @@ export default {
     deleteAnimalCategory(docid) {
       console.log(docid)
       if (confirm('Are you sure you will delete this?')) {
-        firestore.collection('animalcategories').doc(docid).delete().then(() => {
-          // alert('Animal Category Removed')
-          this.fetchData()
-        }).catch(e => {
-          console.log(e)
-        })
+        firestore
+          .collection('animalcategories')
+          .doc(docid)
+          .delete()
+          .then(() => {
+            // alert('Animal Category Removed')
+            this.fetchData()
+          })
+          .catch((e) => {
+            console.log(e)
+          })
       }
     },
 
@@ -714,16 +675,18 @@ export default {
 
     calculateAge(animal) {
       const currentDate = new Date()
-      const difference = currentDate - (new Date(animal.createddate))
+      const difference = currentDate - new Date(animal.createddate)
       // console.log(currentDate + '-' + (new Date(animal.createddate)) + '=' + difference)
-      var ma = Number(animal.monthage) + Math.floor(difference / (30 * 24 * 60 * 60 * 1000))// 1000*3600*24
+      var ma =
+        Number(animal.monthage) +
+        Math.floor(difference / (30 * 24 * 60 * 60 * 1000)) // 1000*3600*24
       // console.log(ma)
       return ma
     },
 
     sort(sn) {
       if (sn === this.currentsortname) {
-        this.currentsortdir = (this.currentsortdir == 'asc') ? 'desc' : 'asc'
+        this.currentsortdir = this.currentsortdir == 'asc' ? 'desc' : 'asc'
         this.sortanimals(sn, this.currentsortdir)
       } else {
         this.currentsortname = sn
@@ -782,13 +745,21 @@ export default {
           const xx = x.toLowerCase()
           const yy = y.toLowerCase()
           var val = 0
-          if (xx < yy) { val = -1 }
-          if (xx > yy) { val = 1 }
-          if (sd === 'desc') { val = -1 * val }
+          if (xx < yy) {
+            val = -1
+          }
+          if (xx > yy) {
+            val = 1
+          }
+          if (sd === 'desc') {
+            val = -1 * val
+          }
           return val
         })
       }
-      console.log('sorting changed to ' + name + 'in direction' + this.currentsortdir)
+      console.log(
+        'sorting changed to ' + name + 'in direction' + this.currentsortdir
+      )
     },
 
     checkFormValidity() {
@@ -829,7 +800,9 @@ export default {
       this.animals = []
 
       if (this.searchform.alias) {
-        this.animals = this.$store.getters.animals.filter(animal => animal.alias === this.searchform.alias)
+        this.animals = this.$store.getters.animals.filter(
+          (animal) => animal.alias === this.searchform.alias
+        )
       } else {
         if (this.searchform.checkedcategories.length == 0) {
           this.animaloptions.forEach((ao) => {
@@ -841,29 +814,47 @@ export default {
         }
 
         this.searchform.checkedcategories.forEach((checkedcategory) => {
-          var obtainedanimal = this.$store.getters.animals.filter(ani => ani.category === checkedcategory)
+          var obtainedanimal = this.$store.getters.animals.filter(
+            (ani) => ani.category === checkedcategory
+          )
 
           if (this.searchform.checkedgender.length == 1) {
-            obtainedanimal = obtainedanimal.filter(animal => animal.gender === this.searchform.checkedgender[0])
+            obtainedanimal = obtainedanimal.filter(
+              (animal) => animal.gender === this.searchform.checkedgender[0]
+            )
           }
 
           if (this.searchform.createddate1 !== '') {
-            obtainedanimal = obtainedanimal.filter(animal => animal.createddate >= this.searchform.createddate1)
+            obtainedanimal = obtainedanimal.filter(
+              (animal) => animal.createddate >= this.searchform.createddate1
+            )
           }
           if (this.searchform.createddate2 !== '') {
-            obtainedanimal = obtainedanimal.filter(animal => animal.createddate <= this.searchform.createddate2)
+            obtainedanimal = obtainedanimal.filter(
+              (animal) => animal.createddate <= this.searchform.createddate2
+            )
           }
           if (this.searchform.deleteddate1 !== '') {
-            obtainedanimal = obtainedanimal.filter(animal => animal.deleteddate >= this.searchform.deleteddate1)
+            obtainedanimal = obtainedanimal.filter(
+              (animal) => animal.deleteddate >= this.searchform.deleteddate1
+            )
           }
           if (this.searchform.deleteddate2 !== '') {
-            obtainedanimal = obtainedanimal.filter(animal => animal.deleteddate <= this.searchform.deleteddate2)
+            obtainedanimal = obtainedanimal.filter(
+              (animal) => animal.deleteddate <= this.searchform.deleteddate2
+            )
           }
           if (this.searchform.monthage1 !== '') {
-            obtainedanimal = obtainedanimal.filter(animal => Number(animal.monthage) >= Number(this.searchform.monthage1))
+            obtainedanimal = obtainedanimal.filter(
+              (animal) =>
+                Number(animal.monthage) >= Number(this.searchform.monthage1)
+            )
           }
           if (this.searchform.monthage2 !== '') {
-            obtainedanimal = obtainedanimal.filter(animal => Number(animal.monthage) <= Number(this.searchform.monthage2))
+            obtainedanimal = obtainedanimal.filter(
+              (animal) =>
+                Number(animal.monthage) <= Number(this.searchform.monthage2)
+            )
           }
 
           this.animals.push(...obtainedanimal)
@@ -982,7 +973,9 @@ export default {
       // this.selected=this.options[0]
 
       console.log(qrcode)
-      this.animals = this.$store.getters.animals.filter(animal => animal.qrcode === qrcode)
+      this.animals = this.$store.getters.animals.filter(
+        (animal) => animal.qrcode === qrcode
+      )
       this.confirmdisabled = 1
     },
 
@@ -1003,7 +996,7 @@ export default {
           this.onQrDecode(content)
         }
       } catch (error) {
-      // ...
+        // ...
       }
     },
 
@@ -1028,7 +1021,8 @@ export default {
         } else if (error.name === 'StreamApiNotSupportedError') {
           this.error = 'ERROR: Stream API is not supported in this browser'
         } else if (error.name === 'InsecureContextError') {
-          this.error = 'ERROR: Camera access is only permitted in secure context. Use HTTPS or localhost rather than HTTP.'
+          this.error =
+            'ERROR: Camera access is only permitted in secure context. Use HTTPS or localhost rather than HTTP.'
         } else {
           this.error = `ERROR: Camera error (${error.name})`
         }
@@ -1057,36 +1051,48 @@ export default {
       this.animalcategories = this.$store.getters.animalcategories
       this.genders = this.$store.getters.genders
       this.animaloptions = []
-      this.animalcategories.forEach(ac => this.animaloptions.push({
-        text: ac.name, value: ac.name
-      }))
+      this.animalcategories.forEach((ac) =>
+        this.animaloptions.push({
+          text: ac.name,
+          value: ac.name
+        })
+      )
     },
 
     deleteData(docid) {
       if (confirm('Are you sure you will delete this?')) {
-        firestore.collection('animals').doc(docid).delete().then(() => {
-          alert('Animal Removed')
-          this.fetchData()
-        }).catch(e => {
-          console.log(e)
-        })
+        firestore
+          .collection('animals')
+          .doc(docid)
+          .delete()
+          .then(() => {
+            alert('Animal Removed')
+            this.fetchData()
+          })
+          .catch((e) => {
+            console.log(e)
+          })
       }
     },
 
     modifyData() {
       if (this.docid) {
         console.log(this.docid)
-        firestore.collection('animals').doc(this.docid).update({
-          alias: this.alias,
-          category: this.category,
-          createddate: this.createddate,
-          deleteddate: this.deleteddate,
-          gender: this.gender,
-          monthage: this.monthage,
-          photolink: this.photolink ? this.photolink : ''
-        }).then(() => {
-          this.fetchData()
-        })
+        firestore
+          .collection('animals')
+          .doc(this.docid)
+          .update({
+            alias: this.alias,
+            category: this.category,
+            createddate: this.createddate,
+            deleteddate: this.deleteddate,
+            gender: this.gender,
+            monthage: this.monthage,
+            photolink: this.photolink ? this.photolink : ''
+          })
+          .then(() => {
+            this.fetchData()
+          })
       } else {
         alert('no doc to update')
       }
@@ -1094,28 +1100,31 @@ export default {
 
     boundDataToEditModal(docid) {
       // console.log(docid)
-      firestore.collection('animals').doc(docid).get().then(doc => {
-        this.category = doc.data().category
-        this.gender = doc.data().gender
-        this.qrcode = doc.data().qrcode
-        this.monthage = doc.data().monthage
-        this.alias = doc.data().alias ? doc.data().alias : ''
-        this.createddate = doc.data().createddate
-        this.deleteddate = doc.data().deleteddate
-        this.photolink = doc.data().photolink ? doc.data().photolink : ''
-        this.docid = doc.id
-      })
+      firestore
+        .collection('animals')
+        .doc(docid)
+        .get()
+        .then((doc) => {
+          this.category = doc.data().category
+          this.gender = doc.data().gender
+          this.qrcode = doc.data().qrcode
+          this.monthage = doc.data().monthage
+          this.alias = doc.data().alias ? doc.data().alias : ''
+          this.createddate = doc.data().createddate
+          this.deleteddate = doc.data().deleteddate
+          this.photolink = doc.data().photolink ? doc.data().photolink : ''
+          this.docid = doc.id
+        })
     }
   }
 }
 </script>
 
 <style scoped>
-  .scrollable {
+.scrollable {
   overflow: hidden;
   overflow-y: scroll;
   overflow-x: scroll;
   height: calc(100vh - 20px);
 }
-
 </style>

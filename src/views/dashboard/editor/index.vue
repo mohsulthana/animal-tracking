@@ -14,10 +14,12 @@
     <el-row>
       <el-col>
         <el-card class="box-card">
-          <button :style="[selected===1 ? {'background': 'blue','color': 'white'}: {'background': '#FFF'}]" @click="selected=1, handleSetLineChartData('footagein7days')">7 days</button>
-          <button :style="[selected===2 ? {'background': 'blue','color': 'white'}: {'background': '#FFF'}]" @click="selected=2, handleSetLineChartData('footagein1month')">1 month</button>
-          <button :style="[selected===3 ? {'background': 'blue','color': 'white'}: {'background': '#FFF'}]" @click="selected=3, handleSetLineChartData('footagein6months')">6 months</button>
-          <button :style="[selected===4 ? {'background': 'blue','color': 'white'}: {'background': '#FFF'}]" @click="selected=4, handleSetLineChartData('footagein1year')">1 year</button>
+          <el-radio-group v-model="selected">
+            <el-radio-button :label="1">7 Days</el-radio-button>
+            <el-radio-button :label="2">1 Month </el-radio-button>
+            <el-radio-button :label="3"> 6 Months </el-radio-button>
+            <el-radio-button :label="4">1 Year</el-radio-button>
+          </el-radio-group>
 
           <line-chart :chart-data="lineChartData" />
         </el-card>
@@ -44,15 +46,30 @@ export default {
   data: () => {
     return {
       selected: 1,
-      lineChartData1: {
-        goatNumber: [0, 0, 0, 0, 0, 0, 0],
-        sheepNumber: [0, 0, 0, 0, 0, 0, 0],
-        cattleNumber: [0, 0, 0, 0, 0, 0, 0],
-        bokNumber: [0, 0, 0, 0, 0, 0, 0]
-      },
       lineChartData: { type: 'footagein7days', data: [] },
       pieChartData: { AdultMaleCount: 10, AdultFemaleCount: 20, YoungMaleCount: 30, YoungFemaleCount: 40 },
-      animalStatisticData: {}
+      animalStatisticData: {},
+      animalFootageHistoryData: {}
+    }
+  },
+  watch: {
+    selected: function(newVal, oldVal) {
+      switch (newVal) {
+        case 1:
+          this.handleSetLineChartData('footagein7days')
+          break
+        case 2:
+          this.handleSetLineChartData('footagein1month')
+          break
+        case 3:
+          this.handleSetLineChartData('footagein6months')
+          break
+        case 4:
+          this.handleSetLineChartData('footagein1year')
+          break
+        default:
+          break
+      }
     }
   },
   mounted() {
@@ -73,7 +90,7 @@ export default {
         data: totalAnimals
       }]
 
-      data.data.forEach((value) => {
+      data.animals.forEach((value) => {
         labels.push(value.gender)
         totalAnimals.push(value.total_animals)
       })
