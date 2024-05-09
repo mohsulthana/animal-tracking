@@ -54,9 +54,14 @@
                   >
                 </template>
               </el-table-column>
-              <el-table-column prop="created_at" label="Created" />
-              <el-table-column prop="updated_at" label="Updated" />
-              <el-table-column prop="action" label="Action">
+              <el-table-column prop="updated_at" label="Updated At">
+                <template slot-scope="scope">
+
+                  {{ formatDataDate(scope.row.updated_at) }}
+                </template>
+
+              </el-table-column>
+              <el-table-column label="Action">
                 <template slot-scope="scope">
                   <el-button
                     type="primary"
@@ -326,7 +331,7 @@
         <el-form-item label="Gender" prop="gender">
           <el-select v-model="form.gender" placeholder="Select gender" style="width: 100%;">
             <el-option
-              v-for="(item, index) in gender"
+              v-for="(item, index) in genders"
               :key="index"
               :label="item.name"
               :value="item.id"
@@ -383,6 +388,7 @@ import { firestore } from '../dashboard/admin/components/Config/firebase'
 import Vue from 'vue'
 import { IconsPlugin } from 'bootstrap-vue'
 import VueExcelXlsx from 'vue-excel-xlsx'
+import { formatDate } from '@/helpers/time'
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
 Vue.use(VueExcelXlsx)
@@ -431,7 +437,6 @@ export default {
       currentsortname: 'category',
       deleteddate: '',
       error: '',
-      gender: 'F',
       genders: [],
       imageName: '',
       monthage: '',
@@ -517,8 +522,9 @@ export default {
   },
 
   mounted() {
-    // this.fetchData()
     this.fetchAnimalData()
+    this.fetchAnimalGender()
+    this.fetchAnimalCategories()
   },
 
   function() {
@@ -528,6 +534,9 @@ export default {
   },
 
   methods: {
+    formatDataDate(date) {
+      return formatDate(date)
+    },
     handleRemove(file, fileList) {
       console.log(file, fileList)
     },
@@ -598,21 +607,25 @@ export default {
       })
     },
 
-    deleteAnimalGender(docid) {
-      console.log(docid)
-      if (confirm('Are you sure you will delete this?')) {
-        firestore
-          .collection('genders')
-          .doc(docid)
-          .delete()
-          .then(() => {
-            // alert('Animal Category Removed')
-            this.fetchData()
-          })
-          .catch((e) => {
-            console.log(e)
-          })
-      }
+    async fetchAnimalCategories() {
+      const { data } = await this.$http.get('api/categories')
+      data.data.data.forEach((value) => {
+        this.animalcategories.push({
+          id: value.id,
+          name: value.name,
+          alias: value.alias
+        })
+      })
+    },
+
+    async fetchAnimalGender() {
+      const { data } = await this.$http.get('api/gender')
+      data.data.data.forEach((value) => {
+        this.genders.push({
+          id: value.GID,
+          name: value.name
+        })
+      })
     },
 
     addAnimalGender(newgender) {
@@ -643,23 +656,6 @@ export default {
         .catch((e) => {
           console.log(e)
         })
-    },
-
-    deleteAnimalCategory(docid) {
-      console.log(docid)
-      if (confirm('Are you sure you will delete this?')) {
-        firestore
-          .collection('animalcategories')
-          .doc(docid)
-          .delete()
-          .then(() => {
-            // alert('Animal Category Removed')
-            this.fetchData()
-          })
-          .catch((e) => {
-            console.log(e)
-          })
-      }
     },
 
     handleSetPhotoData(photoinfo) {
@@ -1044,19 +1040,6 @@ export default {
         ctx.closePath()
         ctx.stroke()
       }
-    },
-
-    fetchData() {
-      this.animals = this.$store.getters.animals
-      this.animalcategories = this.$store.getters.animalcategories
-      this.genders = this.$store.getters.genders
-      this.animaloptions = []
-      this.animalcategories.forEach((ac) =>
-        this.animaloptions.push({
-          text: ac.name,
-          value: ac.name
-        })
-      )
     },
 
     deleteData(docid) {
