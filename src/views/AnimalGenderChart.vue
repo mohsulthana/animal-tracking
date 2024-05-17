@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import PieChart from './Pie.vue'
+import PieChart from '@/components/Charts/Pie.vue'
 
 export default {
   name: 'AnimalGenderChart',
@@ -11,7 +11,10 @@ export default {
     PieChart
   },
   props: {
-    data: Object
+    data: {
+      type: Object,
+      default: () => {}
+    }
   }
 }
 </script>

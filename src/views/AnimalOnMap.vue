@@ -7,7 +7,14 @@
             <h5>Animals on map</h5>
           </div>
           <div class="px-4">
-            <el-select v-model="animalsSelected" multiple placeholder="Select animals to display on the map" style="width: 100%;" size="large" clearable>
+            <el-select
+              v-model="animalsSelected"
+              multiple
+              placeholder="Select animals to display on the map"
+              style="width: 100%"
+              size="large"
+              clearable
+            >
               <el-option
                 v-for="(item, index) in animalcategories"
                 :key="index"
@@ -16,11 +23,38 @@
               />
             </el-select>
             <el-button-group class="my-2">
-              <el-button plain type="primary" @click="map.removeObjects(map.getObjects()), createFarmBoundaryPolygon(map), addMarkersfromVueXStore(map, checkedcategories)">Selected</el-button>
-              <el-button plain type="danger" @click="map.removeObjects(map.getObjects()), createFarmBoundaryPolygon(map)">Clear</el-button>
-              <el-button plain type="secondary" @click=" map.removeObjects(map.getObjects()), createFarmBoundaryPolygon(map), addMarkersfromVueXStore(map, animalcategories)">All</el-button>
+              <el-button
+                plain
+                type="primary"
+                @click="
+                  map.removeObjects(map.getObjects()),
+                  createFarmBoundaryPolygon(map),
+                  addMarkersfromVueXStore(map, checkedcategories)
+                "
+              >Selected</el-button>
+              <el-button
+                plain
+                type="danger"
+                @click="
+                  map.removeObjects(map.getObjects()),
+                  createFarmBoundaryPolygon(map)
+                "
+              >Clear</el-button>
+              <el-button
+                plain
+                type="secondary"
+                @click="
+                  map.removeObjects(map.getObjects()),
+                  createFarmBoundaryPolygon(map),
+                  addMarkersfromVueXStore(map, animalcategories)
+                "
+              >All</el-button>
             </el-button-group>
-            <div id="mapContainer" ref="hereMap" style="height:600px;width:100%" />
+            <div
+              id="mapContainer"
+              ref="hereMap"
+              style="height: 600px; width: 100%"
+            />
           </div>
         </el-card>
       </el-col>
@@ -29,7 +63,7 @@
 </template>
 
 <script>
-import { firestore } from '../dashboard/admin/components/Config/firebase'
+import { firestore } from './dashboard/admin/components/Config/firebase'
 
 export default {
   name: 'HereMap',
@@ -37,12 +71,19 @@ export default {
   data() {
     return {
       animalcategories: [],
-      apikey: 'hpwTfOkmR7qhTEn9Iv_PJYy7M6J6BJD4dUirOo-QtV0',
+      apikey: process.env.VUE_APP_HERE_API_KEY,
       center: null,
       checkedcategories: [],
       clickedlatlanstr: '',
       defaultLayers: null,
-      DeonFarm: [{ lat: -25.734747, lng: 28.160192 }, { lat: -25.735070, lng: 28.159608 }, { lat: -25.735979, lng: 28.159718 }, { lat: -25.735944, lng: 28.160767 }, { lat: -25.735460, lng: 28.160824 }, { lat: -25.734944, lng: 28.160698 }], // [{lat: -26.555104, lng: 20.302489}, {lat: -26.520111, lng: 20.221591}, {lat: -26.540428, lng: 20.213576}, {lat: -26.574163, lng: 20.289141}],
+      DeonFarm: [
+        { lat: -25.734747, lng: 28.160192 },
+        { lat: -25.73507, lng: 28.159608 },
+        { lat: -25.735979, lng: 28.159718 },
+        { lat: -25.735944, lng: 28.160767 },
+        { lat: -25.73546, lng: 28.160824 },
+        { lat: -25.734944, lng: 28.160698 }
+      ], // [{lat: -26.555104, lng: 20.302489}, {lat: -26.520111, lng: 20.221591}, {lat: -26.540428, lng: 20.213576}, {lat: -26.574163, lng: 20.289141}],
       farmbounderies: null,
       platform: null,
       lat: '-25.735411', // "-26.54",
@@ -88,7 +129,6 @@ export default {
     this.markers = []
     await this.fetchUplinkMessages()
     this.initializeHereMap()
-    // this.initializeIcons();
 
     // this.logContainer = document.createElement('ul');
     // this.logContainer.className ='log';
@@ -102,15 +142,12 @@ export default {
     // this.addfakefootage()
     this.addMarkersfromVueXStore(this.map, this.animalcategories)
     // this.connectmarkers(this.map)
-    // setTimeout(this.animationmarkers, 500);
-    // setInterval(this.animationmarkers, 5000);
 
     // this.createDraggableShapes(this.map)
 
     this.fetchAnimalCategories()
   },
   methods: {
-
     async fetchUplinkMessages() {
       const { data } = await this.$http.get('api/uplink-message')
       this.uplinkMessages = data.data
@@ -131,41 +168,61 @@ export default {
       var geoPoint = new H.geo.Point(this.lat, this.lng)
       var today = new Date()
 
-      firestore.collection('animals').get().then(docs => {
-        docs.forEach(doc => {
-          for (let i = 0; i < 5; i++) {
-            const randomPoint = geoPoint.walk(Math.random() * 360, Math.random() * 5000)
-            const obj = {
-              animalID: doc.id,
-              lat: randomPoint.lat,
-              lng: randomPoint.lng,
-              date: today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + (today.getDate())).slice(-2) + ('T' + ('0' + (today.getHours())).slice(-2)) + ':' + ('0' + (today.getMinutes())).slice(-2)
+      firestore
+        .collection('animals')
+        .get()
+        .then((docs) => {
+          docs.forEach((doc) => {
+            for (let i = 0; i < 5; i++) {
+              const randomPoint = geoPoint.walk(
+                Math.random() * 360,
+                Math.random() * 5000
+              )
+              const obj = {
+                animalID: doc.id,
+                lat: randomPoint.lat,
+                lng: randomPoint.lng,
+                date:
+                  today.getFullYear() +
+                  '-' +
+                  ('0' + (today.getMonth() + 1)).slice(-2) +
+                  '-' +
+                  ('0' + today.getDate()).slice(-2) +
+                  ('T' + ('0' + today.getHours()).slice(-2)) +
+                  ':' +
+                  ('0' + today.getMinutes()).slice(-2)
+              }
+              firestore
+                .collection('footages')
+                .add(obj)
+                .then((doc) => {})
+                .catch((e) => {
+                  console.log(e)
+                })
             }
-            firestore.collection('footages').add(obj).then(doc => {
-            }).catch(e => {
-              console.log(e)
-            })
-          }
+          })
         })
-      })
     },
 
     addCircleToMap(map) {
-      map.addObject(new H.map.Circle(
-        // The central point of the circle
-        { lat: 28.6071, lng: 77.2127 },
-        // The radius of the circle in meters
-        1000,
-        {
-          style: {
-            strokeColor: 'rgba(55, 85, 170, 0.6)', // Color of the perimeter
-            fillColor: 'rgba(0, 128, 0, 0.7)' // Color of the circle
+      map.addObject(
+        new H.map.Circle(
+          // The central point of the circle
+          { lat: 28.6071, lng: 77.2127 },
+          // The radius of the circle in meters
+          1000,
+          {
+            style: {
+              strokeColor: 'rgba(55, 85, 170, 0.6)', // Color of the perimeter
+              fillColor: 'rgba(0, 128, 0, 0.7)' // Color of the circle
+            }
           }
-        }
-      ))
+        )
+      )
     },
 
-    initializeHereMap() { // rendering map
+    initializeHereMap() {
+      // rendering map
       const mapContainer = this.$refs.hereMap
       const H = window.H
       this.center = { lat: this.lat, lng: this.lng }
@@ -179,7 +236,12 @@ export default {
       })
 
       this.farmbounderies = new H.map.Polygon(
-        new H.geo.Polygon(new H.geo.LineString.fromLatLngArray([-25.734747, 28.160192, -25.735070, 28.159608, -25.735979, 28.159718, -25.735944, 28.160767, -25.735460, 28.160824, -25.734944, 28.160698])),
+        new H.geo.Polygon(
+          new H.geo.LineString.fromLatLngArray([
+            -25.734747, 28.160192, -25.73507, 28.159608, -25.735979, 28.159718,
+            -25.735944, 28.160767, -25.73546, 28.160824, -25.734944, 28.160698
+          ])
+        ),
         {
           style: { fillColor: 'rgba(0, 100, 0, .3)', lineWidth: 0 }
         }
@@ -197,20 +259,30 @@ export default {
 
       this.map.addObject(group)
 
-      group.addEventListener('tap', function(evt) {
-        var bubble = this.ui.InfoBubble(evt.target.getGeometry(), {
-          content: evt.target.getData()
-        })
-        this.ui.addBubble(bubble)
-      }, false)
+      group.addEventListener(
+        'tap',
+        function(evt) {
+          var bubble = this.ui.InfoBubble(evt.target.getGeometry(), {
+            content: evt.target.getData()
+          })
+          this.ui.addBubble(bubble)
+        },
+        false
+      )
 
       this.uplinkMessages.forEach((uplink) => {
         if (uplink.MessageMode === 'GPS_OK') {
-          const marker = new H.map.Marker({ lat: uplink.Var1, lng: uplink.Var2 })
+          const marker = new H.map.Marker({
+            lat: uplink.Var1,
+            lng: uplink.Var2
+          })
           this.map.addObject(marker)
 
-          this.addMarkerToGroup(group, { lat: uplink.Var1, lng: uplink.Var2 },
-            `<div>Animal information: ${uplink.AnimalID}</div>`)
+          this.addMarkerToGroup(
+            group,
+            { lat: uplink.Var1, lng: uplink.Var2 },
+            `<div>Animal information: ${uplink.AnimalID}</div>`
+          )
         }
       })
     },
@@ -223,45 +295,61 @@ export default {
     },
 
     initializeIcons() {
-      var svgletterC = '<svg  width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
+      var svgletterC =
+        '<svg  width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
         '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
-        'text-anchor="middle" fill="${STROKE}" >C</text></svg>'
-      this.CattleIconRed = new H.map.Icon(
-        svgletterC.replace('${STROKE}', 'red')),
-      this.CattleIconGreen = new H.map.Icon(
-        svgletterC.replace('${STROKE}', 'green')),
-      this.CattleIconBlue = new H.map.Icon(
-        svgletterC.replace('${STROKE}', 'blue'))
+        'text-anchor="middle" fill="${STROKE}" >C</text></svg>';
+      (this.CattleIconRed = new H.map.Icon(
+        svgletterC.replace('${STROKE}', 'red')
+      )),
+      (this.CattleIconGreen = new H.map.Icon(
+        svgletterC.replace('${STROKE}', 'green')
+      )),
+      (this.CattleIconBlue = new H.map.Icon(
+        svgletterC.replace('${STROKE}', 'blue')
+      ))
 
-      var svgletterB = '<svg  width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
+      var svgletterB =
+        '<svg  width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
         '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
-        'text-anchor="middle" fill="${STROKE}" >B</text></svg>'
-      this.BokIconRed = new H.map.Icon(
-        svgletterB.replace('${STROKE}', 'red')),
-      this.BokIconGreen = new H.map.Icon(
-        svgletterB.replace('${STROKE}', 'green')),
-      this.BokIconBlue = new H.map.Icon(
-        svgletterB.replace('${STROKE}', 'blue'))
+        'text-anchor="middle" fill="${STROKE}" >B</text></svg>';
+      (this.BokIconRed = new H.map.Icon(
+        svgletterB.replace('${STROKE}', 'red')
+      )),
+      (this.BokIconGreen = new H.map.Icon(
+        svgletterB.replace('${STROKE}', 'green')
+      )),
+      (this.BokIconBlue = new H.map.Icon(
+        svgletterB.replace('${STROKE}', 'blue')
+      ))
 
-      var svgletterG = '<svg  width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
+      var svgletterG =
+        '<svg  width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
         '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
-        'text-anchor="middle" fill="${STROKE}" >G</text></svg>'
-      this.GoatIconRed = new H.map.Icon(
-        svgletterG.replace('${STROKE}', 'red')),
-      this.GoatIconGreen = new H.map.Icon(
-        svgletterG.replace('${STROKE}', 'green')),
-      this.GoatIconBlue = new H.map.Icon(
-        svgletterG.replace('${STROKE}', 'yellow'))
+        'text-anchor="middle" fill="${STROKE}" >G</text></svg>';
+      (this.GoatIconRed = new H.map.Icon(
+        svgletterG.replace('${STROKE}', 'red')
+      )),
+      (this.GoatIconGreen = new H.map.Icon(
+        svgletterG.replace('${STROKE}', 'green')
+      )),
+      (this.GoatIconBlue = new H.map.Icon(
+        svgletterG.replace('${STROKE}', 'yellow')
+      ))
 
-      var svgletterS = '<svg  width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
+      var svgletterS =
+        '<svg  width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
         '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
-        'text-anchor="middle" fill="${STROKE}" >S</text></svg>'
-      this.SheepIconRed = new H.map.Icon(
-        svgletterS.replace('${STROKE}', 'red')),
-      this.SheepIconGreen = new H.map.Icon(
-        svgletterS.replace('${STROKE}', 'green')),
-      this.SheepIconBlue = new H.map.Icon(
-        svgletterS.replace('${STROKE}', 'yellow'))
+        'text-anchor="middle" fill="${STROKE}" >S</text></svg>';
+      (this.SheepIconRed = new H.map.Icon(
+        svgletterS.replace('${STROKE}', 'red')
+      )),
+      (this.SheepIconGreen = new H.map.Icon(
+        svgletterS.replace('${STROKE}', 'green')
+      )),
+      (this.SheepIconBlue = new H.map.Icon(
+        svgletterS.replace('${STROKE}', 'yellow')
+      ))
     },
 
     addMarkersfromVueXStore(map, categories) {
@@ -269,93 +357,140 @@ export default {
       var animalIn = 1
       that.markersfiltered = false
       console.log(categories)
-      categories.forEach(c => {
+      categories.forEach((c) => {
         animalIn = 1
-        this.$store.state.data.animals.filter(a => c === a.category).forEach(animal => {
-          // console.log(animal.category)
-          // console.log('categories.some(c => c === animal.category):' + categories.some(c => c === animal.category))
-          // console.log(this.$store.state.footages.some(f => animal.animalID === f.animalID && f.date>days[364] && f.date<days[0]))
-          var letters
-          if (animal.alias != '' && animal.alias != null) {
-            letters = animal.alias
-          } else {
-            letters = (animal.category)[0] + animalIn
-            animalIn++
-          }
-          this.$store.state.data.footages.filter(f => animal.animalID === f.animalID).forEach(animfoo => {
-            var amimalmarker = new H.map.Marker({ lat: animfoo.lat, lng: animfoo.lng })
-            var is_in = this.ray_casting(amimalmarker.getGeometry(), this.farmbounderies)
-
-            var svgletter = '<svg  width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
-              '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
-              'text-anchor="middle" fill="${STROKE}" >' + letters + '</text></svg>'
-
-            var iconGreen = new H.map.Icon(
-              svgletter.replace('${STROKE}', 'green'))
-            var iconRed = new H.map.Icon(
-              svgletter.replace('${STROKE}', 'red'))
-
-            if (is_in) {
-              amimalmarker.setIcon(iconGreen)
+        this.$store.state.data.animals
+          .filter((a) => c === a.category)
+          .forEach((animal) => {
+            // console.log(animal.category)
+            // console.log('categories.some(c => c === animal.category):' + categories.some(c => c === animal.category))
+            // console.log(this.$store.state.footages.some(f => animal.animalID === f.animalID && f.date>days[364] && f.date<days[0]))
+            var letters
+            if (animal.alias != '' && animal.alias != null) {
+              letters = animal.alias
             } else {
-              amimalmarker.setIcon(iconRed)
+              letters = animal.category[0] + animalIn
+              animalIn++
             }
+            this.$store.state.data.footages
+              .filter((f) => animal.animalID === f.animalID)
+              .forEach((animfoo) => {
+                var amimalmarker = new H.map.Marker({
+                  lat: animfoo.lat,
+                  lng: animfoo.lng
+                })
+                var is_in = this.ray_casting(
+                  amimalmarker.getGeometry(),
+                  this.farmbounderies
+                )
 
-            amimalmarker.setData(animfoo)
+                var svgletter =
+                  '<svg  width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
+                  '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
+                  'text-anchor="middle" fill="${STROKE}" >' +
+                  letters +
+                  '</text></svg>'
 
-            // generate infobubble
-            var bubble = new H.ui.InfoBubble({ lat: animfoo.lat, lng: animfoo.lng }, {
-              content: 'category:' + animal.category + ', gender: ' + animal.gender + ', monthage:' + animal.monthage + ', alias:' + animal.alias
-            })
-            bubble.close()
-            that.ui.addBubble(bubble)
+                var iconGreen = new H.map.Icon(
+                  svgletter.replace('${STROKE}', 'green')
+                )
+                var iconRed = new H.map.Icon(
+                  svgletter.replace('${STROKE}', 'red')
+                )
 
-            bubble.getElement().addEventListener('click', function(evt) { bubble.close() })
-            // add point enter listener
-            /* amimalmarker.addEventListener('pointerenter', function(evt) {
+                if (is_in) {
+                  amimalmarker.setIcon(iconGreen)
+                } else {
+                  amimalmarker.setIcon(iconRed)
+                }
+
+                amimalmarker.setData(animfoo)
+
+                // generate infobubble
+                var bubble = new H.ui.InfoBubble(
+                  { lat: animfoo.lat, lng: animfoo.lng },
+                  {
+                    content:
+                      'category:' +
+                      animal.category +
+                      ', gender: ' +
+                      animal.gender +
+                      ', monthage:' +
+                      animal.monthage +
+                      ', alias:' +
+                      animal.alias
+                  }
+                )
+                bubble.close()
+                that.ui.addBubble(bubble)
+
+                bubble.getElement().addEventListener('click', function(evt) {
+                  bubble.close()
+                })
+                // add point enter listener
+                /* amimalmarker.addEventListener('pointerenter', function(evt) {
               bubble.open() ;
             }, true);*/
-            // add point leave listener
-            amimalmarker.addEventListener('pointerleave', function(evt) {
-              bubble.close()
-            }, false)
-            // add click listener
-            amimalmarker.addEventListener('tap', function(evt) {
-              bubble.open()
-              if (that.markersfiltered) {
-                return
-              }
-
-              that.removemarkers()// map.removeObjects(that.markers)
-
-              var sortedMarkers = that.markers.filter(mar => mar.getData().animalID === animfoo.animalID)
-                .sort(function(a, b) {
-                  return (a.getData().date > b.getData().date) ? 1 : -1
-                })
-
-              try {
-                const lineString = new H.geo.LineString()
-                sortedMarkers.forEach(m => { map.addObject(m), lineString.pushPoint({ lat: m.getGeometry().lat, lng: m.getGeometry().lng }) })
-
-                var pl = new H.map.Polyline(
-                  lineString, { style: { strokeColor: 'green', lineWidth: 5 }, arrow: { fillColor: 'red', frequency: 5, width: 3, length: 3 }}
+                // add point leave listener
+                amimalmarker.addEventListener(
+                  'pointerleave',
+                  function(evt) {
+                    bubble.close()
+                  },
+                  false
                 )
-                // pl.setArrows()
+                // add click listener
+                amimalmarker.addEventListener('tap', function(evt) {
+                  bubble.open()
+                  if (that.markersfiltered) {
+                    return
+                  }
 
-                // mapArrow = new.H.mapArrow(pl, widthInPixels, lineColor)
-                // pl.style =
-                // pl.arrows =
-                map.addObject(pl)
-              } catch (e) {
-                console.log(e)
-              }
-            })
-            // (H.map.ArrowStyle | H.map.ArrowStyle.Options)=
+                  that.removemarkers() // map.removeObjects(that.markers)
 
-            this.markers.push(amimalmarker)
-            map.addObject(amimalmarker)
+                  var sortedMarkers = that.markers
+                    .filter(
+                      (mar) => mar.getData().animalID === animfoo.animalID
+                    )
+                    .sort(function(a, b) {
+                      return a.getData().date > b.getData().date ? 1 : -1
+                    })
+
+                  try {
+                    const lineString = new H.geo.LineString()
+                    sortedMarkers.forEach((m) => {
+                      map.addObject(m),
+                      lineString.pushPoint({
+                        lat: m.getGeometry().lat,
+                        lng: m.getGeometry().lng
+                      })
+                    })
+
+                    var pl = new H.map.Polyline(lineString, {
+                      style: { strokeColor: 'green', lineWidth: 5 },
+                      arrow: {
+                        fillColor: 'red',
+                        frequency: 5,
+                        width: 3,
+                        length: 3
+                      }
+                    })
+                    // pl.setArrows()
+
+                    // mapArrow = new.H.mapArrow(pl, widthInPixels, lineColor)
+                    // pl.style =
+                    // pl.arrows =
+                    map.addObject(pl)
+                  } catch (e) {
+                    console.log(e)
+                  }
+                })
+                // (H.map.ArrowStyle | H.map.ArrowStyle.Options)=
+
+                this.markers.push(amimalmarker)
+                map.addObject(amimalmarker)
+              })
           })
-        })
       })
     },
 
@@ -368,68 +503,117 @@ export default {
       this.removemarkers()
       // this.markers = []
       var that = this
-      categories.forEach(category => {
-        this.$store.state.data.animals.filter(ani => ani.category === category).forEach(animal => {
-          // console.log(this.$store.state.footages.some(f => animal.animalID === f.animalID && f.date>days[364] && f.date<days[0]))
-          this.$store.state.data.footages.filter(f => animal.animalID === f.animalID).forEach(animfoo => {
-            var amimalmarker = new H.map.Marker({ lat: animfoo.lat, lng: animfoo.lng })
-            var is_in = this.ray_casting(amimalmarker.getGeometry(), this.farmbounderies)
-            var svgletter = '<svg  width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
-              '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
-              'text-anchor="middle" fill="${STROKE}" >' + (animal.category)[0] + '</text></svg>'
-            var iconGreen = new H.map.Icon(
-              svgletter.replace('${STROKE}', 'green'))
-            var iconRed = new H.map.Icon(
-              svgletter.replace('${STROKE}', 'red'))
-
-            if (is_in) {
-              amimalmarker.setIcon(iconGreen)
-            } else {
-              amimalmarker.setIcon(iconRed)
-            }
-
-            var bubble
-            var defaultLayers = that.platform.createDefaultLayers()
-            var ui = H.ui.UI.createDefault(that.map, defaultLayers)
-            amimalmarker.addEventListener('pointerenter', function(evt) {
-              bubble = new H.ui.InfoBubble({ lat: animfoo.lat, lng: animfoo.lng }, {
-                content: 'category:' + animal.category + ', gender: ' + animal.gender + ', monthage:' + animal.monthage + ', alias:' + animal.alias
-              })
-              ui.addBubble(bubble)
-            }, false)
-            amimalmarker.addEventListener('pointerleave', function(evt) {
-              bubble.close()
-            }, false)
-
-            amimalmarker.setData(animfoo)
-            amimalmarker.addEventListener('tap', function(evt) {
-              that.removemarkers()// map.removeObjects(that.markers)
-              var sortedMarkers = that.markers.filter(mar => mar.getData().animalID === animfoo.animalID)
-                .sort(function(a, b) {
-                  return (a.getData().date > b.getData().date) ? 1 : -1
+      categories.forEach((category) => {
+        this.$store.state.data.animals
+          .filter((ani) => ani.category === category)
+          .forEach((animal) => {
+            // console.log(this.$store.state.footages.some(f => animal.animalID === f.animalID && f.date>days[364] && f.date<days[0]))
+            this.$store.state.data.footages
+              .filter((f) => animal.animalID === f.animalID)
+              .forEach((animfoo) => {
+                var amimalmarker = new H.map.Marker({
+                  lat: animfoo.lat,
+                  lng: animfoo.lng
                 })
-
-              try {
-                const lineString = new H.geo.LineString()
-                sortedMarkers.forEach(m => { map.addObject(m), lineString.pushPoint({ lat: m.getGeometry().lat, lng: m.getGeometry().lng }) })
-
-                var pl = new H.map.Polyline(
-                  lineString, { style: { strokeColor: 'green', lineWidth: 5 }, arrow: { fillColor: 'red', frequency: 5, width: 3, length: 3 }}
+                var is_in = this.ray_casting(
+                  amimalmarker.getGeometry(),
+                  this.farmbounderies
                 )
-                // pl.setArrows()
+                var svgletter =
+                  '<svg  width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
+                  '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
+                  'text-anchor="middle" fill="${STROKE}" >' +
+                  animal.category[0] +
+                  '</text></svg>'
+                var iconGreen = new H.map.Icon(
+                  svgletter.replace('${STROKE}', 'green')
+                )
+                var iconRed = new H.map.Icon(
+                  svgletter.replace('${STROKE}', 'red')
+                )
 
-                // mapArrow = new.H.mapArrow(pl, widthInPixels, lineColor)
-                // pl.style =
-                // pl.arrows =
-                map.addObject(pl)
-              } catch (e) {
-                console.log(e)
-              }
-            })
-            this.markers.push(amimalmarker)
-            this.map.addObject(amimalmarker)
+                if (is_in) {
+                  amimalmarker.setIcon(iconGreen)
+                } else {
+                  amimalmarker.setIcon(iconRed)
+                }
+
+                var bubble
+                var defaultLayers = that.platform.createDefaultLayers()
+                var ui = H.ui.UI.createDefault(that.map, defaultLayers)
+                amimalmarker.addEventListener(
+                  'pointerenter',
+                  function(evt) {
+                    bubble = new H.ui.InfoBubble(
+                      { lat: animfoo.lat, lng: animfoo.lng },
+                      {
+                        content:
+                          'category:' +
+                          animal.category +
+                          ', gender: ' +
+                          animal.gender +
+                          ', monthage:' +
+                          animal.monthage +
+                          ', alias:' +
+                          animal.alias
+                      }
+                    )
+                    ui.addBubble(bubble)
+                  },
+                  false
+                )
+                amimalmarker.addEventListener(
+                  'pointerleave',
+                  function(evt) {
+                    bubble.close()
+                  },
+                  false
+                )
+
+                amimalmarker.setData(animfoo)
+                amimalmarker.addEventListener('tap', function(evt) {
+                  that.removemarkers() // map.removeObjects(that.markers)
+                  var sortedMarkers = that.markers
+                    .filter(
+                      (mar) => mar.getData().animalID === animfoo.animalID
+                    )
+                    .sort(function(a, b) {
+                      return a.getData().date > b.getData().date ? 1 : -1
+                    })
+
+                  try {
+                    const lineString = new H.geo.LineString()
+                    sortedMarkers.forEach((m) => {
+                      map.addObject(m),
+                      lineString.pushPoint({
+                        lat: m.getGeometry().lat,
+                        lng: m.getGeometry().lng
+                      })
+                    })
+
+                    var pl = new H.map.Polyline(lineString, {
+                      style: { strokeColor: 'green', lineWidth: 5 },
+                      arrow: {
+                        fillColor: 'red',
+                        frequency: 5,
+                        width: 3,
+                        length: 3
+                      }
+                    })
+                    // pl.setArrows()
+
+                    // mapArrow = new.H.mapArrow(pl, widthInPixels, lineColor)
+                    // pl.style =
+                    // pl.arrows =
+                    map.addObject(pl)
+                  } catch (e) {
+                    console.log(e)
+                  }
+                })
+                this.markers.push(amimalmarker)
+                this.map.addObject(amimalmarker)
+              })
           })
-        })
       })
       alert(this.markers.length + ' markers added!')
     },
@@ -438,13 +622,19 @@ export default {
       // -25.731340, lng:28.2293
 
       var polygonTimeout = null
-      var svgCircle = '<svg width="20" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg">' +
+      var svgCircle =
+        '<svg width="20" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg">' +
         '<circle cx="10" cy="10" r="7" fill="transparent" stroke="red" stroke-width="4"/>' +
         '</svg>'
       var polygon = new H.map.Polygon(
         // new H.geo.Polygon(new H.geo.LineString([-25.7, 28.2, 0, -24.7, 29.2, 0, -24.7, 30.2, 0, -25.7, 31.2, 0, -26.7, 30.2, 0, -26.7, 29.2, 0 ])),
         // new H.geo.Polygon(new H.geo.LineString.fromLatLngArray([-26.520111, 20.221591, -26.540428, 20.213576, -26.574163, 20.289141, -26.555104, 20.302489])),
-        new H.geo.Polygon(new H.geo.LineString.fromLatLngArray([-25.734747, 28.160192, -25.735070, 28.159608, -25.735979, 28.159718, -25.735944, 28.160767, -25.735460, 28.160824, -25.734944, 28.160698])),
+        new H.geo.Polygon(
+          new H.geo.LineString.fromLatLngArray([
+            -25.734747, 28.160192, -25.73507, 28.159608, -25.735979, 28.159718,
+            -25.735944, 28.160767, -25.73546, 28.160824, -25.734944, 28.160698
+          ])
+        ),
         {
           style: { fillColor: 'rgba(0, 100, 0, .3)', lineWidth: 0 }
         }
@@ -461,71 +651,93 @@ export default {
       polygon.draggable = true
 
       // create markers for each polygon's vertice which will be used for dragging
-      polygon.getGeometry().getExterior().eachLatLngAlt(function(lat, lng, alt, index) {
-        var vertice = new H.map.Marker(
-          { lat, lng },
-          {
-            icon: new H.map.Icon(svgCircle, { anchor: { x: 10, y: 10 }})
-          }
-        )
-        vertice.draggable = true
-        vertice.setData({ 'verticeIndex': index })
-        verticeGroup.addObject(vertice)
-      }),
-
+      polygon
+        .getGeometry()
+        .getExterior()
+        .eachLatLngAlt(function(lat, lng, alt, index) {
+          var vertice = new H.map.Marker(
+            { lat, lng },
+            {
+              icon: new H.map.Icon(svgCircle, { anchor: { x: 10, y: 10 }})
+            }
+          )
+          vertice.draggable = true
+          vertice.setData({ verticeIndex: index })
+          verticeGroup.addObject(vertice)
+        }),
       // add group with polygon and it's vertices (markers) on the map
       map.addObject(mainGroup),
-
       // event listener for main group to show markers if moved in with mouse (or touched on touch devices)
-      mainGroup.addEventListener('pointerenter', function(evt) {
-        if (polygonTimeout) {
-          clearTimeout(polygonTimeout)
-          polygonTimeout = null
-        }
+      mainGroup.addEventListener(
+        'pointerenter',
+        function(evt) {
+          if (polygonTimeout) {
+            clearTimeout(polygonTimeout)
+            polygonTimeout = null
+          }
 
-        // show vertice markers
-        verticeGroup.setVisibility(true)
-      }, true),
-
+          // show vertice markers
+          verticeGroup.setVisibility(true)
+        },
+        true
+      ),
       // event listener for main group to hide vertice markers if moved out with mouse (or released finger on touch devices)
       // the vertice markers are hidden on touch devices after specific timeout
-      mainGroup.addEventListener('pointerleave', function(evt) {
-        var timeout = (evt.currentPointer.type == 'touch') ? 1000 : 0
+      mainGroup.addEventListener(
+        'pointerleave',
+        function(evt) {
+          var timeout = evt.currentPointer.type == 'touch' ? 1000 : 0
 
-        // hide vertice markers
-        polygonTimeout = setTimeout(function() {
-          verticeGroup.setVisibility(false)
-        }, timeout)
-      }, true),
-
+          // hide vertice markers
+          polygonTimeout = setTimeout(function() {
+            verticeGroup.setVisibility(false)
+          }, timeout)
+        },
+        true
+      ),
       // event listener for vertice markers group to change the cursor to pointer
-      verticeGroup.addEventListener('pointerenter', function(evt) {
-        document.body.style.cursor = 'pointer'
-      }, true),
-
+      verticeGroup.addEventListener(
+        'pointerenter',
+        function(evt) {
+          document.body.style.cursor = 'pointer'
+        },
+        true
+      ),
       // event listener for vertice markers group to change the cursor to default
-      verticeGroup.addEventListener('pointerleave', function(evt) {
-        document.body.style.cursor = 'default'
-      }, true),
-
+      verticeGroup.addEventListener(
+        'pointerleave',
+        function(evt) {
+          document.body.style.cursor = 'default'
+        },
+        true
+      ),
       // event listener for vertice markers group to resize the geo polygon object if dragging over markers
-      verticeGroup.addEventListener('drag', function(evt) {
-        var pointer = evt.currentPointer
-        var geoLineString = polygon.getGeometry().getExterior()
-        var geoPoint = map.screenToGeo(pointer.viewportX, pointer.viewportY)
+      verticeGroup.addEventListener(
+        'drag',
+        function(evt) {
+          var pointer = evt.currentPointer
+          var geoLineString = polygon.getGeometry().getExterior()
+          var geoPoint = map.screenToGeo(
+            pointer.viewportX,
+            pointer.viewportY
+          )
 
-        // set new position for vertice marker
-        evt.target.setGeometry(geoPoint)
+          // set new position for vertice marker
+          evt.target.setGeometry(geoPoint)
 
-        // set new position for polygon's vertice
-        geoLineString.removePoint(evt.target.getData()['verticeIndex'])
-        geoLineString.insertPoint(evt.target.getData()['verticeIndex'], geoPoint)
-        polygon.setGeometry(new H.geo.Polygon(geoLineString))
+          // set new position for polygon's vertice
+          geoLineString.removePoint(evt.target.getData()['verticeIndex'])
+          geoLineString.insertPoint(
+            evt.target.getData()['verticeIndex'],
+            geoPoint
+          )
+          polygon.setGeometry(new H.geo.Polygon(geoLineString))
 
-        // stop propagating the drag event, so the map doesn't move
-        evt.stopPropagation()
-      }, true),
-
+          // stop propagating the drag event, so the map doesn't move
+          evt.stopPropagation()
+        },
+        true
+      ),
       // add event listeners for polygon object
       polygon.addEventListener('dragstart', function(evt) {
         var pointer = evt.currentPointer
@@ -537,7 +749,6 @@ export default {
         })
         evt.stopPropagation()
       }),
-
       polygon.addEventListener('drag', function(evt) {
         var pointer = evt.currentPointer
         var object = evt.target
@@ -551,8 +762,8 @@ export default {
 
           // create new LineString with updated coordinates
           currentLineString.eachLatLngAlt(function(lat, lng, alt) {
-            var diffLat = (lat - startCoord.lat)
-            var diffLng = (lng - startCoord.lng)
+            var diffLat = lat - startCoord.lat
+            var diffLng = lng - startCoord.lng
             var newLat = newCoord.lat + diffLat
             var newLng = newCoord.lng + diffLng
 
@@ -572,29 +783,34 @@ export default {
             })
             // set new position for polygon's vertice
             verticeGroup.removeAll()
-            polygon.getGeometry().getExterior().eachLatLngAlt(function(lat, lng, alt, index) {
-              var vertice = new H.map.Marker(
-                { lat, lng },
-                {
-                  icon: new H.map.Icon(svgCircle, { anchor: { x: 10, y: 10 }})
-                }
-              )
-              vertice.draggable = true
-              vertice.setData({ 'verticeIndex': index })
-              verticeGroup.addObject(vertice)
-            })
+            polygon
+              .getGeometry()
+              .getExterior()
+              .eachLatLngAlt(function(lat, lng, alt, index) {
+                var vertice = new H.map.Marker(
+                  { lat, lng },
+                  {
+                    icon: new H.map.Icon(svgCircle, {
+                      anchor: { x: 10, y: 10 }
+                    })
+                  }
+                )
+                vertice.draggable = true
+                vertice.setData({ verticeIndex: index })
+                verticeGroup.addObject(vertice)
+              })
           }
         }
         evt.stopPropagation()
       }),
-
-      this.farmbounderies = polygon
+      (this.farmbounderies = polygon)
     },
 
     createFarmBoundaryPolygon(map) {
       // -25.731340, lng:28.2293
       var polygonTimeout = null
-      var svgCircle = '<svg width="20" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg">' +
+      var svgCircle =
+        '<svg width="20" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg">' +
         '<circle cx="10" cy="10" r="7" fill="transparent" stroke="red" stroke-width="4"/>' +
         '</svg>'
       var verticeGroup = new H.map.Group({
@@ -611,19 +827,18 @@ export default {
       this.DeonFarm.forEach((b) => {
         lineString.pushPoint(b)
 
-        var vertice = new H.map.Marker(
-          b,
-          {
-            icon: new H.map.Icon(svgCircle, { anchor: { x: 10, y: 10 }})
-          }
-        )
+        var vertice = new H.map.Marker(b, {
+          icon: new H.map.Icon(svgCircle, { anchor: { x: 10, y: 10 }})
+        })
         verticeGroup.addObject(vertice)
       }),
       lineString.pushPoint(this.DeonFarm[0])
 
-      map.addObject(new H.map.Polyline(
-        lineString, { style: { strokeColor: 'red', lineWidth: 10 }}
-      ))
+      map.addObject(
+        new H.map.Polyline(lineString, {
+          style: { strokeColor: 'red', lineWidth: 10 }
+        })
+      )
 
       map.addObject(verticeGroup)
     },
@@ -845,30 +1060,37 @@ export default {
     // conect markers:
     connectmarkers(map) {
       const lineString = new H.geo.LineString()
-      lineString.pushPoint({ lat: -25.731340, lng: 28.2293 })
+      lineString.pushPoint({ lat: -25.73134, lng: 28.2293 })
       lineString.pushPoint({ lat: -26.2041, lng: 28.0473 })
-      map.addObject(new H.map.Polyline(
-        lineString, { style: { strokeColor: 'green', lineWidth: 5 }}
-      ))
+      map.addObject(
+        new H.map.Polyline(lineString, {
+          style: { strokeColor: 'green', lineWidth: 5 }
+        })
+      )
     },
 
     setUpClickListener(map) {
       // Attach an event listener to map display
       // obtain the coordinates and display in an alert box.
       map.addEventListener('tap', function(evt) {
-        var coord = map.screenToGeo(evt.currentPointer.viewportX,
-          evt.currentPointer.viewportY)
-        this.clickedlatlanstr = 'Clicked at ' + Math.abs(coord.lat.toFixed(4)) +
-          ((coord.lat > 0) ? 'N' : 'S') +
-          ' ' + Math.abs(coord.lng.toFixed(4)) +
-          ((coord.lng > 0) ? 'E' : 'W')
+        var coord = map.screenToGeo(
+          evt.currentPointer.viewportX,
+          evt.currentPointer.viewportY
+        )
+        this.clickedlatlanstr =
+          'Clicked at ' +
+          Math.abs(coord.lat.toFixed(4)) +
+          (coord.lat > 0 ? 'N' : 'S') +
+          ' ' +
+          Math.abs(coord.lng.toFixed(4)) +
+          (coord.lng > 0 ? 'E' : 'W')
         // console.log(this.clickedlatlanstr)
       })
     },
 
     addMarkersAndSetViewBounds(map) {
       // create map objects
-      var toronto = new H.map.Marker({ lat: -25.731340, lng: 28.2293 })
+      var toronto = new H.map.Marker({ lat: -25.73134, lng: 28.2293 })
       var boston = new H.map.Marker({ lat: -26.2041, lng: 28.0473 })
       var washington = new H.map.Marker({ lat: -27.8951, lng: 29.0366 })
       var group = new H.map.Group()
@@ -889,7 +1111,10 @@ export default {
       var is_in = false
       var x = point.lat
       var y = point.lng
-      var x1; var x2; var y1; var y2
+      var x1
+      var x2
+      var y1
+      var y2
 
       for (var i = 0; i < n - 1; ++i) {
         var point1 = linestring.extractPoint(i)
@@ -898,7 +1123,7 @@ export default {
         y1 = point1.lng
         x2 = point2.lat
         y2 = point2.lng
-        if (((y < y1) != (y < y2)) && (x < ((x2 - x1) * (y - y1) / (y2 - y1) + x1))) {
+        if (y < y1 != y < y2 && x < ((x2 - x1) * (y - y1)) / (y2 - y1) + x1) {
           is_in = !is_in
         }
       }
@@ -906,7 +1131,7 @@ export default {
       y1 = linestring.extractPoint(0).lng
       x2 = linestring.extractPoint(n - 1).lat
       y2 = linestring.extractPoint(n - 1).lng
-      if (((y < y1) != (y < y2)) && (x < ((x2 - x1) * (y - y1) / (y2 - y1) + x1))) {
+      if (y < y1 != y < y2 && x < ((x2 - x1) * (y - y1)) / (y2 - y1) + x1) {
         is_in = !is_in
       }
 
@@ -914,7 +1139,10 @@ export default {
     },
 
     addMarkersToMap(map) {
-      var pretorialynnwoodMarker = new H.map.Marker({ lat: -25.7643, lng: 28.2673 })
+      var pretorialynnwoodMarker = new H.map.Marker({
+        lat: -25.7643,
+        lng: 28.2673
+      })
       map.addObject(pretorialynnwoodMarker)
 
       /* var svgMarkup = '<svg  width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
@@ -925,8 +1153,10 @@ export default {
       // Add the first marker
       /* var bearsIcon = new H.map.Icon(
             svgMarkup.replace('${FILL}', 'blue').replace('${STROKE}', 'red')),*/
-      var bearsMarker = new H.map.Marker({ lat: -26.53, lng: 20.23 },
-        { icon: this.CattleIconRed })
+      var bearsMarker = new H.map.Marker(
+        { lat: -26.53, lng: 20.23 },
+        { icon: this.CattleIconRed }
+      )
       if (this.ray_casting(bearsMarker.getGeometry(), this.farmbounderies)) {
         bearsMarker.setIcon(this.CattleIconRed)
       } else {
@@ -956,32 +1186,8 @@ export default {
       }
       this.markers.push(cubsMarker1)
 
-      /* console.log(cubsMarker.getGeometry())
-        var geo = cubsMarker.getGeometry()
-        geo.lat = -26.731340
-        geo.lng = 28.5293
-
-        cubsMarker.setGeometry(geo)*/
       map.addObject(cubsMarker)
       map.addObject(cubsMarker1)
-      // console.log(cubsMarker.getGeometry())
-      /* var ptaMarker = new H.map.Marker({lat:-25.731340, lng:28.2293});
-        map.addObject(ptaMarker);
-
-        var parisMarker = new H.map.Marker({lat:48.8567, lng:2.3508});
-        map.addObject(parisMarker);
-
-        var romeMarker = new H.map.Marker({lat:41.9, lng: 12.5});
-        map.addObject(romeMarker);
-
-        var berlinMarker = new H.map.Marker({lat:52.5166, lng:13.3833});
-        map.addObject(berlinMarker);
-
-        var madridMarker = new H.map.Marker({lat:40.4, lng: -3.6833});
-        map.addObject(madridMarker);
-
-        var londonMarker = new H.map.Marker({lat:51.5008, lng:-0.1224});
-        map.addObject(londonMarker);*/
     },
 
     removemarkers() {
@@ -1002,39 +1208,46 @@ export default {
       this.markers.forEach(function(marker) {
         // get random position 0 - 450km from map's center in random direction
         var geoPoint = new H.geo.Point(scope.lat, scope.lng)
-        const randomPoint = geoPoint.walk(Math.random() * 360, Math.random() * 450000)
+        const randomPoint = geoPoint.walk(
+          Math.random() * 360,
+          Math.random() * 450000
+        )
 
         // update marker's position within ease function callback
-        ease(
-          marker.getGeometry(),
-          randomPoint,
-          4000,
-          function(coord) {
-            var svgMarkup = '<svg  width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
-              '<rect stroke="black" fill="${FILL}" x="1" y="1" width="22" height="22" />' +
-              '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
-              'text-anchor="middle" fill="${STROKE}" >C</text></svg>'
-            if (scope.ray_casting(coord, scope.farmbounderies)) {
-              var cubsIcon = new H.map.Icon(
-                svgMarkup.replace('${FILL}', 'white').replace('${STROKE}', 'orange'))
-              marker.setIcon(cubsIcon)
-            } else {
-              var cubsIcon = new H.map.Icon(
-                svgMarkup.replace('${FILL}', 'red').replace('${STROKE}', 'orange'))
-              marker.setIcon(cubsIcon)
-            }
-            marker.setGeometry(coord)
+        ease(marker.getGeometry(), randomPoint, 4000, function(coord) {
+          var svgMarkup =
+            '<svg  width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
+            '<rect stroke="black" fill="${FILL}" x="1" y="1" width="22" height="22" />' +
+            '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
+            'text-anchor="middle" fill="${STROKE}" >C</text></svg>'
+          if (scope.ray_casting(coord, scope.farmbounderies)) {
+            var cubsIcon = new H.map.Icon(
+              svgMarkup
+                .replace('${FILL}', 'white')
+                .replace('${STROKE}', 'orange')
+            )
+            marker.setIcon(cubsIcon)
+          } else {
+            var cubsIcon = new H.map.Icon(
+              svgMarkup.replace('${FILL}', 'red').replace('${STROKE}', 'orange')
+            )
+            marker.setIcon(cubsIcon)
           }
-        )
+          marker.setGeometry(coord)
+        })
 
         function ease(
           startCoord = { lat: 0, lng: 0 },
           endCoord = { lat: 1, lng: 1 },
           durationMs = 200,
           onStep = console.log,
-          onComplete = function() { }
+          onComplete = function() {}
         ) {
-          var raf = window.requestAnimationFrame || function(f) { window.setTimeout(f, 16) }
+          var raf =
+            window.requestAnimationFrame ||
+            function(f) {
+              window.setTimeout(f, 16)
+            }
           var stepCount = durationMs / 16
           var valueIncrementLat = (endCoord.lat - startCoord.lat) / stepCount
           var valueIncrementLng = (endCoord.lng - startCoord.lng) / stepCount
@@ -1045,8 +1258,10 @@ export default {
 
           function step() {
             currentSinValue += sinValueIncrement
-            currentValueLat += valueIncrementLat * (Math.sin(currentSinValue) ** 2) * 2
-            currentValueLng += valueIncrementLng * (Math.sin(currentSinValue) ** 2) * 2
+            currentValueLat +=
+              valueIncrementLat * Math.sin(currentSinValue) ** 2 * 2
+            currentValueLng +=
+              valueIncrementLng * Math.sin(currentSinValue) ** 2 * 2
 
             if (currentSinValue < Math.PI) {
               onStep({ lat: currentValueLat, lng: currentValueLng })

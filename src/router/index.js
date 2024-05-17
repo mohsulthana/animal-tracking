@@ -36,7 +36,7 @@ export const routes = [
       {
         path: 'dashboard',
         name: 'dashboard',
-        component: () => import('@/views/dashboard/index'),
+        component: () => import('@/views/Dashboard'),
         meta: {
           title: 'Dashboard',
           icon: 'dashboard',
@@ -47,20 +47,38 @@ export const routes = [
       {
         path: '/animal-on-map',
         name: 'animal-on-map',
-        component: () => import('@/views/animalonmap/index'),
-        meta: { title: 'Animal on Map', roles: ['admin'], icon: 'animalonmap', affix: true, requiresAuth: true }
+        component: () => import('@/views/AnimalOnMap'),
+        meta: {
+          title: 'Animal on Map',
+          roles: ['admin'],
+          icon: 'animalonmap',
+          affix: true,
+          requiresAuth: true
+        }
       },
       {
         path: '/animal-record-manage',
-        component: () => import('@/views/animalmanagement/index'),
+        component: () => import('@/views/AnimalManagement'),
         name: 'manage-animal-record',
-        meta: { title: 'Manage Animal Record', roles: ['admin'], icon: 'AnimalRecordManage', affix: true, requiresAuth: true }
+        meta: {
+          title: 'Manage Animal Record',
+          roles: ['admin'],
+          icon: 'AnimalRecordManage',
+          affix: true,
+          requiresAuth: true
+        }
       },
       {
         path: '/user-manage',
         name: 'user-manage',
-        component: () => import('@/views/usermanagement/index'),
-        meta: { title: 'User Manage', roles: ['admin'], icon: 'UserManage', affix: true, requiresAuth: true }
+        component: () => import('@/views/UserManagement'),
+        meta: {
+          title: 'User Manage',
+          roles: ['admin'],
+          icon: 'UserManage',
+          affix: true,
+          requiresAuth: true
+        }
       }
     ]
   },
@@ -124,6 +142,13 @@ router.beforeEach((to, from, next) => {
   }
 
   next()
+})
+
+const DEFAULT_TITLE = 'Some Default Title'
+router.afterEach((to, from) => {
+  Vue.nextTick(() => {
+    document.title = `${to.meta.title} | Animal Tracking Project` || DEFAULT_TITLE
+  })
 })
 
 export default router

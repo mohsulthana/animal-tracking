@@ -8,17 +8,18 @@
             <div class="action-button">
               <!-- <el-button type="secondary" @click="isSearchMultipleAnimalDialogVisible = !isSearchMultipleAnimalDialogVisible">Search multiple animals</el-button> -->
               <!-- <el-button type="secondary" @click="isSearchByQRCodeDialogVisible = !isSearchByQRCodeDialogVisible">Search by QR Code</el-button> -->
-              <el-button type="primary" @click="isRegisterAnimalModalVisible = !isRegisterAnimalModalVisible">Register animal</el-button>
-              <el-button type="secondary">Export to Excel</el-button>
-              <!-- <vue-excel-xlsx
+              <el-button type="primary" size="medium" @click="isRegisterAnimalModalVisible = !isRegisterAnimalModalVisible">Register animal</el-button>
+              <vue-excel-xlsx
                 :data="animals"
                 :columns="columns"
                 :file-name="'exportedanimalrecorders'"
                 :file-type="'xlsx'"
                 :sheet-name="'animalinformation'"
+                class="el-button el-button--secondary"
+                style="cursor: pointer;"
               >
                 Export to Excel
-              </vue-excel-xlsx> -->`
+              </vue-excel-xlsx>
             </div>
           </div>
           <div class="px-4">
@@ -45,18 +46,24 @@
               <el-table-column prop="ip" label="IP" />
               <el-table-column prop="qrcode" label="QR Code">
                 <template slot-scope="scope">
+                  <FsLightBox
+                    :toggler="toggler"
+                    :sources="[
+                      'https://i.imgur.com/fsyrScY.jpg'
+                    ]"
+                  />
                   <img
                     :src="scope.row.qr_code"
                     :height="200"
                     width="100%"
                     :alt="scope.row.alias"
-                    style="object-fit: contain"
+                    style="object-fit: contain; cursor: pointer;"
+                    @click="toggler = true"
                   >
                 </template>
               </el-table-column>
               <el-table-column prop="updated_at" label="Updated At">
                 <template slot-scope="scope">
-
                   {{ formatDataDate(scope.row.updated_at) }}
                 </template>
 
@@ -74,35 +81,11 @@
                     icon="el-icon-delete"
                     plain
                     circle
-                    @click="openDeleteConfirmationModal"
+                    @click="openDeleteConfirmationModal(scope.row.id)"
                   />
                 </template>
               </el-table-column>
             </el-table>
-            <div>
-              <div>
-                <!-- <table border="3" name="animaltable" style="table-layout: fixed; width: 100%">
-    <tbody>
-      <tr v-for="(animal,index) in animals" :key="index">
-
-        <td style="word-wrap: break-word">{{ animal.category }}</td>
-        <td style="word-wrap: break-word">{{ animal.gender }}</td>
-        <td style="word-wrap: break-word">{{ calculateAge(animal) }}</td>
-        <td style="word-wrap: break-word">{{ animal.alias }}</td>
-        <td style="word-wrap: break-word"><span v-if="animal.photolink!=null && animal.photolink!=''"><label v-b-modal.modal-animal-photo size="sm" type="button" class="btn btn-primary" @click="boundDataToPhotoModal(animal.photolink)">Photo</label></span></td>
-        <td style="word-wrap: break-word">{{ animal.ip }}</td>
-        <td style="word-wrap: break-word">{{ animal.qrcode }}</td>
-        <td style="word-wrap: break-word">{{ animal.createddate }}</td>
-        <td style="word-wrap: break-word">{{ animal.deleteddate }}</td>
-
-        <td><button v-b-modal.modal-Edit-animal type="button" class="btn btn-warning" @click="boundDataToEditModal(animal.animalID)">Edit</button></td>
-        <td><button type="button" class="btn btn-danger" @click="deleteData(animal.animalID)">Delete</button></td>
-
-      </tr>
-    </tbody>
-  </table> -->
-              </div>
-            </div>
           </div>
         </el-card>
       </el-col>
@@ -119,7 +102,6 @@
             <label for="registered-date">Registered Date</label>
             <el-date-picker
               id="registered-date"
-              v-model="value1"
               type="daterange"
               range-separator="To"
               start-placeholder="Start date"
@@ -132,7 +114,6 @@
             <label for="deleted-date">Deleted Date</label>
             <el-date-picker
               id="deleted-date"
-              v-model="value1"
               type="daterange"
               range-separator="To"
               start-placeholder="Start date"
@@ -294,15 +275,6 @@
       </b-form>
     </b-modal> -->
 
-    <!-- Animal photo Form-->
-    <!-- <b-modal id="modal-animal-photo" ref="modal" title="Animal photo" size="sm">
-      <b-form>
-        <b-container class="bv-example-row" fluid="lg">
-          <img :src="photolink">
-        </b-container>
-      </b-form>
-    </b-modal> -->
-
     <!-- <div class="row">
          <div class="col-md-4">
           <button type="button"  v-on:click="modifyData" class="btn btn-primary" :disabled="confirmdisabled == 1">Confirm the Changes</button>
@@ -319,7 +291,7 @@
           <el-input v-model.number="form.age" />
         </el-form-item>
         <el-form-item label="Category" prop="category">
-          <el-select v-model="form.category" placeholder="Select category" style="width: 100%;">
+          <el-select v-model="form.category_id" placeholder="Select category" style="width: 100%;">
             <el-option
               v-for="(item, index) in animalcategories"
               :key="index"
@@ -329,7 +301,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="Gender" prop="gender">
-          <el-select v-model="form.gender" placeholder="Select gender" style="width: 100%;">
+          <el-select v-model="form.GID" placeholder="Select gender" style="width: 100%;">
             <el-option
               v-for="(item, index) in genders"
               :key="index"
@@ -341,13 +313,16 @@
 
         <el-row :gutter="24">
           <el-col :span="12">
-            <el-form-item label="Photo link" prop="photo_link">
+            <el-form-item label="Photo link">
               <el-upload
+                http-request
                 class="upload-demo"
-                :on-preview="handlePreview"
+                :on-preview="handlePreview('photo_link')"
                 :on-remove="handleRemove"
-                :file-list="fileList"
+                :file-list="photo_link_list"
+                :on-change="handleChangePhotoLink"
                 list-type="list"
+                :multiple="false"
                 :auto-upload="false"
               >
                 <el-button size="small" type="primary">Click to upload</el-button>
@@ -356,13 +331,15 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="QR Code" prop="qr_code">
+            <el-form-item label="QR Code">
               <el-upload
                 class="upload-demo"
                 :on-preview="handlePreview"
                 :on-remove="handleRemove"
-                :file-list="fileList"
+                :file-list="qr_code_list"
+                :on-change="handleChangeQRCode"
                 list-type="list"
+                :multiple="false"
                 :auto-upload="false"
               >
                 <el-button size="small" type="primary">Click to upload</el-button>
@@ -382,27 +359,25 @@
 </template>
 
 <script>
-import Camera from '../Camera.vue'
+import Camera from './Camera.vue'
 import { QrcodeStream, QrcodeDropZone, QrcodeCapture } from 'vue-qrcode-reader'
-import { firestore } from '../dashboard/admin/components/Config/firebase'
+import { firestore } from './dashboard/admin/components/Config/firebase'
 import Vue from 'vue'
 import { IconsPlugin } from 'bootstrap-vue'
 import VueExcelXlsx from 'vue-excel-xlsx'
 import { formatDate } from '@/helpers/time'
+import FsLightBox from 'fslightbox-vue'
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
 Vue.use(VueExcelXlsx)
 export default {
   name: 'AnimalRecordManage',
-
-  components: { QrcodeStream, QrcodeDropZone, QrcodeCapture, Camera },
+  components: { FsLightBox },
 
   data() {
     const options = [
       { text: 'nothing (default)', value: undefined },
       { text: 'Camera', value: this.paintOutline },
-      // { text: "centered text", value: this.paintCenterText },
-      //  { text: "bounding box", value: this.paintBoundingBox },
       { text: 'Files', value: 'uploadfile' }
     ]
 
@@ -411,6 +386,7 @@ export default {
     const searchmode = 'MutipleSearch'
 
     return {
+      toggler: false,
       alias: '',
       animaloptions: [
         { text: 'Goat', value: 'Goat' },
@@ -469,8 +445,10 @@ export default {
       form: {
         alias: '',
         age: '',
-        gender: '',
-        category: ''
+        GID: '',
+        category_id: '',
+        qr_code: null,
+        photo_link: null
       },
       rules: {
         alias: [
@@ -480,10 +458,10 @@ export default {
           { required: true, message: 'Please input age', trigger: 'change' },
           { type: 'number', message: 'Age must be a number', trigger: 'change' }
         ],
-        category: [
+        category_id: [
           { required: true, message: 'Please input category', trigger: 'change' }
         ],
-        gender: [
+        GID: [
           { required: true, message: 'Please input gender', trigger: 'change' }
         ],
         qr_code: [
@@ -493,7 +471,8 @@ export default {
           { required: true, message: 'Please upload photo link', trigger: 'blur' }
         ]
       },
-      fileList: []
+      qr_code_list: [],
+      photo_link_list: []
       // foods: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
     }
   },
@@ -537,13 +516,46 @@ export default {
     formatDataDate(date) {
       return formatDate(date)
     },
-    handleRemove(file, fileList) {
-      console.log(file, fileList)
+    handleChangeQRCode(file, fileList) {
+      this.qr_code_list = fileList.slice(-1)
     },
-    handlePreview(file) {
-      console.log(file)
+    handleChangePhotoLink(file, fileList) {
+      this.photo_link_list = fileList.slice(-1)
+    },
+    handleRemove(type) {
+      switch (type) {
+        case 'photo_link':
+          console.log('type')
+          break
+        case 'qr_code':
+          console.log('type')
+          break
+        default:
+          break
+      }
+    },
+    handlePreview(type) {
+      switch (type) {
+        case 'photo_link':
+          console.log('type')
+          break
+        case 'qr_code':
+          console.log('type')
+          break
+        default:
+          break
+      }
     },
     submitForm(formName) {
+      if (this.photo_link_list.length > 0) {
+        this.form.photo_link = this.photo_link_list[0].raw
+      }
+      if (this.qr_code_list.length > 0) {
+        this.form.qr_code = this.qr_code_list[0].raw
+      }
+
+      console.log(this.form)
+
       this.$refs[formName].validate((valid) => {
         if (valid) {
           alert('submit!')
