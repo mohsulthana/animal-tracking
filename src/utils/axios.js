@@ -4,7 +4,8 @@ import { Message } from 'element-ui'
 import store from '@/store/index'
 import router from '@/router'
 
-const devInstance = createInstance('http://localhost:8000')
+const host = process.env.VUE_APP_API_URL
+const devInstance = createInstance(host)
 
 function createInstance(baseURL) {
   const service = axios.create({
