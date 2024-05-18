@@ -51,11 +51,6 @@ export default {
 
                 // clear store to pull in firestore data and establish snapshot listener
                 // that.$store.state.tagsView.visitedViews = []
-                that.$store.state.data.footages = []
-                that.$store.state.data.animals = []
-                that.$store.state.data.animalcategories = []
-                that.$store.state.data.genders = []
-                that.$store.state.data.users = []
 
                 // load users
                 firestore.collection('users').onSnapshot(function(snapshot) {

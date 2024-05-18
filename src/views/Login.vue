@@ -22,8 +22,8 @@
 </template>
 
 <script>
-import { auth } from '../dashboard/admin/components/Config/firebase'
-import { firestore } from '../dashboard/admin/components/Config/firebase'
+import { auth } from './dashboard/admin/components/Config/firebase'
+import { firestore } from './dashboard/admin/components/Config/firebase'
 import { validEmail } from '@/utils/validate'
 
 export default {
@@ -90,24 +90,12 @@ export default {
       immediate: true
     }
   },
-  created() {
-
-    // window.addEventListener('storage', this.afterQRScan)
-  },
   mounted() {
-    /* this.$store.state.data.firstanimalsnapshot = 1
-    this.$store.state.data.firstanimalcategoriessnapshot = 1
-    this.$store.state.data.firstfootagesnapshot = 1
-    this.$store.state.data.firstgenderssnapshot = 1
-    this.$store.state.data.firstusersnapshot = 1*/
     if (this.loginForm.username === '') {
       this.$refs.username.focus()
     } else if (this.loginForm.password === '') {
       this.$refs.password.focus()
     }
-  },
-  destroyed() {
-    // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
     checkCapslock(e) {

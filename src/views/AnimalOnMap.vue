@@ -1199,8 +1199,7 @@ export default {
         if (mapObjects[i] instanceof H.map.Marker) {
           this.map.removeObject(mapObjects[i])
         }
-      } // console.log("remove markers")
-      // this.map.removeObjects(this.map.getObjects)
+      }
     },
 
     animationmarkers() {

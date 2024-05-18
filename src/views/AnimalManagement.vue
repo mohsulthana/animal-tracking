@@ -480,14 +480,14 @@ export default {
   watch: {
     count: function() {
       this.$nextTick(function() {
-        var container = this.$refs.tablearea
+        const container = this.$refs.tablearea
         container.scrollTop = container.scrollHeight + 120
       })
     }
   },
 
   created() {
-    var today = new Date()
+    const today = new Date()
     this.createddate =
       '' +
       today.getFullYear() +
@@ -504,12 +504,6 @@ export default {
     this.fetchAnimalData()
     this.fetchAnimalGender()
     this.fetchAnimalCategories()
-  },
-
-  function() {
-    return {
-      items: []
-    }
   },
 
   methods: {
