@@ -32,20 +32,30 @@
                 </template>
               </el-table-column>
               <el-table-column prop="photo_link" label="Photo Link">
-                <template slot-scope="scope">
+                <template v-if="scope.row.photo_link !== null" slot-scope="scope">
+                  <FsLightBox
+                    :toggler="toggler"
+                    :sources="[
+                      'https://i.imgur.com/fsyrScY.jpg'
+                    ]"
+                  />
                   <img
                     :src="scope.row.photo_link"
                     :height="200"
                     width="100%"
                     :alt="scope.row.alias"
-                    style="object-fit: contain"
+                    style="object-fit: contain; cursor: pointer;"
+                    @click="toggler = true"
                   >
+                </template>
+                <template v-else>
+                  <el-empty description="Empty image" />
                 </template>
               </el-table-column>
               <el-table-column prop="alias" label="Alias" />
               <el-table-column prop="ip" label="IP" />
               <el-table-column prop="qrcode" label="QR Code">
-                <template slot-scope="scope">
+                <template v-if="scope.row.qr_code !== null" slot-scope="scope">
                   <FsLightBox
                     :toggler="toggler"
                     :sources="[
@@ -548,11 +558,10 @@ export default {
         this.form.qr_code = this.qr_code_list[0].raw
       }
 
-      console.log(this.form)
-
-      this.$refs[formName].validate((valid) => {
+      this.$refs[formName].validate(async(valid) => {
         if (valid) {
-          alert('submit!')
+          const request = await this.$http.post('api/users', this.form)
+          console.log(request)
         } else {
           console.log('error submit!!')
           return false

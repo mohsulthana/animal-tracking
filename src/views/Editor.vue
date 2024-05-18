@@ -3,17 +3,15 @@
 
     <panel-group @handleSetLineChartData="handleSetLineChartData" @handleSetPieChartData="handleSetPieChartData" />
 
-    <el-row>
-      <el-col>
-        <el-card class="box-card">
-          <AnimalGenderChart :data="animalStatisticData" />
+    <el-row :gutter="12">
+      <el-col span="12">
+        <el-card>
+          <AnimalGenderChart v-if="animalStatisticData.labels.length" :data="animalStatisticData" />
+          <el-empty v-else description="Empty category data" />
         </el-card>
-        <div class="chart-wrapper" />
       </el-col>
-    </el-row>
-    <el-row>
-      <el-col>
-        <el-card class="box-card">
+      <el-col span="12">
+        <el-card>
           <el-radio-group v-model="selected">
             <el-radio-button :label="1">7 Days</el-radio-button>
             <el-radio-button :label="2">1 Month </el-radio-button>

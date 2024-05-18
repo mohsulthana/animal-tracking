@@ -327,11 +327,7 @@ export default {
             that.loading = false
             return false
           })
-      } else {
-        console.log('App.vue: got store but not yet loged in')
       }
-    } else {
-      console.log('App.vue: not yet loged in')
     }
 
     // Save the store to sessionStorage when the page is refreshed
