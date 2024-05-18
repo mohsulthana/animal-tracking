@@ -32,44 +32,51 @@
                 </template>
               </el-table-column>
               <el-table-column prop="photo_link" label="Photo Link">
-                <template v-if="scope.row.photo_link !== null" slot-scope="scope">
-                  <FsLightBox
-                    :toggler="toggler"
-                    :sources="[
-                      'https://i.imgur.com/fsyrScY.jpg'
-                    ]"
-                  />
-                  <img
-                    :src="scope.row.photo_link"
-                    :height="200"
-                    width="100%"
-                    :alt="scope.row.alias"
-                    style="object-fit: contain; cursor: pointer;"
-                    @click="toggler = true"
-                  >
-                </template>
-                <template v-else>
-                  <el-empty description="Empty image" />
+                <template slot-scope="scope">
+                  <div v-if="scope.row.photo_link">
+                    <FsLightBox
+                      :toggler="photolinkToggler"
+                      :sources="[
+                        'https://i.imgur.com/fsyrScY.jpg'
+                      ]"
+                    />
+                    <img
+                      :src="scope.row.photo_link"
+                      :height="200"
+                      width="100%"
+                      :alt="scope.row.alias"
+                      style="object-fit: contain; cursor: pointer;"
+                      @click="photolinkToggler = true"
+                    >
+                  </div>
+                  <div v-else>
+                    Empty image
+                  </div>
                 </template>
               </el-table-column>
               <el-table-column prop="alias" label="Alias" />
               <el-table-column prop="ip" label="IP" />
               <el-table-column prop="qrcode" label="QR Code">
-                <template v-if="scope.row.qr_code !== null" slot-scope="scope">
-                  <FsLightBox
-                    :toggler="toggler"
-                    :sources="[
-                      'https://i.imgur.com/fsyrScY.jpg'
-                    ]"
-                  />
-                  <img
-                    :src="scope.row.qr_code"
-                    :height="200"
-                    width="100%"
-                    :alt="scope.row.alias"
-                    style="object-fit: contain; cursor: pointer;"
-                    @click="toggler = true"
-                  >
+                <template slot-scope="scope">
+                  <div v-if="scope.row.qr_code">
+                    <FsLightBox
+                      :toggler="qrCodeToggler"
+                      :sources="[
+                        'https://i.imgur.com/fsyrScY.jpg'
+                      ]"
+                    />
+                    <img
+                      :src="scope.row.qr_code"
+                      :height="200"
+                      width="100%"
+                      :alt="scope.row.alias"
+                      style="object-fit: contain; cursor: pointer;"
+                      @click="qrCodeToggler = true"
+                    >
+                  </div>
+                  <div v-else>
+                    Empty image
+                  </div>
                 </template>
               </el-table-column>
               <el-table-column prop="updated_at" label="Updated At">
@@ -396,7 +403,8 @@ export default {
     const searchmode = 'MutipleSearch'
 
     return {
-      toggler: false,
+      qrCodeToggler: false,
+      photolinkToggle: false,
       alias: '',
       animaloptions: [
         { text: 'Goat', value: 'Goat' },
@@ -568,7 +576,7 @@ export default {
         }
       })
     },
-    openDeleteConfirmationModal() {
+    openDeleteConfirmationModal(id) {
       const h = this.$createElement
 
       this.$msgbox({
@@ -582,26 +590,28 @@ export default {
         cancelButtonText: 'Cancel',
         beforeClose: async(action, instance, done) => {
           if (action === 'confirm') {
-            const { data } = await this.$http.delete('api/animals')
-            console.log(data)
-
             instance.confirmButtonLoading = true
             instance.confirmButtonText = 'Loading...'
-            setTimeout(() => {
-              done()
-              setTimeout(() => {
-                instance.confirmButtonLoading = false
-              }, 300)
-            }, 3000)
-          } else {
-            done()
+
+            const request = await this.$http.delete(`api/animals/${id}`)
+
+            if (request.status === 200) {
+              const index = this.animals.findIndex(obj => obj.id === id)
+              this.animals.splice(index, 1)
+              this.$message({
+                type: 'success',
+                message: 'Animal deleted'
+              })
+            } else {
+              this.$message({
+                type: 'error',
+                message: 'Please try again'
+              })
+            }
           }
+          done()
+          instance.confirmButtonLoading = false
         }
-      }).then(action => {
-        this.$message({
-          type: 'info',
-          message: 'action: ' + action
-        })
       })
     },
     async fetchAnimalData() {

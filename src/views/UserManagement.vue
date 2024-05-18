@@ -53,14 +53,14 @@
                     icon="el-icon-delete"
                     plain
                     circle
-                    @click="openDeleteConfirmationModal"
+                    @click="openDeleteConfirmationModal(scope.row.id)"
                   />
                 </template>
               </el-table-column>
               <el-table-column
                 align="right"
               >
-                <template slot="header" slot-scope="scope">
+                <template slot="header">
                   <el-input
                     v-model="search"
                     placeholder="Type to search by email or name"
@@ -152,7 +152,7 @@ export default {
   },
 
   methods: {
-    openDeleteConfirmationModal() {
+    openDeleteConfirmationModal(id) {
       const h = this.$createElement
 
       this.$msgbox({
@@ -166,26 +166,28 @@ export default {
         cancelButtonText: 'Cancel',
         beforeClose: async(action, instance, done) => {
           if (action === 'confirm') {
-            const { data } = await this.$http.delete('api/users')
-            console.log(data)
-
             instance.confirmButtonLoading = true
             instance.confirmButtonText = 'Loading...'
-            setTimeout(() => {
-              done()
-              setTimeout(() => {
-                instance.confirmButtonLoading = false
-              }, 300)
-            }, 3000)
-          } else {
-            done()
+
+            const request = await this.$http.delete(`api/users/${id}`)
+
+            if (request.status === 200) {
+              const index = this.users.findIndex(obj => obj.id === id)
+              this.users.splice(index, 1)
+              this.$message({
+                type: 'success',
+                message: 'User deleted'
+              })
+            } else {
+              this.$message({
+                type: 'error',
+                message: 'Please try again'
+              })
+            }
           }
+          done()
+          instance.confirmButtonLoading = false
         }
-      }).then(action => {
-        this.$message({
-          type: 'info',
-          message: 'action: ' + action
-        })
       })
     },
     submitForm(formName) {
@@ -220,6 +222,7 @@ export default {
       const { data } = await this.$http.get('api/users')
       data.users.data.forEach((value) => {
         this.users.push({
+          id: value.id,
           email: value.email,
           first_name: value.firstname,
           surname: value.surname,
