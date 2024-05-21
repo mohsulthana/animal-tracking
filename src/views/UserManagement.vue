@@ -193,7 +193,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(async(valid) => {
         if (valid) {
-          const request = await this.$http.post('api/users', this.form)
+          const request = await this.$http.post('users', this.form)
 
           if (request.status === 201) {
             alert('Success')
@@ -210,7 +210,7 @@ export default {
       })
     },
     async fetchRole() {
-      const { data } = await this.$http.get('api/role')
+      const { data } = await this.$http.get('role')
       data.data.data.forEach((value) => {
         this.role.push({
           id: value.id,
@@ -219,7 +219,7 @@ export default {
       })
     },
     async fetchUsers() {
-      const { data } = await this.$http.get('api/users')
+      const { data } = await this.$http.get('users')
       data.users.data.forEach((value) => {
         this.users.push({
           id: value.id,

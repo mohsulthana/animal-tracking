@@ -568,7 +568,7 @@ export default {
 
       this.$refs[formName].validate(async(valid) => {
         if (valid) {
-          const request = await this.$http.post('api/users', this.form)
+          const request = await this.$http.post('users', this.form)
           console.log(request)
         } else {
           console.log('error submit!!')
@@ -615,7 +615,7 @@ export default {
       })
     },
     async fetchAnimalData() {
-      const { data } = await this.$http.get('api/animals')
+      const { data } = await this.$http.get('animals')
       data.animals.data.forEach((value) => {
         this.animals.push({
           alias: value.alias,
@@ -633,7 +633,7 @@ export default {
     },
 
     async fetchAnimalCategories() {
-      const { data } = await this.$http.get('api/categories')
+      const { data } = await this.$http.get('categories')
       data.data.data.forEach((value) => {
         this.animalcategories.push({
           id: value.id,
@@ -644,7 +644,7 @@ export default {
     },
 
     async fetchAnimalGender() {
-      const { data } = await this.$http.get('api/gender')
+      const { data } = await this.$http.get('gender')
       data.data.data.forEach((value) => {
         this.genders.push({
           id: value.GID,

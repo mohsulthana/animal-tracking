@@ -83,7 +83,7 @@ export default {
         { lat: -25.735944, lng: 28.160767 },
         { lat: -25.73546, lng: 28.160824 },
         { lat: -25.734944, lng: 28.160698 }
-      ], // [{lat: -26.555104, lng: 20.302489}, {lat: -26.520111, lng: 20.221591}, {lat: -26.540428, lng: 20.213576}, {lat: -26.574163, lng: 20.289141}],
+      ],
       farmbounderies: null,
       platform: null,
       lat: '-25.735411', // "-26.54",
@@ -107,19 +107,8 @@ export default {
       SheepIconYellow: null,
       animalsSelected: [],
       uplinkMessages: []
-      // You can get the API KEY from developer.here.com
     }
   },
-
-  /* watch: {
-    markers: {
-      deep: true,
-      handler(val) {
-        this.map.removeObjects(this.map.getObjects())
-        this.map.addObject(this.markers)
-      }
-    }
-  },*/
 
   async mounted() {
     // Initialize the platform object:
@@ -129,32 +118,19 @@ export default {
     this.markers = []
     await this.fetchUplinkMessages()
     this.initializeHereMap()
-
-    // this.logContainer = document.createElement('ul');
-    // this.logContainer.className ='log';
-    // this.logContainer.innerHTML = '<li class="log-entry">Try clicking on the map</li>';
-    // this.map.getElement().appendChild(this.logContainer);
     this.setUpClickListener(this.map)
-    // this.createResizablePolygon(this.map)
     this.createFarmBoundaryPolygon(this.map)
-    // this.addMarkersAndSetViewBounds(this.map);
-    // this.addMarkersToMap(this.map)
-    // this.addfakefootage()
-    this.addMarkersfromVueXStore(this.map, this.animalcategories)
-    // this.connectmarkers(this.map)
-
-    // this.createDraggableShapes(this.map)
 
     this.fetchAnimalCategories()
   },
   methods: {
     async fetchUplinkMessages() {
-      const { data } = await this.$http.get('api/uplink-message')
+      const { data } = await this.$http.get('uplink-message')
       this.uplinkMessages = data.data
     },
 
     async fetchAnimalCategories() {
-      const { data } = await this.$http.get('api/categories')
+      const { data } = await this.$http.get('categories')
       data.data.data.forEach((value) => {
         this.animalcategories.push({
           id: value.id,

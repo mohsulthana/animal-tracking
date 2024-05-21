@@ -653,7 +653,7 @@ export default {
     },
 
     async fetchAnimalGender() {
-      const { data } = await this.$http.get('api/gender')
+      const { data } = await this.$http.get('gender')
       data.data.data.forEach((value) => {
         this.gender.push({
           id: value.GID,
@@ -663,7 +663,7 @@ export default {
     },
 
     async fetchAnimalCategories() {
-      const { data } = await this.$http.get('api/categories')
+      const { data } = await this.$http.get('categories')
       data.data.data.forEach((value) => {
         this.animalcategories.push({
           id: value.id,
@@ -673,7 +673,7 @@ export default {
     },
 
     async fetchAnimalData() {
-      const { data } = await this.$http.get('api/animals')
+      const { data } = await this.$http.get('animals')
       data.data.data.forEach((value) => {
         this.animals.push({
           alias: value.alias,

@@ -115,7 +115,7 @@ export default {
     async handleLogin() {
       this.loading = true
 
-      await this.$http.post('api/login', this.loginForm)
+      await this.$http.post('login', this.loginForm)
         .then((response) => {
           const token = response.data.access_token
           this.$store.dispatch('auth/setToken', token)
