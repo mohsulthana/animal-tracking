@@ -13,12 +13,6 @@
         {{ tag.meta.title }}
       </router-link>
     </scroll-pane>
-    <!-- <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
-      <li @click="refreshSelectedTag(selectedTag)">Refresh</li>
-      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">Close</li>
-      <li @click="closeOthersTags">Close Others</li>
-      <li @click="closeAllTags(selectedTag)">Close All</li>
-    </ul> -->
   </div>
 </template>
 
@@ -64,7 +58,7 @@ export default {
   },
   methods: {
     isActive(route) {
-      return route.path === this.$route.path
+      return route.meta.title === this.$route.meta.title
     },
     isAffix(tag) {
       return tag.meta && tag.meta.affix

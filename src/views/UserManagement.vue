@@ -42,12 +42,12 @@
               </el-table-column>
               <el-table-column prop="action" label="Action">
                 <template slot-scope="scope">
-                  <el-button
+                  <!-- <el-button
                     type="primary"
                     icon="el-icon-edit"
                     plain
                     circle
-                  />
+                  /> -->
                   <el-button
                     type="danger"
                     icon="el-icon-delete"
