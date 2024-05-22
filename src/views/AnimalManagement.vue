@@ -24,6 +24,7 @@
           </div>
           <div class="px-4">
             <el-table :data="animals" style="width: 100%">
+              <el-table-column prop="name" label="Name" />
               <el-table-column prop="category" label="Category" />
               <el-table-column prop="gender" label="Gender" />
               <el-table-column prop="month_age" label="Age">
@@ -304,8 +305,11 @@
         <el-form-item label="Alias" prop="alias">
           <el-input v-model="form.alias" />
         </el-form-item>
-        <el-form-item label="Age (in months)" prop="age">
-          <el-input v-model.number="form.age" />
+        <el-form-item label="Name" prop="name">
+          <el-input v-model="form.name" />
+        </el-form-item>
+        <el-form-item label="Age (in months)" prop="month_age">
+          <el-input v-model.number="form.month_age" />
         </el-form-item>
         <el-form-item label="Category" prop="category">
           <el-select v-model="form.category_id" placeholder="Select category" style="width: 100%;">
@@ -384,9 +388,10 @@ import { IconsPlugin } from 'bootstrap-vue'
 import VueExcelXlsx from 'vue-excel-xlsx'
 import { formatDate } from '@/helpers/time'
 import FsLightBox from 'fslightbox-vue'
-// Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
 Vue.use(VueExcelXlsx)
+import { Message } from 'element-ui'
+
 export default {
   name: 'AnimalRecordManage',
   components: { FsLightBox },
@@ -461,18 +466,22 @@ export default {
       isSearchByQRCodeDialogVisible: false,
       isRegisterAnimalModalVisible: false,
       form: {
+        name: '',
         alias: '',
-        age: '',
+        month_age: '',
         GID: '',
         category_id: '',
         qr_code: null,
         photo_link: null
       },
       rules: {
+        name: [
+          { required: true, message: 'Please input name', trigger: 'blur' }
+        ],
         alias: [
           { required: true, message: 'Please input alias', trigger: 'blur' }
         ],
-        age: [
+        month_age: [
           { required: true, message: 'Please input age', trigger: 'change' },
           { type: 'number', message: 'Age must be a number', trigger: 'change' }
         ],
@@ -491,7 +500,6 @@ export default {
       },
       qr_code_list: [],
       photo_link_list: []
-      // foods: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
     }
   },
 
@@ -568,8 +576,15 @@ export default {
 
       this.$refs[formName].validate(async(valid) => {
         if (valid) {
-          const request = await this.$http.post('users', this.form)
-          console.log(request)
+          await this.$http.post('animals', this.form)
+          this.isRegisterAnimalModalVisible = false
+          Message({
+            message: 'Animal has been added',
+            type: 'success',
+            duration: 5 * 1000
+          })
+          this.animals = []
+          this.fetchAnimalData()
         } else {
           console.log('error submit!!')
           return false
@@ -618,6 +633,7 @@ export default {
       const { data } = await this.$http.get('animals')
       data.animals.data.forEach((value) => {
         this.animals.push({
+          name: value.name,
           alias: value.alias,
           category: value.category,
           created_at: value.created_at,
