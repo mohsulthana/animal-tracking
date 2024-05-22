@@ -104,13 +104,13 @@ export default {
     },
     async fetchFootageChart() {
       const { data } = await this.$http.get('footage-chart')
-      this.lineChartData.data = data.data.data.map((chart) => chart.total)
+      // this.lineChartData.data.push(data.data)
+      data.data.forEach(footage => {
+        this.lineChartData.data.push(footage)
+      })
     },
     handleSetLineChartData(type) {
-      this.lineChartData = {
-        type: type,
-        data: this.$store.getters.categoryfootage
-      }
+      this.lineChartData.type = type
     },
 
     handleSetPieChartData(type) {

@@ -81,7 +81,6 @@ export default {
 
           ]
           data.forEach(d => {
-            console.log(data)
             var color = '#' + (Math.random() * 0xFFFFFF << 0).toString(16)
             series.push({
               name: d.categoryname,
