@@ -104,7 +104,6 @@ export default {
     },
     async fetchFootageChart() {
       const { data } = await this.$http.get('footage-chart')
-      // this.lineChartData.data.push(data.data)
       data.data.forEach(footage => {
         this.lineChartData.data.push(footage)
       })
