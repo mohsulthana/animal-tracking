@@ -198,11 +198,9 @@ export default {
     },
 
     initializeHereMap() {
-      // rendering map
       const mapContainer = this.$refs.hereMap
       const H = window.H
       this.center = { lat: this.lat, lng: this.lng }
-      // Obtain the default map types from the platform object
       this.defaultLayers = this.platform.createDefaultLayers()
 
       // Instantiate (and display) a map object:
@@ -222,45 +220,44 @@ export default {
           style: { fillColor: 'rgba(0, 100, 0, .3)', lineWidth: 0 }
         }
       )
+
       addEventListener('resize', () => this.map.getViewPort().resize())
 
       // add behavior control
       new H.mapevents.Behavior(new H.mapevents.MapEvents(this.map))
 
-      // this.map.getPositionIndicator().setVisible(true);
-      // add UI
-      this.ui = H.ui.UI.createDefault(this.map, this.defaultLayers)
-
-      var group = new H.map.Group()
-
-      this.map.addObject(group)
-
-      group.addEventListener(
-        'tap',
-        function(evt) {
-          var bubble = this.ui.InfoBubble(evt.target.getGeometry(), {
-            content: evt.target.getData()
-          })
-          this.ui.addBubble(bubble)
-        },
-        false
-      )
-
       this.uplinkMessages.forEach((uplink) => {
         if (uplink.MessageMode === 'GPS_OK') {
-          const marker = new H.map.Marker({
-            lat: uplink.Var1,
-            lng: uplink.Var2
-          })
-          this.map.addObject(marker)
-
-          this.addMarkerToGroup(
-            group,
-            { lat: uplink.Var1, lng: uplink.Var2 },
-            `<div>Animal information: ${uplink.AnimalID}</div>`
-          )
+          this.addInfoBubble(this.map, uplink)
         }
       })
+    },
+
+    addInfoBubble(map, animal) {
+      console.log(animal)
+      var group = new H.map.Group()
+
+      map.addObject(group)
+
+      var defaultLayers = this.platform.createDefaultLayers()
+      var ui = H.ui.UI.createDefault(map, defaultLayers)
+
+      // add 'tap' event listener, that opens info bubble, to the group
+      group.addEventListener('tap', function(evt) {
+        var bubble = new H.ui.InfoBubble(evt.target.getGeometry(), {
+          content: evt.target.getData()
+        })
+
+        ui.addBubble(bubble)
+      }, false)
+
+      this.addMarkerToGroup(group, { lat: animal.Var1, lng: animal.Var2 },
+        `
+          <div>
+            ${animal.AnimalID}
+          </div>
+        `
+      )
     },
 
     addMarkerToGroup(group, coordinate, html) {
@@ -332,7 +329,7 @@ export default {
       var that = this
       var animalIn = 1
       that.markersfiltered = false
-      console.log(categories)
+
       categories.forEach((c) => {
         animalIn = 1
         this.$store.state.data.animals
