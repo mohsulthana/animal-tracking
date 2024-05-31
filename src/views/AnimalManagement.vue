@@ -409,7 +409,7 @@ export default {
 
     return {
       qrCodeToggler: false,
-      photolinkToggle: false,
+      photolinkToggler: false,
       alias: '',
       animaloptions: [
         { text: 'Goat', value: 'Goat' },

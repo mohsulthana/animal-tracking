@@ -53,8 +53,8 @@ export default {
     }
   },
   mounted() {
-    this.initTags()
-    this.addTags()
+    // this.initTags()
+    // this.addTags()
   },
   methods: {
     isActive(route) {
@@ -65,7 +65,7 @@ export default {
     },
     filterAffixTags(routes, basePath = '/') {
       let tags = []
-      routes.forEach(route => {
+      routes?.forEach(route => {
         if (route.meta && route.meta.affix) {
           const tagPath = path.resolve(basePath, route.path)
           tags.push({
@@ -85,7 +85,7 @@ export default {
       return tags
     },
     initTags() {
-      const affixTags = this.affixTags = this.filterAffixTags(this.routes)
+      const affixTags = this.affixTags = this.filterAffixTags(this.route)
       for (const tag of affixTags) {
         // Must have tag name
         if (tag.name) {
