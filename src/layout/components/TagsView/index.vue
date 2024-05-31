@@ -42,7 +42,7 @@ export default {
   watch: {
     $route() {
       // this.addTags()
-      this.moveToCurrentTag()
+      // this.moveToCurrentTag()
     },
     visible(value) {
       if (value) {
