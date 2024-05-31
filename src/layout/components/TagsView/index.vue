@@ -2,7 +2,7 @@
   <div id="tags-view-container" class="tags-view-container">
     <scroll-pane ref="scrollPane" class="tags-view-wrapper" @scroll="handleScroll">
       <router-link
-        v-for="tag in $router.options.routes[0].children"
+        v-for="tag in $router?.options?.routes[0].children"
         ref="tag"
         :key="tag.path"
         :class="isActive(tag)?'active':''"
@@ -41,7 +41,7 @@ export default {
   },
   watch: {
     $route() {
-      this.addTags()
+      // this.addTags()
       this.moveToCurrentTag()
     },
     visible(value) {
