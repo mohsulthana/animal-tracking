@@ -2,14 +2,13 @@
   <div class="dashboard-editor-container">
     <panel-group
       @handleSetLineChartData="handleSetLineChartData"
-      @handleSetPieChartData="handleSetPieChartData"
     />
 
     <el-row :gutter="12">
       <el-col span="12">
         <el-card>
           <AnimalGenderChart
-            v-if="animalStatisticData.labels.length"
+            v-if="animalStatisticData.labels?.length"
             :data="animalStatisticData"
           />
           <el-empty v-else description="Empty animal data" />
@@ -110,34 +109,34 @@ export default {
     },
     handleSetLineChartData(type) {
       this.lineChartData.type = type
-    },
-
-    handleSetPieChartData(type) {
-      var AdultMaleCount = 0
-      var AdultFemaleCount = 0
-      var YoungMaleCount = 0
-      var YoungFemaleCount = 0
-
-      AdultMaleCount = this.$store.getters.animals.filter(
-        (a) => a.category === type && a.monthage >= 12 && a.gender === 'M'
-      ).length
-      AdultFemaleCount = this.$store.getters.animals.filter(
-        (a) => a.category === type && a.monthage >= 12 && a.gender === 'F'
-      ).length
-      YoungMaleCount = this.$store.getters.animals.filter(
-        (a) => a.category === type && a.monthage < 12 && a.gender === 'M'
-      ).length
-      YoungFemaleCount = this.$store.getters.animals.filter(
-        (a) => a.category === type && a.monthage < 12 && a.gender === 'F'
-      ).length
-
-      this.pieChartData = {
-        AdultMaleCount: AdultMaleCount,
-        AdultFemaleCount: AdultFemaleCount,
-        YoungMaleCount: YoungMaleCount,
-        YoungFemaleCount: YoungFemaleCount
-      }
     }
+
+    // handleSetPieChartData(type) {
+    //   var AdultMaleCount = 0
+    //   var AdultFemaleCount = 0
+    //   var YoungMaleCount = 0
+    //   var YoungFemaleCount = 0
+
+    //   AdultMaleCount = this.$store.getters.animals.filter(
+    //     (a) => a.category === type && a.monthage >= 12 && a.gender === 'M'
+    //   ).length
+    //   AdultFemaleCount = this.$store.getters.animals.filter(
+    //     (a) => a.category === type && a.monthage >= 12 && a.gender === 'F'
+    //   ).length
+    //   YoungMaleCount = this.$store.getters.animals.filter(
+    //     (a) => a.category === type && a.monthage < 12 && a.gender === 'M'
+    //   ).length
+    //   YoungFemaleCount = this.$store.getters.animals.filter(
+    //     (a) => a.category === type && a.monthage < 12 && a.gender === 'F'
+    //   ).length
+
+    //   this.pieChartData = {
+    //     AdultMaleCount: AdultMaleCount,
+    //     AdultFemaleCount: AdultFemaleCount,
+    //     YoungMaleCount: YoungMaleCount,
+    //     YoungFemaleCount: YoungFemaleCount
+    //   }
+    // }
   }
 }
 </script>
