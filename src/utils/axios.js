@@ -1,7 +1,7 @@
 import axios from 'axios'
 import Vue from 'vue'
 import { Message } from 'element-ui'
-import store from '@/store/index'
+import store from '../store/index'
 import router from '@/router'
 
 const host = process.env.VUE_APP_API_URL

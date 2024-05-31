@@ -65,6 +65,7 @@ export default {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
+      await this.$http.post('logout')
       await this.$store.dispatch('auth/logout')
       this.$router.push({ name: 'login' })
     }

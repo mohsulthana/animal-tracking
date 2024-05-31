@@ -608,7 +608,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = 'Loading...'
 
-            const request = await this.$http.delete(`api/animals/${id}`)
+            const request = await this.$http.delete(`animals/${id}`)
 
             if (request.status === 200) {
               const index = this.animals.findIndex(obj => obj.id === id)
