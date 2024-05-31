@@ -106,11 +106,13 @@ export default {
       SheepIconGreen: null,
       SheepIconYellow: null,
       animalsSelected: [],
-      uplinkMessages: []
+      uplinkMessages: [],
+      mapRef: null
     }
   },
 
   async mounted() {
+    this.mapRef = this.$refs.hereMap
     // Initialize the platform object:
     this.platform = new window.H.service.Platform({
       apikey: this.apikey
@@ -198,7 +200,7 @@ export default {
     },
 
     initializeHereMap() {
-      const mapContainer = this.$refs.hereMap
+      const mapContainer = this.mapRef
       const H = window.H
       this.center = { lat: this.lat, lng: this.lng }
       this.defaultLayers = this.platform.createDefaultLayers()
