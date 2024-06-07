@@ -83,9 +83,21 @@ export const routes = [
       {
         path: '/categories',
         name: 'categories',
-        component: () => import('@/views/Categories'),
+        component: () => import('@/views/CategoriesManagement'),
         meta: {
           title: 'Categories',
+          roles: ['admin'],
+          icon: 'UserManage',
+          affix: true,
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/gender',
+        name: 'gender',
+        component: () => import('@/views/GenderManagement'),
+        meta: {
+          title: 'Gender',
           roles: ['admin'],
           icon: 'UserManage',
           affix: true,
