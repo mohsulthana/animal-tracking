@@ -20,9 +20,7 @@ function createInstance(baseURL) {
     response => {
       const { status } = response
 
-      if (status === 200) {
-        return response
-      }
+      return response
     },
     error => {
       if (error?.response?.status === 401) {

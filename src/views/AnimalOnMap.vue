@@ -6,7 +6,8 @@
           <div slot="header" class="d-flex justify-content-between">
             <h5>Animals on map</h5>
           </div>
-          <div class="px-4">
+          <div class="px-4 text-left">
+            <p>Select category below</p>
             <el-select
               v-model="animalsSelected"
               multiple
@@ -132,8 +133,8 @@ export default {
     },
 
     async fetchAnimalCategories() {
-      const { data } = await this.$http.get('categories')
-      data.data.data.forEach((value) => {
+      const { data } = await this.$http.get('category')
+      data.category.data.forEach((value) => {
         this.animalcategories.push({
           id: value.id,
           name: value.name,

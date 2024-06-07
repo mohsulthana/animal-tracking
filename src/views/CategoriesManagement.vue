@@ -136,16 +136,24 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(async(valid) => {
         if (valid) {
-          const request = await this.$http.post('category', this.form)
+          await this.$http.post('category', this.form)
+            .then((response) => {
+              if (response.status === 201) {
+                this.$message({
+                  type: 'success',
+                  message: 'Category added'
+                })
 
-          if (request.status === 201) {
-            alert('Success')
-          } else {
-            alert('Not success')
-          }
-
-          this.isDialogNewCategoryVisible = false
-          this.$refs[formName].resetFields()
+                this.isDialogNewCategoryVisible = false
+                this.$refs[formName].resetFields()
+                this.fetchCategory()
+              } else {
+                this.$message({
+                  type: 'error',
+                  message: 'Please try again'
+                })
+              }
+            })
         } else {
           console.log('error submit!!')
           return false
@@ -153,6 +161,7 @@ export default {
       })
     },
     async fetchCategory() {
+      this.category = []
       const { data } = await this.$http.get('category')
       data.category.data.forEach((value) => {
         this.category.push(value)
