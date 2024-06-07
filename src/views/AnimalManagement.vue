@@ -147,44 +147,8 @@
     </el-dialog>
 
     <!-- Search by QR Code dialog -->
-    <el-dialog :visible.sync="isScanAnimalModalVisible">
-      <div id="app" class="web-camera-container" style="margin-left: auto; margin-right: auto">
-        <div class="camera-button">
-          <el-button :type="isCameraOpen ? 'primary' : 'secondary'" @click="toggleCamera">
-            <span v-if="!isCameraOpen">Open Camera</span>
-            <span v-else>Close Camera</span>
-          </el-button>
-        </div>
-
-        <div v-show="isCameraOpen && isLoading" class="camera-loading">
-          <ul class="loader-circle">
-            <li />
-            <li />
-            <li />
-          </ul>
-        </div>
-
-        <div v-if="isCameraOpen" v-show="!isLoading" class="camera-box" :class="{ 'flash' : isShotPhoto }">
-
-          <div class="camera-shutter" :class="{'flash' : isShotPhoto}" />
-
-          <video v-show="!isPhotoTaken" ref="camera" :width="450" :height="337.5" autoplay />
-
-          <canvas v-show="isPhotoTaken" id="photoTaken" ref="canvas" :width="450" :height="337.5" />
-        </div>
-
-        <div v-if="isCameraOpen && !isLoading" class="camera-shoot">
-          <button type="button" class="button" @click="takePhoto">
-            <img src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png" alt="Photo button">
-          </button>
-        </div>
-
-        <div v-if="isPhotoTaken && isCameraOpen" class="camera-download">
-          <a id="downloadPhoto" download="my-photo.jpg" class="button" role="button" alt="Captured Image" @click="downloadImage">
-            Save Image
-          </a>
-        </div>
-      </div>
+    <el-dialog title="Scan Animal QR Code" :visible.sync="isScanAnimalModalVisible">
+      <qrcode-stream @detect="onDetect" />
     </el-dialog>
 
     <!-- Register animal dialog -->
@@ -276,13 +240,14 @@ import { IconsPlugin } from 'bootstrap-vue'
 import VueExcelXlsx from 'vue-excel-xlsx'
 import { formatDate } from '@/helpers/time'
 import FsLightBox from 'fslightbox-vue'
+import { Message } from 'element-ui'
+
 Vue.use(IconsPlugin)
 Vue.use(VueExcelXlsx)
-import { Message } from 'element-ui'
 
 export default {
   name: 'AnimalRecordManage',
-  components: { FsLightBox },
+  components: { FsLightBox, QrcodeStream, QrcodeDropZone, QrcodeCapture },
 
   data() {
     const options = [
@@ -428,6 +393,14 @@ export default {
   },
 
   methods: {
+    async onDetect(args) {
+      const result = await args
+      const content = result.content
+
+      this.$alert(content, 'Animal Information', {
+        confirmButtonText: 'OK'
+      })
+    },
     takePhoto() {
       if (!this.isPhotoTaken) {
         this.isShotPhoto = true
