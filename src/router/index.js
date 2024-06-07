@@ -79,6 +79,18 @@ export const routes = [
           affix: true,
           requiresAuth: true
         }
+      },
+      {
+        path: '/categories',
+        name: 'categories',
+        component: () => import('@/views/Categories'),
+        meta: {
+          title: 'Categories',
+          roles: ['admin'],
+          icon: 'UserManage',
+          affix: true,
+          requiresAuth: true
+        }
       }
     ]
   },

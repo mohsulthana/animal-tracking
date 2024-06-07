@@ -5,7 +5,7 @@
     />
 
     <el-row :gutter="12">
-      <el-col span="12">
+      <el-col :span="12">
         <el-card>
           <AnimalGenderChart
             v-if="animalStatisticData.labels?.length"
@@ -14,7 +14,7 @@
           <el-empty v-else description="Empty animal data" />
         </el-card>
       </el-col>
-      <el-col span="12">
+      <el-col :span="12">
         <el-card>
           <el-radio-group v-model="selected">
             <el-radio-button :label="1">7 Days</el-radio-button>

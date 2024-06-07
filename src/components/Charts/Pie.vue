@@ -57,8 +57,8 @@ export default {
       default: () => {}
     },
     plugins: {
-      type: Array,
-      default: () => []
+      type: Object,
+      default: () => {}
     },
     chartData: {
       type: Object,

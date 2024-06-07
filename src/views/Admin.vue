@@ -66,9 +66,8 @@ export default {
         cattleNumber: [0, 0, 0, 0, 0, 0, 0],
         bokNumber: [0, 0, 0, 0, 0, 0, 0]
       },
-      lineChartData: { type: 'footagein7days', data: [] },
+      lineChartData: { type: 'footagein7days', data: [] }
 
-      pieChartData: { AdultMaleCount: 10, AdultFemaleCount: 20, YoungMaleCount: 30, YoungFemaleCount: 40 }
       /*
       totalgoat: 0,
       totalbok: 0,
