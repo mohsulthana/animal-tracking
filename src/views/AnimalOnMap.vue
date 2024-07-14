@@ -237,7 +237,6 @@ export default {
     },
 
     addInfoBubble(map, animal) {
-      console.log(animal)
       var group = new H.map.Group()
 
       map.addObject(group)
