@@ -75,7 +75,7 @@
       :visible.sync="isDialogEditGenderVisible"
       width="30%"
     >
-      <el-form ref="edit_gender" :model="selectedGender" :rules="rules" label-width="120px">
+      <el-form ref="edit_gender_form" :model="selectedGender" :rules="rules" label-width="120px">
 
         <el-form-item label="Gender name" prop="name">
           <el-input v-model="selectedGender.name" />
@@ -84,7 +84,7 @@
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="isDialogEditGenderVisible = false">Cancel</el-button>
-        <el-button type="primary" :loading="isButtonLoading" @click="submitEditGenderForm('edit_gender')">Save</el-button>
+        <el-button type="primary" :loading="isButtonLoading" @click="submitEditGenderForm('edit_gender_form')">Save</el-button>
       </span>
     </el-dialog>
   </div>
@@ -175,6 +175,7 @@ export default {
               message: 'Gender updated'
             })
             this.isDialogEditGenderVisible = false
+            this.$refs[formName].resetFields()
             this.fetchGender()
           } else {
             this.$message({

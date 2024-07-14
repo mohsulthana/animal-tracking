@@ -42,7 +42,6 @@
     "js-cookie": "2.2.0",
     "jsonlint": "1.6.3",
     "jszip": "3.2.1",
-    "moment": "^2.29.4",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
     "path-to-regexp": "2.4.0",
@@ -64,7 +63,6 @@
     "vue2-google-maps": "^0.10.7",
     "vue3-qrcode-reader": "^0.0.1",
     "vuedraggable": "2.20.0",
-    "vuefire": "^2.2.5",
     "vuex": "^3.1.0",
     "vuex-persistedstate": "^4.1.0",
     "xlsx": "0.14.1"

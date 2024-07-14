@@ -73,7 +73,7 @@ export const routes = [
         name: 'user-manage',
         component: () => import('@/views/UserManagement'),
         meta: {
-          title: 'User Manage',
+          title: 'User Management',
           roles: ['admin'],
           icon: 'UserManage',
           affix: true,
