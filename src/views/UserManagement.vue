@@ -42,12 +42,13 @@
               </el-table-column>
               <el-table-column prop="action" label="Action">
                 <template slot-scope="scope">
-                  <!-- <el-button
+                  <el-button
                     type="primary"
                     icon="el-icon-edit"
                     plain
                     circle
-                  /> -->
+                    @click="openEditModal(scope.row.id)"
+                  />
                   <el-button
                     type="danger"
                     icon="el-icon-delete"
@@ -73,6 +74,7 @@
       </el-col>
     </el-row>
 
+    <!-- Register user dialog -->
     <el-dialog
       title="Register new User"
       :visible.sync="isDialogRegisterUserVisible"
@@ -106,7 +108,45 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="isDialogRegisterUserVisible = false">Cancel</el-button>
         <el-button @click="resetForm('ruleForm')">Reset</el-button>
-        <el-button type="primary" @click="submitForm('form')">Create</el-button>
+        <el-button type="primary" @click="submitRegisterUserForm('form')">Create</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- Edit user dialog -->
+    <el-dialog
+      title="Edit user"
+      :visible.sync="isEditUserDialogVisible"
+      width="30%"
+    >
+      <el-form ref="edit_user_form" :model="user_detail" :rules="rules" label-width="120px">
+        <el-form-item label="Email address" prop="email">
+          <el-input v-model="user_detail.email" />
+        </el-form-item>
+
+        <el-form-item label="First name" prop="firstname">
+          <el-input v-model="user_detail.firstname" />
+        </el-form-item>
+
+        <el-form-item label="Surname" prop="surname">
+          <el-input v-model="user_detail.surname" />
+        </el-form-item>
+
+        <el-form-item label="Role" prop="role_id">
+          <el-select v-model="user_detail.role_id" placeholder="Select role" style="width: 100%;">
+            <el-option
+              v-for="(item, index) in role"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="isEditUserDialogVisible = false">Cancel</el-button>
+        <el-button @click="resetForm('edit_user_form')">Reset</el-button>
+        <el-button type="primary" @click="submitEditUserForm('edit_user_form')">Create</el-button>
       </span>
     </el-dialog>
   </div>
@@ -119,11 +159,20 @@ export default {
   data: () => {
     return {
       isDialogRegisterUserVisible: false,
+      isEditUserDialogVisible: false,
       form: {
         firstname: '',
         surname: '',
         email: '',
         role_id: ''
+      },
+      user_detail: {
+        email: '',
+        firstname: '',
+        surname: '',
+        role: '',
+        photo: '',
+        password: ''
       },
       search: '',
       users: [],
@@ -152,6 +201,10 @@ export default {
   },
 
   methods: {
+    openEditModal(id) {
+      this.user_detail = this.users.find((user) => user.id === id)
+      this.isEditUserDialogVisible = true
+    },
     openDeleteConfirmationModal(id) {
       const h = this.$createElement
 
@@ -190,7 +243,10 @@ export default {
         }
       })
     },
-    submitForm(formName) {
+    submitEditUserForm(formName) {
+
+    },
+    submitRegisterUserForm(formName) {
       this.$refs[formName].validate(async(valid) => {
         if (valid) {
           const request = await this.$http.post('users', this.form)

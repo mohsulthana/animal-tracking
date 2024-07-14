@@ -23,6 +23,7 @@
                     icon="el-icon-edit"
                     plain
                     circle
+                    @click="openEditModal(scope.row.GID)"
                   />
                   <el-button
                     type="danger"
@@ -49,6 +50,7 @@
       </el-col>
     </el-row>
 
+    <!-- Dialog new gender -->
     <el-dialog
       title="Add new Gender"
       :visible.sync="isDialogNewGenderVisible"
@@ -63,7 +65,26 @@
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="isDialogNewGenderVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="submitForm('form')">Add</el-button>
+        <el-button type="primary" :loading="isButtonLoading" @click="submitCreateGenderForm('form')">Add</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- Dialog edit gender -->
+    <el-dialog
+      title="Edit Gender"
+      :visible.sync="isDialogEditGenderVisible"
+      width="30%"
+    >
+      <el-form ref="edit_gender" :model="selectedGender" :rules="rules" label-width="120px">
+
+        <el-form-item label="Gender name" prop="name">
+          <el-input v-model="selectedGender.name" />
+        </el-form-item>
+      </el-form>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="isDialogEditGenderVisible = false">Cancel</el-button>
+        <el-button type="primary" :loading="isButtonLoading" @click="submitEditGenderForm('edit_gender')">Save</el-button>
       </span>
     </el-dialog>
   </div>
@@ -76,6 +97,8 @@ export default {
   data: () => {
     return {
       isDialogNewGenderVisible: false,
+      isDialogEditGenderVisible: false,
+      isButtonLoading: false,
       form: {
         name: ''
       },
@@ -86,7 +109,8 @@ export default {
         name: [
           { required: true, message: 'Please input Gender Name', trigger: 'blur' }
         ]
-      }
+      },
+      selectedGender: {}
     }
   },
 
@@ -95,6 +119,10 @@ export default {
   },
 
   methods: {
+    openEditModal(id) {
+      this.selectedGender = Object.assign({}, this.gender.find((g) => g.GID === id))
+      this.isDialogEditGenderVisible = true
+    },
     openDeleteConfirmationModal(id) {
       const h = this.$createElement
 
@@ -133,9 +161,35 @@ export default {
         }
       })
     },
-    submitForm(formName) {
+    submitEditGenderForm(formName) {
       this.$refs[formName].validate(async(valid) => {
         if (valid) {
+          this.isButtonLoading = true
+          const request = await this.$http.put(`gender/${this.selectedGender.GID}`, {
+            name: this.selectedGender.name
+          })
+
+          if (request.status === 200) {
+            this.$message({
+              type: 'success',
+              message: 'Gender updated'
+            })
+            this.isDialogEditGenderVisible = false
+            this.fetchGender()
+          } else {
+            this.$message({
+              type: 'error',
+              message: 'Please try again'
+            })
+          }
+          this.isButtonLoading = false
+        }
+      })
+    },
+    submitCreateGenderForm(formName) {
+      this.$refs[formName].validate(async(valid) => {
+        if (valid) {
+          this.isButtonLoading = true
           const request = await this.$http.post('gender', this.form)
 
           if (request.status === 201) {
@@ -150,10 +204,12 @@ export default {
           console.log('error submit!!')
           return false
         }
+        this.isButtonLoading = false
       })
     },
     async fetchGender() {
       const { data } = await this.$http.get('gender')
+      this.gender = []
       data.gender.data.forEach((value) => {
         this.gender.push(value)
       })

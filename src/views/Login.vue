@@ -7,17 +7,45 @@
 
         <p v-if="errorMessage != ''" class="text-danger">{{ errorMessage }}</p>
 
-        <el-form-item>
+        <el-form-item prop="email">
           <el-input v-model="loginForm.email" prefix-icon="el-icon-user" placeholder="Email" />
         </el-form-item>
 
-        <el-form-item>
+        <el-form-item prop="password">
           <el-input v-model="loginForm.password" prefix-icon="el-icon-key" type="password" placeholder="Type your password" />
         </el-form-item>
 
-        <el-button :loading="loading" type="primary" style="width:100%;" size="large" @click.native.prevent="handleLogin">Login</el-button>
+        <el-form-item>
+          <el-button :loading="loginLoading" type="primary" style="width:100%;" size="large" @click="handleLogin('loginForm')">Login</el-button>
+        </el-form-item>
+
+        <div class="pt-4">
+          <el-button size="medium" type="text" @click="registerFormDialog = true">Register user</el-button>
+        </div>
       </el-card>
     </el-form>
+
+    <el-dialog title="Register User" :visible.sync="registerFormDialog">
+      <el-form ref="registerForm" :model="registerForm" :rules="registerRules" autocomplete="on">
+
+        <el-form-item label="Name" :label-width="formLabelWidth" prop="name">
+          <el-input v-model="registerForm.name" autocomplete="off" prefix-icon="el-icon-user" />
+        </el-form-item>
+
+        <el-form-item label="Email" :label-width="formLabelWidth" prop="email">
+          <el-input v-model="registerForm.email" prefix-icon="el-icon-message" />
+        </el-form-item>
+
+        <el-form-item label="Password" :label-width="formLabelWidth" prop="password">
+          <el-input v-model="registerForm.password" prefix-icon="el-icon-key" />
+        </el-form-item>
+      </el-form>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="registerFormDialog = false">Cancel</el-button>
+        <el-button :loading="registerLoading" type="primary" @click.native.prevent="handleRegister('registerForm')">Register</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -29,13 +57,6 @@ import { validEmail } from '@/utils/validate'
 export default {
   name: 'Login',
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validEmail(value)) {
-        callback(new Error('Please enter the correct email'))
-      } else {
-        callback()
-      }
-    }
     const validateEmail = (rule, value, callback) => {
       if (!validEmail(value)) {
         callback(new Error('Please enter the correct email'))
@@ -44,32 +65,39 @@ export default {
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
+      if (value === '') {
+        callback(new Error('Please input the password'))
+      } else if (value.length < 6) {
         callback(new Error('The password can not be less than 6 digits'))
       } else {
         callback()
       }
     }
     return {
+      registerFormDialog: false,
       loginForm: {
         email: 'duc@tut.ac.za',
         password: 'aaaaaa'
       },
+      registerForm: {
+        name: '',
+        email: '',
+        password: ''
+      },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        email: [{ required: true, trigger: 'blur', validator: validateEmail }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
-      RegisterForm: {
-        email: 'duzhuofeng73@gmail.com',
-        password: '111111'
-      },
-      RegisterRules: {
+      registerRules: {
+        name: [{ required: true, trigger: 'blur' }],
         email: [{ required: true, trigger: 'blur', validator: validateEmail }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       passwordType: 'password',
+      formLabelWidth: '120px',
       capsTooltip: false,
-      loading: false,
+      loginLoading: false,
+      registerLoading: false,
       showDialog: false,
       redirect: undefined,
       otherQuery: {},
@@ -90,13 +118,14 @@ export default {
       immediate: true
     }
   },
-  mounted() {
-    if (this.loginForm.username === '') {
-      this.$refs.username.focus()
-    } else if (this.loginForm.password === '') {
-      this.$refs.password.focus()
-    }
-  },
+  // mounted() {
+  //   console.log(this.$refs['loginForm'])
+  //   if (this.loginForm.name === '') {
+  //     this.$refs['loginForm'].name.focus()
+  //   } else if (this.loginForm.password === '') {
+  //     this.$refs['loginForm'].password.focus()
+  //   }
+  // },
   methods: {
     checkCapslock(e) {
       const { key } = e
@@ -112,30 +141,67 @@ export default {
         this.$refs.password.focus()
       })
     },
-    async handleLogin() {
-      this.loading = true
+    handleLogin(formName) {
+      this.$refs[formName].validate(async(valid) => {
+        if (valid) {
+          this.loginLoading = true
 
-      await this.$http.post('login', this.loginForm)
-        .then(async(response) => {
-          const token = response.data.access_token
-          await this.$store.dispatch('auth/setToken', token)
-          // this.$router.push({ name: 'dashboard' })
-          this.$message({
-            message: 'You have successfully authrozied. Directing you to the dashboard',
-            type: 'success'
-          })
+          await this.$http.post('login', this.loginForm)
+            .then(async(response) => {
+              const token = response.data.access_token
+              await this.$store.dispatch('auth/setToken', token)
+              // this.$router.push({ name: 'dashboard' })
+              this.$message({
+                message: 'You have successfully authrozied. Directing you to the dashboard',
+                type: 'success'
+              })
 
-          this.$router.go(0)
+              this.$router.go(0)
 
-          // TODO: Fix routing problem after login
-        })
-        .catch((error) => {
-          const { data } = error
-          this.errorMessage = data.message
-        })
-        .finally(() => {
-          this.loading = false
-        })
+              // TODO: Fix routing problem after login
+            })
+            .catch((error) => {
+              const { data } = error
+              this.errorMessage = data.message
+            })
+            .finally(() => {
+              this.loginLoading = false
+            })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    async handleRegister(formName) {
+      this.$refs[formName].validate(async(valid) => {
+        if (valid) {
+          this.registerLoading = true
+
+          await this.$http.post('register', this.registerForm)
+            .then(async(response) => {
+              if (response.status === 200) {
+                this.$message({
+                  message: 'The user has been registered. Now you\'re required to login.',
+                  type: 'success'
+                })
+
+                this.registerFormDialog = false
+                this.$refs[formName].resetFields()
+              }
+            })
+            .catch((error) => {
+              const { data } = error
+              this.errorMessage = data.message
+            })
+            .finally(() => {
+              this.registerLoading = false
+            })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
     },
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {
