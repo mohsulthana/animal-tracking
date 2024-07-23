@@ -174,9 +174,9 @@ export default {
               type: 'success',
               message: 'Gender updated'
             })
+            await this.fetchGender()
             this.isDialogEditGenderVisible = false
             this.$refs[formName].resetFields()
-            this.fetchGender()
           } else {
             this.$message({
               type: 'error',
@@ -201,6 +201,7 @@ export default {
 
           this.isDialogNewGenderVisible = false
           this.$refs[formName].resetFields()
+          await this.fetchGender()
         } else {
           console.log('error submit!!')
           return false

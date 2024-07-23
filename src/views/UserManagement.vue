@@ -5,7 +5,7 @@
         <el-card class="box-card">
           <div slot="header" class="d-flex justify-content-between">
             <h5>Users Management</h5>
-            <el-button type="primary" @click="isDialogRegisterUserVisible = !isDialogRegisterUserVisible">Register a new User</el-button>
+            <el-button type="primary" @click="isDialogRegisterUserVisible = !isDialogRegisterUserVisible">Register a new Staff</el-button>
           </div>
           <div class="px-4">
             <el-table
@@ -80,21 +80,21 @@
       :visible.sync="isDialogRegisterUserVisible"
       width="30%"
     >
-      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+      <el-form ref="new_user_form" :model="new_user_form" :rules="rules" label-width="120px">
         <el-form-item label="Email address" prop="email">
-          <el-input v-model="form.email" />
+          <el-input v-model="new_user_form.email" />
         </el-form-item>
 
         <el-form-item label="First name" prop="firstname">
-          <el-input v-model="form.firstname" />
+          <el-input v-model="new_user_form.firstname" />
         </el-form-item>
 
         <el-form-item label="Surname" prop="surname">
-          <el-input v-model="form.surname" />
+          <el-input v-model="new_user_form.surname" />
         </el-form-item>
 
         <el-form-item label="Role" prop="role_id">
-          <el-select v-model="form.role_id" placeholder="Select role" style="width: 100%;">
+          <el-select v-model="new_user_form.role_id" placeholder="Select role" style="width: 100%;">
             <el-option
               v-for="(item, index) in role"
               :key="index"
@@ -108,7 +108,7 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="isDialogRegisterUserVisible = false">Cancel</el-button>
         <el-button @click="resetForm('ruleForm')">Reset</el-button>
-        <el-button type="primary" @click="submitRegisterUserForm('form')">Create</el-button>
+        <el-button type="primary" @click="submitRegisterUserForm('new_user_form')">Create</el-button>
       </span>
     </el-dialog>
 
@@ -160,7 +160,7 @@ export default {
     return {
       isDialogRegisterUserVisible: false,
       isEditUserDialogVisible: false,
-      form: {
+      new_user_form: {
         firstname: '',
         surname: '',
         email: '',
@@ -201,6 +201,9 @@ export default {
   },
 
   methods: {
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
+    },
     openEditModal(id) {
       this.user_detail = this.users.find((user) => user.id === id)
       this.isEditUserDialogVisible = true
@@ -247,9 +250,11 @@ export default {
 
     },
     submitRegisterUserForm(formName) {
+      console.log(this.new_user_form)
+
       this.$refs[formName].validate(async(valid) => {
         if (valid) {
-          const request = await this.$http.post('users', this.form)
+          const request = await this.$http.post('users', this.new_user_form)
 
           if (request.status === 201) {
             alert('Success')

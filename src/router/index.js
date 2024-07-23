@@ -103,6 +103,18 @@ export const routes = [
           affix: true,
           requiresAuth: true
         }
+      },
+      {
+        path: '/settings',
+        name: 'settings',
+        component: () => import('@/views/Settings'),
+        meta: {
+          title: 'Settings',
+          roles: ['admin'],
+          icon: 'UserManage',
+          affix: true,
+          requiresAuth: true
+        }
       }
     ]
   },

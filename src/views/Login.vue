@@ -20,30 +20,22 @@
         </el-form-item>
 
         <div class="pt-4">
-          <el-button size="medium" type="text" @click="registerFormDialog = true">Register user</el-button>
+          <el-button size="medium" type="text" @click="forgotPasswordDialog = true">Forgot Password</el-button>
         </div>
       </el-card>
     </el-form>
 
-    <el-dialog title="Register User" :visible.sync="registerFormDialog">
+    <el-dialog title="Forgot Password" :visible.sync="forgotPasswordDialog">
       <el-form ref="registerForm" :model="registerForm" :rules="registerRules" autocomplete="on">
-
-        <el-form-item label="Name" :label-width="formLabelWidth" prop="name">
-          <el-input v-model="registerForm.name" autocomplete="off" prefix-icon="el-icon-user" />
-        </el-form-item>
 
         <el-form-item label="Email" :label-width="formLabelWidth" prop="email">
           <el-input v-model="registerForm.email" prefix-icon="el-icon-message" />
         </el-form-item>
-
-        <el-form-item label="Password" :label-width="formLabelWidth" prop="password">
-          <el-input v-model="registerForm.password" prefix-icon="el-icon-key" />
-        </el-form-item>
       </el-form>
 
       <span slot="footer" class="dialog-footer">
-        <el-button @click="registerFormDialog = false">Cancel</el-button>
-        <el-button :loading="registerLoading" type="primary" @click.native.prevent="handleRegister('registerForm')">Register</el-button>
+        <el-button @click="forgotPasswordDialog = false">Cancel</el-button>
+        <el-button :loading="forgotPasswordLoading" type="primary" @click.native.prevent="handleRegister('registerForm')">Send Link</el-button>
       </span>
     </el-dialog>
   </div>
@@ -74,7 +66,7 @@ export default {
       }
     }
     return {
-      registerFormDialog: false,
+      forgotPasswordDialog: false,
       loginForm: {
         email: 'duc@tut.ac.za',
         password: 'aaaaaa'
@@ -97,7 +89,7 @@ export default {
       formLabelWidth: '120px',
       capsTooltip: false,
       loginLoading: false,
-      registerLoading: false,
+      forgotPasswordLoading: false,
       showDialog: false,
       redirect: undefined,
       otherQuery: {},
@@ -176,7 +168,7 @@ export default {
     async handleRegister(formName) {
       this.$refs[formName].validate(async(valid) => {
         if (valid) {
-          this.registerLoading = true
+          this.forgotPasswordLoading = true
 
           await this.$http.post('register', this.registerForm)
             .then(async(response) => {
@@ -186,7 +178,7 @@ export default {
                   type: 'success'
                 })
 
-                this.registerFormDialog = false
+                this.forgotPasswordDialog = false
                 this.$refs[formName].resetFields()
               }
             })
@@ -195,7 +187,7 @@ export default {
               this.errorMessage = data.message
             })
             .finally(() => {
-              this.registerLoading = false
+              this.forgotPasswordLoading = false
             })
         } else {
           console.log('error submit!!')
