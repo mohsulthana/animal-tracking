@@ -163,7 +163,7 @@
         <el-form-item label="Age (in months)" prop="month_age">
           <el-input v-model.number="form.month_age" />
         </el-form-item>
-        <el-form-item label="Category" prop="category">
+        <el-form-item label="Category" prop="category_id">
           <el-select v-model="form.category_id" placeholder="Select category" style="width: 100%;">
             <el-option
               v-for="(item, index) in animalcategories"
@@ -173,7 +173,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="Gender" prop="gender">
+        <el-form-item label="Gender" prop="GID">
           <el-select v-model="form.GID" placeholder="Select gender" style="width: 100%;">
             <el-option
               v-for="(item, index) in genders"
@@ -338,10 +338,10 @@ export default {
           { required: true, message: 'Please input age', trigger: 'change' },
           { type: 'number', message: 'Age must be a number', trigger: 'change' }
         ],
-        category: [
+        category_id: [
           { required: true, message: 'Please input category', trigger: 'change' }
         ],
-        gender: [
+        GID: [
           { required: true, message: 'Please input gender', trigger: 'change' }
         ],
         qr_code: [
