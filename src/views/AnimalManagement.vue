@@ -173,8 +173,8 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="Gender" prop="GID">
-          <el-select v-model="form.GID" placeholder="Select gender" style="width: 100%;">
+        <el-form-item label="Gender" prop="gender_id">
+          <el-select v-model="form.gender_id" placeholder="Select gender" style="width: 100%;">
             <el-option
               v-for="(item, index) in genders"
               :key="index"
@@ -322,7 +322,7 @@ export default {
         name: '',
         alias: '',
         month_age: '',
-        GID: '',
+        gender_id: '',
         category_id: '',
         qr_code: null,
         photo_link: null
@@ -341,7 +341,7 @@ export default {
         category_id: [
           { required: true, message: 'Please input category', trigger: 'change' }
         ],
-        GID: [
+        gender_id: [
           { required: true, message: 'Please input gender', trigger: 'change' }
         ],
         qr_code: [
