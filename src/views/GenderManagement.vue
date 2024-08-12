@@ -120,7 +120,7 @@ export default {
 
   methods: {
     openEditModal(id) {
-      this.selectedGender = Object.assign({}, this.gender.find((g) => g.GID === id))
+      this.selectedGender = { ...this.gender.find((g) => g.GID === id) }
       this.isDialogEditGenderVisible = true
     },
     openDeleteConfirmationModal(id) {
@@ -194,9 +194,15 @@ export default {
           const request = await this.$http.post('gender', this.form)
 
           if (request.status === 201) {
-            alert('Success')
+            this.$message({
+              type: 'success',
+              message: 'Gender created'
+            })
           } else {
-            alert('Not success')
+            this.$message({
+              type: 'error',
+              message: 'Gender not created'
+            })
           }
 
           this.isDialogNewGenderVisible = false
