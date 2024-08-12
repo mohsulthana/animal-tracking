@@ -90,6 +90,7 @@ export default {
       }
     }
     return {
+      clientId: process.env.VUE_APP_GOOGLE_CLIENT_ID,
       forgotPasswordDialog: false,
       loginForm: {
         // email: 'duc@tut.ac.za',
