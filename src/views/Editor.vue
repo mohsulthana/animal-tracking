@@ -110,33 +110,6 @@ export default {
     handleSetLineChartData(type) {
       this.lineChartData.type = type
     }
-
-    // handleSetPieChartData(type) {
-    //   var AdultMaleCount = 0
-    //   var AdultFemaleCount = 0
-    //   var YoungMaleCount = 0
-    //   var YoungFemaleCount = 0
-
-    //   AdultMaleCount = this.$store.getters.animals.filter(
-    //     (a) => a.category === type && a.monthage >= 12 && a.gender === 'M'
-    //   ).length
-    //   AdultFemaleCount = this.$store.getters.animals.filter(
-    //     (a) => a.category === type && a.monthage >= 12 && a.gender === 'F'
-    //   ).length
-    //   YoungMaleCount = this.$store.getters.animals.filter(
-    //     (a) => a.category === type && a.monthage < 12 && a.gender === 'M'
-    //   ).length
-    //   YoungFemaleCount = this.$store.getters.animals.filter(
-    //     (a) => a.category === type && a.monthage < 12 && a.gender === 'F'
-    //   ).length
-
-    //   this.pieChartData = {
-    //     AdultMaleCount: AdultMaleCount,
-    //     AdultFemaleCount: AdultFemaleCount,
-    //     YoungMaleCount: YoungMaleCount,
-    //     YoungFemaleCount: YoungFemaleCount
-    //   }
-    // }
   }
 }
 </script>

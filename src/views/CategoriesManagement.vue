@@ -183,7 +183,8 @@ export default {
                   message: 'Please try again'
                 })
               }
-
+            })
+            .finally(() => {
               this.isButtonLoading = false
             })
         } else {

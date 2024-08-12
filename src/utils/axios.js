@@ -16,10 +16,14 @@ function createInstance(baseURL) {
     }
   })
 
+  service.interceptors.request.use(function(config) {
+    const token = store.getters.access_token
+    config.headers.Authorization = token ? `Bearer ${token}` : ''
+    return config
+  })
+
   service.interceptors.response.use(
     response => {
-      const { status } = response
-
       return response
     },
     error => {

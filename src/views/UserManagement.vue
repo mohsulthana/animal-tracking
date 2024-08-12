@@ -17,7 +17,7 @@
                 label="Email"
               />
               <el-table-column
-                prop="first_name"
+                prop="firstname"
                 label="First Name"
               />
               <el-table-column
@@ -285,7 +285,7 @@ export default {
         this.users.push({
           id: value.id,
           email: value.email,
-          first_name: value.firstname,
+          firstname: value.firstname,
           surname: value.surname,
           role: value.role,
           password: value.password,

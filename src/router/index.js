@@ -129,6 +129,26 @@ export const routes = [
     }
   },
   {
+    path: '/verify-pin',
+    component: () => import('@/views/VerifyPin'),
+    hidden: true,
+    name: 'verify-pin',
+    meta: {
+      requiresAuth: false,
+      title: 'Verify Pin'
+    }
+  },
+  {
+    path: '/reset-password',
+    component: () => import('@/views/ResetPassword'),
+    hidden: true,
+    name: 'reset-password',
+    meta: {
+      requiresAuth: false,
+      title: 'Reset Password'
+    }
+  },
+  {
     path: '/auth-redirect',
     component: () => import('@/views/login/auth-redirect'),
     hidden: true,

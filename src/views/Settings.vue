@@ -21,11 +21,12 @@
         <el-form-item label="Confirm Password" prop="new_password_confirmation">
           <el-input v-model="change_password_form.new_password_confirmation" autocomplete="off" show-password />
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submitForm('change_password_form')">Create</el-button>
-          <el-button @click="resetForm('change_password_form')">Reset</el-button>
-        </el-form-item>
       </el-form>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm('change_password_form')">Create</el-button>
+        <el-button @click="$refs['change_password_form'].resetFields()">Reset</el-button>
+      </span>
     </el-dialog>
   </el-card>
 </template>
@@ -77,7 +78,28 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(async(valid) => {
         if (valid) {
-          console.log(this.change_password_form)
+          const form = Object.assign({}, { email: this.$store.state['data'].logedinEmail }, this.change_password_form)
+
+          await this.$http.post('change-password', form)
+            .then((response) => {
+              console.log(response)
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+
+        //   if (request.status === 200) {
+        //     this.$message({
+        //       type: 'success',
+        //       message: 'Password is updated'
+        //     })
+        //   } else {
+        //     console.log(request)
+        //     // this.$message({
+        //     //     type: 'success',
+        //     //     message: 'Password is updated'
+        //     // })
+        //   }
         }
       })
     }
