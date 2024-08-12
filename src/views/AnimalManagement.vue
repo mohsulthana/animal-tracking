@@ -232,7 +232,7 @@
 </template>
 
 <script>
-import Camera from './Camera.vue'
+// import Camera from './Camera.vue'
 import { QrcodeStream, QrcodeDropZone, QrcodeCapture } from 'vue-qrcode-reader'
 import { firestore } from './dashboard/admin/components/Config/firebase'
 import Vue from 'vue'
@@ -338,10 +338,10 @@ export default {
           { required: true, message: 'Please input age', trigger: 'change' },
           { type: 'number', message: 'Age must be a number', trigger: 'change' }
         ],
-        category_id: [
+        category: [
           { required: true, message: 'Please input category', trigger: 'change' }
         ],
-        GID: [
+        gender: [
           { required: true, message: 'Please input gender', trigger: 'change' }
         ],
         qr_code: [
@@ -577,7 +577,7 @@ export default {
 
     async fetchAnimalCategories() {
       const { data } = await this.$http.get('category')
-      data.data.data.forEach((value) => {
+      data.category.data.forEach((value) => {
         this.animalcategories.push({
           id: value.id,
           name: value.name,
@@ -588,7 +588,7 @@ export default {
 
     async fetchAnimalGender() {
       const { data } = await this.$http.get('gender')
-      data.data.data.forEach((value) => {
+      data.gender.data.forEach((value) => {
         this.genders.push({
           id: value.GID,
           name: value.name
