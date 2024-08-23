@@ -160,7 +160,10 @@ export default {
       await this.$http.post('login-with-google', decoded)
         .then(async(response) => {
           const token = response.data.access_token
+          const user = response.data.user
+
           await this.$store.dispatch('auth/setToken', token)
+          await this.$store.dispatch('auth/setUser', user)
           this.$message({
             message: 'You have successfully authrozied. Directing you to the dashboard',
             type: 'success'
@@ -224,7 +227,10 @@ export default {
           await this.$http.post('login', this.loginForm)
             .then(async(response) => {
               const token = response.data.access_token
-              this.$store.dispatch('auth/setToken', token)
+              const user = response.data.user
+
+              await this.$store.dispatch('auth/setToken', token)
+              await this.$store.dispatch('auth/setUser', user)
               this.$message({
                 message: 'You have successfully authrozied. Directing you to the dashboard',
                 type: 'success'

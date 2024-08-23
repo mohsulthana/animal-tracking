@@ -41,7 +41,8 @@ export const routes = [
           title: 'Dashboard',
           icon: 'dashboard',
           affix: true,
-          requiresAuth: true
+          requiresAuth: true,
+          permission_key: 'dashboard'
         }
       },
       {
@@ -53,7 +54,8 @@ export const routes = [
           roles: ['admin'],
           icon: 'animalonmap',
           affix: true,
-          requiresAuth: true
+          requiresAuth: true,
+          permission_key: 'animal_on_map'
         }
       },
       {
@@ -65,7 +67,8 @@ export const routes = [
           roles: ['admin'],
           icon: 'AnimalRecordManage',
           affix: true,
-          requiresAuth: true
+          requiresAuth: true,
+          permission_key: 'animal_list'
         }
       },
       {
@@ -77,7 +80,8 @@ export const routes = [
           roles: ['admin'],
           icon: 'UserManage',
           affix: true,
-          requiresAuth: true
+          requiresAuth: true,
+          permission_key: 'user_management'
         }
       },
       {
@@ -89,7 +93,8 @@ export const routes = [
           roles: ['admin'],
           icon: 'UserManage',
           affix: true,
-          requiresAuth: true
+          requiresAuth: true,
+          permission_key: 'categories'
         }
       },
       {
@@ -101,7 +106,8 @@ export const routes = [
           roles: ['admin'],
           icon: 'UserManage',
           affix: true,
-          requiresAuth: true
+          requiresAuth: true,
+          permission_key: 'gender'
         }
       },
       {
@@ -113,7 +119,8 @@ export const routes = [
           roles: ['admin'],
           icon: 'UserManage',
           affix: true,
-          requiresAuth: true
+          requiresAuth: true,
+          permission_key: 'settings'
         }
       }
     ]

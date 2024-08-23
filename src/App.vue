@@ -13,7 +13,9 @@ export default {
   data() {
     return {}
   },
-  async mounted() {},
+  async mounted() {
+    this.fetchRole()
+  },
   // below created() solves the problem of lossing $store data when refresh a page by clicking the refresh button
   created() {
     const that = this
@@ -71,7 +73,12 @@ export default {
     })
     sessionStorage.removeItem('store')
   },
-  methods: {}
+  methods: {
+    async fetchRole() {
+      const { data } = await this.$http.get('role')
+      await this.$store.dispatch('role/setRole', data.data.data)
+    }
+  }
 }
 </script>
 

@@ -1,17 +1,19 @@
 <template>
   <div id="tags-view-container" class="tags-view-container">
     <scroll-pane ref="scrollPane" class="tags-view-wrapper" @scroll="handleScroll">
-      <router-link
-        v-for="tag in $router?.options?.routes[0].children"
-        ref="tag"
-        :key="tag.path"
-        :class="isActive(tag)?'active':''"
-        :to="{ name: tag.name, query: tag.query, fullPath: tag.fullPath }"
-        tag="span"
-        class="tags-view-item"
-      >
-        {{ tag.meta.title }}
-      </router-link>
+      <template v-for="tag in $router?.options?.routes[0].children">
+        <router-link
+          v-if="hasPermissions(tag.meta.permission_key)"
+          ref="tag"
+          :key="tag.path"
+          :class="isActive(tag)?'active':''"
+          :to="{ name: tag.name, query: tag.query, fullPath: tag.fullPath }"
+          tag="span"
+          class="tags-view-item"
+        >
+          {{ tag.meta.title }}
+        </router-link>
+      </template>
     </scroll-pane>
   </div>
 </template>
@@ -57,6 +59,15 @@ export default {
     // this.addTags()
   },
   methods: {
+    hasPermissions(key) {
+      const role_id = parseInt(this.$store.getters.user.role_id)
+      const roles = this.$store.getters.roles.filter(role => role.id === role_id)
+      return roles.some(role => {
+        const filteredPermissions = JSON.parse(role.permissions)
+        filteredPermissions.push('dashboard', 'settings')
+        return filteredPermissions.includes(key)
+      })
+    },
     isActive(route) {
       return route.meta.title === this.$route.meta.title
     },

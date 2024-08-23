@@ -1,7 +1,7 @@
 <template>
   <div id="users-management">
-    <el-row :span="24">
-      <el-col>
+    <el-tabs v-model="activeTab">
+      <el-tab-pane label="All User" name="all">
         <el-card class="box-card">
           <div slot="header" class="d-flex justify-content-between">
             <h5>Users Management</h5>
@@ -71,8 +71,62 @@
             </el-table>
           </div>
         </el-card>
-      </el-col>
-    </el-row>
+      </el-tab-pane>
+      <el-tab-pane label="Pending Request" name="pending">
+        <el-card class="box-card">
+          <div slot="header" class="d-flex justify-content-between">
+            <h5>Pending Request</h5>
+          </div>
+          <div class="px-4">
+            <el-table
+              :data="pendingRoleRequestList"
+              style="width: 100%"
+            >
+              <el-table-column
+                prop="email"
+                label="Email"
+              />
+              <el-table-column
+                prop="firstname"
+                label="First Name"
+              />
+              <el-table-column
+                prop="surname"
+                label="Surname"
+              />
+              <el-table-column prop="action" label="Action">
+                <template slot-scope="scope">
+                  <el-popconfirm
+                    confirm-button-text="Accept"
+                    cancel-button-text="Reject"
+                    confirm-button-type="Plain"
+                    cancel-button-type="Plain"
+                    title="How do you want to respond this request?"
+                    @confirm="respondRequest('accept',scope.row.user_id, scope.row.requested_role_id )"
+                    @cancel="respondRequest('reject',scope.row.user_id, scope.row.requested_role_id )"
+                  >
+                    <el-button slot="reference" plain>
+                      Respond
+                    </el-button>
+                  </el-popconfirm>
+
+                </template>
+              </el-table-column>
+              <el-table-column
+                align="right"
+              >
+                <template slot="header">
+                  <el-input
+                    v-model="search"
+                    placeholder="Type to search by email or name"
+                  />
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+        </el-card>
+      </el-tab-pane>
+    </el-tabs>
 
     <!-- Register user dialog -->
     <el-dialog
@@ -153,11 +207,11 @@
 </template>
 
 <script>
-
 export default {
   name: 'Users',
   data: () => {
     return {
+      activeTab: 'all',
       isDialogRegisterUserVisible: false,
       isEditUserDialogVisible: false,
       new_user_form: {
@@ -176,6 +230,7 @@ export default {
       },
       search: '',
       users: [],
+      pendingRequest: [],
       role: [],
       rules: {
         firstname: [
@@ -195,12 +250,82 @@ export default {
     }
   },
 
+  computed: {
+    pendingRoleRequestList() {
+      if (this.pendingRequest && this.users) {
+        return this.pendingRequest.map(request => {
+          const user = this.users.find(item => item.id === request.user_id)
+          const role = this.role.find(role => role.id === request.requested_role_id)
+          return { ...request, ...user, ...role }
+        })
+      }
+
+      return []
+    }
+  },
+
   async mounted() {
-    this.fetchRole()
     this.fetchUsers()
+    this.fetchPendingRoleRequest()
+    this.fetchRole()
   },
 
   methods: {
+    async respondRequest(action, user_id, role_id) {
+      const loading = this.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
+      switch (action) {
+        case 'accept': {
+          const payload = {
+            'user_id': user_id,
+            'requested_role_id': role_id,
+            'status': 'accept'
+          }
+          console.log(payload)
+          await this.$http.put(`role/respond`, payload)
+            .then((response) => {
+              if (response.status === 200) {
+                this.$message({
+                  type: 'success',
+                  message: 'Request has been approved'
+                })
+              }
+            })
+            .catch((error) => {
+              console.error(error)
+            })
+          break
+        }
+        case 'reject': {
+          const payload = {
+            'user_id': user_id,
+            'requested_role_id': role_id,
+            'status': 'reject'
+          }
+          await this.$http.put(`role/respond`, payload)
+            .then((response) => {
+              if (response.status === 200) {
+                this.$message({
+                  type: 'success',
+                  message: 'Request has been rejected'
+                })
+              }
+            })
+            .catch((error) => {
+              console.error(error)
+            })
+          break
+        }
+        default:
+          return
+      }
+      loading.close()
+      this.fetchPendingRoleRequest()
+    },
     resetForm(formName) {
       this.$refs[formName].resetFields()
     },
@@ -250,8 +375,6 @@ export default {
 
     },
     submitRegisterUserForm(formName) {
-      console.log(this.new_user_form)
-
       this.$refs[formName].validate(async(valid) => {
         if (valid) {
           const request = await this.$http.post('users', this.new_user_form)
@@ -292,6 +415,10 @@ export default {
           photo: 'No photo for now'
         })
       })
+    },
+    async fetchPendingRoleRequest() {
+      const { data } = await this.$http.get('role/request/list/pending')
+      this.pendingRequest = data.data.data
     }
   }
 }
