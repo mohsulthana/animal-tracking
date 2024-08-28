@@ -54,7 +54,7 @@ export default {
   methods: {
     async fetchCategories() {
       const { data } = await this.$http.get('category')
-      data.data.data.forEach((value) => {
+      data.category.data.forEach((value) => {
         this.categories.push({
           id: value.id,
           name: value.name
