@@ -1,7 +1,7 @@
 import axios from 'axios'
 import Vue from 'vue'
 import { Message } from 'element-ui'
-import store from '@/store/index'
+import store from '../store/index'
 import router from '@/router'
 
 const host = process.env.VUE_APP_API_URL
@@ -16,13 +16,15 @@ function createInstance(baseURL) {
     }
   })
 
+  service.interceptors.request.use(function(config) {
+    const token = store.getters.access_token
+    config.headers.Authorization = token ? `Bearer ${token}` : ''
+    return config
+  })
+
   service.interceptors.response.use(
     response => {
-      const { status } = response
-
-      if (status === 200) {
-        return response
-      }
+      return response
     },
     error => {
       if (error?.response?.status === 401) {

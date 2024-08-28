@@ -7,7 +7,18 @@
         <el-row :gutter="20">
           <el-col :span="12" :sm="24" :xs="24" :md="12" :lg="12" :xl="12">
             <el-card shadow="never">
-              <pie-chart :chart-data="pieChartData" />
+              <animal-category-chart
+                :data="{
+                  labels: [ 'January', 'February', 'March' ],
+                  datasets: [
+                    {
+                      label: 'Data One',
+                      backgroundColor: '#f87979',
+                      data: [40, 20, 12]
+                    }
+                  ]
+                }"
+              />
             </el-card>
           </el-col>
           <el-col :span="12" :sm="24" :xs="24" :md="12" :lg="12" :xl="12">
@@ -30,31 +41,16 @@
 </template>
 
 <script>
-
-// import AnimalRegister from '@/views/animalregister/AnimalRegister'
-// import AnimalRecordManage from '@/views/animalmanagement/AnimalRecordManage'
-// import GithubCorner from '@/components/GithubCorner'
 import PanelGroup from '@/views/dashboard/PanelGroup'
 import LineChart from '@/views/animalstatistic/LineChart'
-// import RaddarChart from '@/views/animalstatistic/RaddarChart'
-import PieChart from '@/views/animalstatistic/PieChart'
-// import BarChart from '@/views/animalstatistic/BarChart'
-// import TransactionTable from './components/TransactionTable'
-// import TodoList from './components/TodoList'
-// import BoxCard from '@/views/animalstatistic/BoxCard'
-// import GoogleMap from '@/components/GoogleMap'
-// import Qrcoderscanner from './components/Qrcodescanner'
-// import HereMap from "@/views/animalonmap/HereMap.vue"
-// import auth from '@/views/dashboard/admin/components/Config/firebase'
-// import QRCanvas from './components/QRCanvas'
-import firebase from 'firebase'
+import AnimalCategoryChart from '@/views/AnimalCategoryChart'
 
 export default {
   name: 'DashboardAdmin',
   components: {
     PanelGroup,
     LineChart,
-    PieChart
+    AnimalCategoryChart
   },
 
   data: () => {
@@ -67,75 +63,19 @@ export default {
         bokNumber: [0, 0, 0, 0, 0, 0, 0]
       },
       lineChartData: { type: 'footagein7days', data: [] },
-
-      pieChartData: { AdultMaleCount: 10, AdultFemaleCount: 20, YoungMaleCount: 30, YoungFemaleCount: 40 }
-      /*
-      totalgoat: 0,
-      totalbok: 0,
-      totalsheep: 0,
-      totalcattle: 0,
-
-      totalgoatin7days:   [0, 0, 0, 0, 0, 0, 0],
-      totalbokin7days:    [0, 0, 0, 0, 0, 0, 0],
-      totalsheepin7days:  [0, 0, 0, 0, 0, 0, 0],
-      totalcattlein7days: [0, 0, 0, 0, 0, 0, 0],
-
-      totalgoatin1month:    [0, 0, 0, 0],
-      totalbokin1month:     [0, 0, 0, 0],
-      totalsheepin1month:   [0, 0, 0, 0],
-      totalcattlein1month:  [0, 0, 0, 0],
-
-      totalgoatin6months:    [0, 0, 0, 0, 0, 0],
-      totalbokin6months:     [0, 0, 0, 0, 0, 0],
-      totalsheepin6months:   [0, 0, 0, 0, 0, 0],
-      totalcattlein6months:  [0, 0, 0, 0, 0, 0],
-
-      totalgoatin1year:    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      totalbokin1year:     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      totalsheepin1year:   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      totalcattlein1year:  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-*/
+      categoryStatistic: {}
     }
-  },
-
-  /* async created() {
-    this.$nextTick(function () {
-      window.addEventListener('beforeunload', this.countanimalfootages)
-    })
-  },*/
-
-  /* destroyed() {
-    window.removeEventListener('beforeunload', this.countanimalfootages)
-  },*/
-  async beforeCreate() {
-
-    // this.$nextTick(function () {
-    // this.countanimalfootages()
-    // this.lineChartData = {goatNumber: this.$store.getters.footagecount.totalgoatin7days, cattleNumber: this.$store.getters.footagecount.totalcattlein7days, sheepNumber: this.$store.getters.footagecount.totalsheepin7days, bokNumber: this.$store.getters.footagecount.totalbokin7days}
-    // })
   },
   mounted() {
-    console.log(firebase.auth().currentUser)
-    console.log(this.$store.state.logedinEmail)
-    console.log(this.$store.state.password)
-    if (!(firebase.auth().currentUser)) {
-      firebase.auth().signInWithEmailAndPassword('duc@tut.ac.za', 'aaaaaa').then(() => {
-        console.log(firebase.auth().currentUser)
-      })
-    }
-
     this.lineChartData1 = { goatNumber: this.$store.getters.footagecount.totalgoatin7days, cattleNumber: this.$store.getters.footagecount.totalcattlein7days, sheepNumber: this.$store.getters.footagecount.totalsheepin7days, bokNumber: this.$store.getters.footagecount.totalbokin7days }
     this.lineChartData = { type: 'footagein7days', data: this.$store.getters.categoryfootage }
   },
-
   methods: {
     handleSetLineChartData(type) {
-      // console.log(this.$store.getters.footagecount)
       this.lineChartData = { type: type, data: this.$store.getters.categoryfootage }
     },
 
     handleSetLineChartData1(type) {
-      // console.log(this.$store.getters.footagecount)
       switch (type) {
         case 'footagein7days':
           this.lineChartData1 = { goatNumber: this.$store.getters.footagecount.totalgoatin7days, cattleNumber: this.$store.getters.footagecount.totalcattlein7days, sheepNumber: this.$store.getters.footagecount.totalsheepin7days, bokNumber: this.$store.getters.footagecount.totalbokin7days }
@@ -153,13 +93,10 @@ export default {
     },
 
     handleSetPieChartData(type) {
-      // console.log(this.$store.getters.footagecount)
-      // console.log(type)
-
-      var AdultMaleCount = 0
-      var AdultFemaleCount = 0
-      var YoungMaleCount = 0
-      var YoungFemaleCount = 0
+      let AdultMaleCount = 0
+      let AdultFemaleCount = 0
+      let YoungMaleCount = 0
+      let YoungFemaleCount = 0
 
       // AdultMaleCount = this.$store.getters.animals.filter(a => a.category === type && a.monthage>=12 && a.gender.startsWith('M')).length
       // AdultFemaleCount = this.$store.getters.animals.filter(a => a.category === type && a.monthage>=12 && a.gender.startsWith('F')).length

@@ -1,24 +1,20 @@
 <template>
   <div id="tags-view-container" class="tags-view-container">
     <scroll-pane ref="scrollPane" class="tags-view-wrapper" @scroll="handleScroll">
-      <router-link
-        v-for="tag in $router.options.routes[0].children"
-        ref="tag"
-        :key="tag.path"
-        :class="isActive(tag)?'active':''"
-        :to="{ name: tag.name, query: tag.query, fullPath: tag.fullPath }"
-        tag="span"
-        class="tags-view-item"
-      >
-        {{ tag.meta.title }}
-      </router-link>
+      <template v-for="tag in $router?.options?.routes[0].children">
+        <router-link
+          v-if="hasPermissions(tag.meta.permission_key)"
+          ref="tag"
+          :key="tag.path"
+          :class="isActive(tag)?'active':''"
+          :to="{ name: tag.name, query: tag.query, fullPath: tag.fullPath }"
+          tag="span"
+          class="tags-view-item"
+        >
+          {{ tag.meta.title }}
+        </router-link>
+      </template>
     </scroll-pane>
-    <!-- <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
-      <li @click="refreshSelectedTag(selectedTag)">Refresh</li>
-      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">Close</li>
-      <li @click="closeOthersTags">Close Others</li>
-      <li @click="closeAllTags(selectedTag)">Close All</li>
-    </ul> -->
   </div>
 </template>
 
@@ -47,8 +43,8 @@ export default {
   },
   watch: {
     $route() {
-      this.addTags()
-      this.moveToCurrentTag()
+      // this.addTags()
+      // this.moveToCurrentTag()
     },
     visible(value) {
       if (value) {
@@ -59,8 +55,8 @@ export default {
     }
   },
   mounted() {
-    this.initTags()
-    this.addTags()
+    // this.initTags()
+    // this.addTags()
   },
   methods: {
     hasPermissions(key) {
@@ -73,14 +69,14 @@ export default {
       })
     },
     isActive(route) {
-      return route.path === this.$route.path
+      return route.meta.title === this.$route.meta.title
     },
     isAffix(tag) {
       return tag.meta && tag.meta.affix
     },
     filterAffixTags(routes, basePath = '/') {
       let tags = []
-      routes.forEach(route => {
+      routes?.forEach(route => {
         if (route.meta && route.meta.affix) {
           const tagPath = path.resolve(basePath, route.path)
           tags.push({
@@ -100,7 +96,7 @@ export default {
       return tags
     },
     initTags() {
-      const affixTags = this.affixTags = this.filterAffixTags(this.routes)
+      const affixTags = this.affixTags = this.filterAffixTags(this.route)
       for (const tag of affixTags) {
         // Must have tag name
         if (tag.name) {

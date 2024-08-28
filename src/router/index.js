@@ -41,7 +41,8 @@ export const routes = [
           title: 'Dashboard',
           icon: 'dashboard',
           affix: true,
-          requiresAuth: true
+          requiresAuth: true,
+          permission_key: 'dashboard'
         }
       },
       {
@@ -53,7 +54,8 @@ export const routes = [
           roles: ['admin'],
           icon: 'animalonmap',
           affix: true,
-          requiresAuth: true
+          requiresAuth: true,
+          permission_key: 'animal_on_map'
         }
       },
       {
@@ -65,7 +67,8 @@ export const routes = [
           roles: ['admin'],
           icon: 'AnimalRecordManage',
           affix: true,
-          requiresAuth: true
+          requiresAuth: true,
+          permission_key: 'animal_list'
         }
       },
       {
@@ -73,11 +76,51 @@ export const routes = [
         name: 'user-manage',
         component: () => import('@/views/UserManagement'),
         meta: {
-          title: 'User Manage',
+          title: 'User Management',
           roles: ['admin'],
           icon: 'UserManage',
           affix: true,
-          requiresAuth: true
+          requiresAuth: true,
+          permission_key: 'user_management'
+        }
+      },
+      {
+        path: '/categories',
+        name: 'categories',
+        component: () => import('@/views/CategoriesManagement'),
+        meta: {
+          title: 'Categories',
+          roles: ['admin'],
+          icon: 'UserManage',
+          affix: true,
+          requiresAuth: true,
+          permission_key: 'categories'
+        }
+      },
+      {
+        path: '/gender',
+        name: 'gender',
+        component: () => import('@/views/GenderManagement'),
+        meta: {
+          title: 'Gender',
+          roles: ['admin'],
+          icon: 'UserManage',
+          affix: true,
+          requiresAuth: true,
+          permission_key: 'gender'
+        }
+      },
+      {
+        path: '/settings',
+        name: 'settings',
+        component: () => import('@/views/Settings'),
+        meta: {
+          title: 'Settings',
+          roles: ['admin'],
+          icon: 'UserManage',
+          affix: true,
+          requiresAuth: true,
+          permission_key: 'settings'
         }
       }
     ]
@@ -90,6 +133,26 @@ export const routes = [
     meta: {
       requiresAuth: false,
       title: 'Login'
+    }
+  },
+  {
+    path: '/verify-pin',
+    component: () => import('@/views/VerifyPin'),
+    hidden: true,
+    name: 'verify-pin',
+    meta: {
+      requiresAuth: false,
+      title: 'Verify Pin'
+    }
+  },
+  {
+    path: '/reset-password',
+    component: () => import('@/views/ResetPassword'),
+    hidden: true,
+    name: 'reset-password',
+    meta: {
+      requiresAuth: false,
+      title: 'Reset Password'
     }
   },
   {

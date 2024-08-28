@@ -6,7 +6,8 @@
           <div slot="header" class="d-flex justify-content-between">
             <h5>Animals on map</h5>
           </div>
-          <div class="px-4">
+          <div class="px-4 text-left">
+            <p>Select category below</p>
             <el-select
               v-model="animalsSelected"
               multiple
@@ -83,7 +84,7 @@ export default {
         { lat: -25.735944, lng: 28.160767 },
         { lat: -25.73546, lng: 28.160824 },
         { lat: -25.734944, lng: 28.160698 }
-      ], // [{lat: -26.555104, lng: 20.302489}, {lat: -26.520111, lng: 20.221591}, {lat: -26.540428, lng: 20.213576}, {lat: -26.574163, lng: 20.289141}],
+      ],
       farmbounderies: null,
       platform: null,
       lat: '-25.735411', // "-26.54",
@@ -106,22 +107,13 @@ export default {
       SheepIconGreen: null,
       SheepIconYellow: null,
       animalsSelected: [],
-      uplinkMessages: []
-      // You can get the API KEY from developer.here.com
+      uplinkMessages: [],
+      mapRef: null
     }
   },
 
-  /* watch: {
-    markers: {
-      deep: true,
-      handler(val) {
-        this.map.removeObjects(this.map.getObjects())
-        this.map.addObject(this.markers)
-      }
-    }
-  },*/
-
   async mounted() {
+    this.mapRef = this.$refs.hereMap
     // Initialize the platform object:
     this.platform = new window.H.service.Platform({
       apikey: this.apikey
@@ -129,33 +121,20 @@ export default {
     this.markers = []
     await this.fetchUplinkMessages()
     this.initializeHereMap()
-
-    // this.logContainer = document.createElement('ul');
-    // this.logContainer.className ='log';
-    // this.logContainer.innerHTML = '<li class="log-entry">Try clicking on the map</li>';
-    // this.map.getElement().appendChild(this.logContainer);
     this.setUpClickListener(this.map)
-    // this.createResizablePolygon(this.map)
     this.createFarmBoundaryPolygon(this.map)
-    // this.addMarkersAndSetViewBounds(this.map);
-    // this.addMarkersToMap(this.map)
-    // this.addfakefootage()
-    this.addMarkersfromVueXStore(this.map, this.animalcategories)
-    // this.connectmarkers(this.map)
-
-    // this.createDraggableShapes(this.map)
 
     this.fetchAnimalCategories()
   },
   methods: {
     async fetchUplinkMessages() {
-      const { data } = await this.$http.get('api/uplink-message')
+      const { data } = await this.$http.get('uplink-message')
       this.uplinkMessages = data.data
     },
 
     async fetchAnimalCategories() {
-      const { data } = await this.$http.get('api/categories')
-      data.data.data.forEach((value) => {
+      const { data } = await this.$http.get('category')
+      data.category.data.forEach((value) => {
         this.animalcategories.push({
           id: value.id,
           name: value.name,
@@ -222,11 +201,9 @@ export default {
     },
 
     initializeHereMap() {
-      // rendering map
-      const mapContainer = this.$refs.hereMap
+      const mapContainer = this.mapRef
       const H = window.H
       this.center = { lat: this.lat, lng: this.lng }
-      // Obtain the default map types from the platform object
       this.defaultLayers = this.platform.createDefaultLayers()
 
       // Instantiate (and display) a map object:
@@ -246,45 +223,43 @@ export default {
           style: { fillColor: 'rgba(0, 100, 0, .3)', lineWidth: 0 }
         }
       )
+
       addEventListener('resize', () => this.map.getViewPort().resize())
 
       // add behavior control
       new H.mapevents.Behavior(new H.mapevents.MapEvents(this.map))
 
-      // this.map.getPositionIndicator().setVisible(true);
-      // add UI
-      this.ui = H.ui.UI.createDefault(this.map, this.defaultLayers)
-
-      var group = new H.map.Group()
-
-      this.map.addObject(group)
-
-      group.addEventListener(
-        'tap',
-        function(evt) {
-          var bubble = this.ui.InfoBubble(evt.target.getGeometry(), {
-            content: evt.target.getData()
-          })
-          this.ui.addBubble(bubble)
-        },
-        false
-      )
-
       this.uplinkMessages.forEach((uplink) => {
         if (uplink.MessageMode === 'GPS_OK') {
-          const marker = new H.map.Marker({
-            lat: uplink.Var1,
-            lng: uplink.Var2
-          })
-          this.map.addObject(marker)
-
-          this.addMarkerToGroup(
-            group,
-            { lat: uplink.Var1, lng: uplink.Var2 },
-            `<div>Animal information: ${uplink.AnimalID}</div>`
-          )
+          this.addInfoBubble(this.map, uplink)
         }
       })
+    },
+
+    addInfoBubble(map, animal) {
+      var group = new H.map.Group()
+
+      map.addObject(group)
+
+      var defaultLayers = this.platform.createDefaultLayers()
+      var ui = H.ui.UI.createDefault(map, defaultLayers)
+
+      // add 'tap' event listener, that opens info bubble, to the group
+      group.addEventListener('tap', function(evt) {
+        var bubble = new H.ui.InfoBubble(evt.target.getGeometry(), {
+          content: evt.target.getData()
+        })
+
+        ui.addBubble(bubble)
+      }, false)
+
+      this.addMarkerToGroup(group, { lat: animal.Var1, lng: animal.Var2 },
+        `
+          <div>
+            ${animal.AnimalID}
+          </div>
+        `
+      )
     },
 
     addMarkerToGroup(group, coordinate, html) {
@@ -356,7 +331,7 @@ export default {
       var that = this
       var animalIn = 1
       that.markersfiltered = false
-      console.log(categories)
+
       categories.forEach((c) => {
         animalIn = 1
         this.$store.state.data.animals

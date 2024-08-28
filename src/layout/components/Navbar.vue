@@ -4,18 +4,13 @@
 
     <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
      -->
-    <div class="right-menu">
+    <div class="right-menu" style="display: flex; align-items: center;">
       <template v-if="device!=='mobile'">
         <!-- <search id="header-search" class="right-menu-item" />
 
         <error-log class="errLog-container right-menu-item hover-effect" /> -->
 
         <screenfull id="screenfull" class="right-menu-item hover-effect" />
-
-        <el-tooltip content="Global Size" effect="dark" placement="bottom">
-          <size-select id="size-select" class="right-menu-item hover-effect" />
-        </el-tooltip>
-
       </template>
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
@@ -34,6 +29,9 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+    <h6 style="margin-right: 16px;">
+      {{ $store.getters.user.firstname + $store.getters.user.surname }}
+    </h6>
   </div>
 </template>
 
@@ -69,6 +67,7 @@ export default {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
+      await this.$http.post('logout')
       await this.$store.dispatch('auth/logout')
       this.$router.push({ name: 'login' })
     }
@@ -114,6 +113,7 @@ export default {
     float: right;
     height: 100%;
     line-height: 50px;
+    display: flex;
 
     &:focus {
       outline: none;

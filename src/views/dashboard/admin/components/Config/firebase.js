@@ -1,7 +1,6 @@
 
 import firebase from 'firebase'
 import 'firebase/firestore'
-console.log('firestore' + (+new Date()))
 if (!firebase.apps.length) {
   const firebaseConfig = {
     apiKey: 'AIzaSyBCDczpSPh0XAp2soGsszlR5wowic23x5c',

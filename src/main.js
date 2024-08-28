@@ -21,10 +21,14 @@ import './utils/error-log' // error log
 import axios from './utils/axios'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 
+import VueHead from 'vue-head'
+
 Vue.use(axios)
 
 Vue.component('ValidationProvider', ValidationProvider)
 Vue.component('ValidationObserver', ValidationObserver)
+
+Vue.use(VueHead)
 
 /**
  * If you don't want to use mock-server

@@ -3,10 +3,6 @@ import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 
 import getters from './getters'
-
-// import firebase from 'firebase'
-// import 'firebase/firestore'
-
 Vue.use(Vuex)
 
 // https://webpack.js.org/guides/dependency-management/#requirecontext
