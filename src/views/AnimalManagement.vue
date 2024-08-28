@@ -89,12 +89,13 @@
               </el-table-column>
               <el-table-column label="Action">
                 <template slot-scope="scope">
-                  <!-- <el-button
+                  <el-button
                     type="primary"
                     icon="el-icon-edit"
                     plain
                     circle
-                  /> -->
+                    @click="openEditAnimalModal(scope.row)"
+                  />
                   <el-button
                     type="danger"
                     icon="el-icon-delete"
@@ -160,6 +161,9 @@
         <el-form-item label="Name" prop="name">
           <el-input v-model="form.name" />
         </el-form-item>
+        <el-form-item label="IP" prop="ip">
+          <el-input v-model="form.ip" />
+        </el-form-item>
         <el-form-item label="Age (in months)" prop="month_age">
           <el-input v-model.number="form.month_age" />
         </el-form-item>
@@ -188,7 +192,6 @@
           <el-col :span="12">
             <el-form-item label="Photo link">
               <el-upload
-                http-request
                 class="upload-demo"
                 :on-preview="handlePreview('photo_link')"
                 :on-remove="handleRemove"
@@ -225,7 +228,87 @@
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="isRegisterAnimalModalVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')">Register</el-button>
+        <el-button type="primary" @click="submitAnimalRegisterForm('ruleForm')">Register</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- Edit animal dialog -->
+    <el-dialog title="Edit animal" :visible.sync="isEditAnimalModalVisible">
+      <el-form ref="editForm" label-position="top" label-width="50px" :model="editAnimalForm" :rules="rules" size="mini" style="text-align: left;">
+        <el-form-item label="Alias" prop="alias">
+          <el-input v-model="editAnimalForm.alias" />
+        </el-form-item>
+        <el-form-item label="Name" prop="name">
+          <el-input v-model="editAnimalForm.name" />
+        </el-form-item>
+        <el-form-item label="IP" prop="ip">
+          <el-input v-model="editAnimalForm.ip" />
+        </el-form-item>
+        <el-form-item label="Age (in months)" prop="month_age">
+          <el-input v-model.number="editAnimalForm.month_age" />
+        </el-form-item>
+        <el-form-item label="Category" prop="category_id">
+          <el-select v-model="editAnimalForm.category_id" placeholder="Select category" style="width: 100%;">
+            <el-option
+              v-for="(item, index) in animalcategories"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="Gender" prop="gender_id">
+          <el-select v-model="editAnimalForm.gender_id" placeholder="Select gender" style="width: 100%;">
+            <el-option
+              v-for="(item, index) in genders"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-row :gutter="24">
+          <el-col :span="12">
+            <el-form-item label="Photo link">
+              <el-upload
+                class="upload-demo"
+                :on-preview="handlePreview('photo_link')"
+                :on-remove="handleRemove"
+                :file-list="photo_link_list"
+                :on-change="handleChangePhotoLink"
+                list-type="list"
+                :multiple="false"
+                :auto-upload="false"
+              >
+                <el-button size="small" type="primary">Click to upload</el-button>
+                <div slot="tip" class="el-upload__tip">jpg/png files with a size less than 500kb</div>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="QR Code">
+              <el-upload
+                class="upload-demo"
+                :on-preview="handlePreview"
+                :on-remove="handleRemove"
+                :file-list="qr_code_list"
+                :on-change="handleChangeQRCode"
+                list-type="list"
+                :multiple="false"
+                :auto-upload="false"
+              >
+                <el-button size="small" type="primary">Click to upload</el-button>
+                <div slot="tip" class="el-upload__tip">jpg/png files with a size less than 500kb</div>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="isEditAnimalModalVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="editAnimal('editForm')">Save Changes</el-button>
       </span>
     </el-dialog>
   </div>
@@ -258,7 +341,6 @@ export default {
 
     const selected = options[0]
     const selectedcategoryforsearch = []
-    const searchmode = 'MutipleSearch'
 
     return {
       qrCodeToggler: false,
@@ -312,18 +394,29 @@ export default {
         photolink: '',
         qrcode: ''
       },
-      searchmode,
       selected,
       selectedcategoryforsearch,
       isSearchMultipleAnimalDialogVisible: false,
       isScanAnimalModalVisible: false,
       isRegisterAnimalModalVisible: false,
+      isEditAnimalModalVisible: false,
+      editAnimalForm: {
+        name: '',
+        alias: '',
+        month_age: '',
+        gender_id: '',
+        category_id: '',
+        ip: '',
+        qr_code: null,
+        photo_link: null
+      },
       form: {
         name: '',
         alias: '',
         month_age: '',
         gender_id: '',
         category_id: '',
+        ip: '',
         qr_code: null,
         photo_link: null
       },
@@ -333,6 +426,9 @@ export default {
         ],
         alias: [
           { required: true, message: 'Please input alias', trigger: 'blur' }
+        ],
+        ip: [
+          { required: true, message: 'Please input IP', trigger: 'blur' }
         ],
         month_age: [
           { required: true, message: 'Please input age', trigger: 'change' },
@@ -493,7 +589,33 @@ export default {
           break
       }
     },
-    submitForm(formName) {
+    editAnimal(formName) {
+      this.$refs[formName].validate(async(valid) => {
+        if (valid) {
+          delete this.editAnimalForm.gender
+          delete this.editAnimalForm.category
+          await this.$http.put(`animals/${this.editAnimalForm.id}`, this.editAnimalForm)
+            .then(({ data, status }) => {
+              if (status === 200) {
+                Message({
+                  message: 'Animal has been updated',
+                  type: 'success',
+                  duration: 5 * 1000
+                })
+                this.animals = []
+                this.fetchAnimalData()
+                this.isEditAnimalModalVisible = false
+              } else {
+                console.log('error submit!!')
+              }
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+        }
+      })
+    },
+    submitAnimalRegisterForm(formName) {
       if (this.photo_link_list.length > 0) {
         this.form.photo_link = this.photo_link_list[0].raw
       }
@@ -517,6 +639,16 @@ export default {
           return false
         }
       })
+    },
+    mapNameToId(name, array) {
+      const item = array.find(element => element.name === name)
+      return item ? item.id : null
+    },
+    openEditAnimalModal(animal) {
+      animal.gender_id = this.mapNameToId(animal.gender, this.genders)
+      animal.category_id = this.mapNameToId(animal.category, this.animalcategories)
+      this.editAnimalForm = animal
+      this.isEditAnimalModalVisible = true
     },
     openDeleteConfirmationModal(id) {
       const h = this.$createElement

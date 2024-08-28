@@ -7,7 +7,18 @@
         <el-row :gutter="20">
           <el-col :span="12" :sm="24" :xs="24" :md="12" :lg="12" :xl="12">
             <el-card shadow="never">
-              <pie-chart :chart-data="pieChartData" />
+              <animal-category-chart
+                :data="{
+                  labels: [ 'January', 'February', 'March' ],
+                  datasets: [
+                    {
+                      label: 'Data One',
+                      backgroundColor: '#f87979',
+                      data: [40, 20, 12]
+                    }
+                  ]
+                }"
+              />
             </el-card>
           </el-col>
           <el-col :span="12" :sm="24" :xs="24" :md="12" :lg="12" :xl="12">
@@ -32,14 +43,14 @@
 <script>
 import PanelGroup from '@/views/dashboard/PanelGroup'
 import LineChart from '@/views/animalstatistic/LineChart'
-import PieChart from '@/views/animalstatistic/PieChart'
+import AnimalCategoryChart from '@/views/AnimalCategoryChart'
 
 export default {
   name: 'DashboardAdmin',
   components: {
     PanelGroup,
     LineChart,
-    PieChart
+    AnimalCategoryChart
   },
 
   data: () => {
@@ -51,7 +62,8 @@ export default {
         cattleNumber: [0, 0, 0, 0, 0, 0, 0],
         bokNumber: [0, 0, 0, 0, 0, 0, 0]
       },
-      lineChartData: { type: 'footagein7days', data: [] }
+      lineChartData: { type: 'footagein7days', data: [] },
+      categoryStatistic: {}
     }
   },
   mounted() {
