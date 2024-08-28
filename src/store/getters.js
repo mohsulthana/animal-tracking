@@ -1,6 +1,7 @@
 // import firebase from 'firebase'
 
 const getters = {
+  user: state => state.auth.user,
   access_token: state => state.auth.access_token,
   animals: state => state.data.animals,
   animalcategories: state => state.data.animalcategories,
@@ -266,7 +267,7 @@ const getters = {
   name: state => state.user.name,
   permission_routes: state => state.permission.routes,
   qrcode: state => state.data.qrcode.Qrcode,
-  roles: state => state.user.roles,
+  roles: state => state.role.role,
   sheeplist(state) { return state.data.animals.filter(anim => anim.category === 'Sheep') },
   sheeplistcount(state, getters) { return getters.sheeplist.length },
   sidebar: state => state.app.sidebar,

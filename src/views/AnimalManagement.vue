@@ -7,8 +7,9 @@
             <h5>Animals records management</h5>
             <div class="action-button">
               <!-- <el-button type="secondary" @click="isSearchMultipleAnimalDialogVisible = !isSearchMultipleAnimalDialogVisible">Search multiple animals</el-button> -->
-              <!-- <el-button type="secondary" @click="isSearchByQRCodeDialogVisible = !isSearchByQRCodeDialogVisible">Search by QR Code</el-button> -->
+              <!-- <el-button type="secondary" @click="isScanAnimalModalVisible = !isScanAnimalModalVisible">Search by QR Code</el-button> -->
               <el-button type="primary" size="medium" @click="isRegisterAnimalModalVisible = !isRegisterAnimalModalVisible">Register animal</el-button>
+              <el-button type="secondary" size="medium" @click="isScanAnimalModalVisible = !isScanAnimalModalVisible">Scan Animal</el-button>
               <vue-excel-xlsx
                 :data="animals"
                 :columns="columns"
@@ -24,6 +25,7 @@
           </div>
           <div class="px-4">
             <el-table :data="animals" style="width: 100%">
+              <el-table-column prop="name" label="Name" />
               <el-table-column prop="category" label="Category" />
               <el-table-column prop="gender" label="Gender" />
               <el-table-column prop="month_age" label="Age">
@@ -92,6 +94,7 @@
                     icon="el-icon-edit"
                     plain
                     circle
+                    @click="openEditAnimalModal(scope.row)"
                   />
                   <el-button
                     type="danger"
@@ -145,158 +148,9 @@
     </el-dialog>
 
     <!-- Search by QR Code dialog -->
-    <el-dialog :visible.sync="isSearchByQRCodeDialogVisible">
-      hello world
+    <el-dialog title="Scan Animal QR Code" :visible.sync="isScanAnimalModalVisible">
+      <qrcode-stream @detect="onDetect" />
     </el-dialog>
-    <!-- <div>
-      <b-container class="bv-example-row">
-        <select v-model="searchmode">
-          <option :value="'QRcodeSearch'">
-            Search single animal by QRcode
-          </option>
-          <option :value="'MutipleSearch'">
-            Search multiple animals
-          </option>
-        </select>
-        <div v-if="this.searchmode === 'QRcodeSearch'" class="row">
-          <div class="col-md-4">
-            <label>Scan Qrcode from Files or Camera:   </label><br>
-            <select v-model="selected">
-              <option v-for="option in options" :key="option.text" :value="option">
-                {{ option.text }}
-              </option>
-            </select>
-            <div v-if="selected === options[0]" />
-            <div v-else>
-              <div v-if="selected === options[2] ">
-                <QrcodeCapture :capture="selected.value" @detect="onQrDetect" />
-              </div>
-              <div v-else>
-                <p class="error">{{ error }}</p>
-                <QrcodeStream @detect="onQrDetect" @init="onInit" />
-              </div>
-            </div>
-          </div>
-          <div>Qrcode: {{ qrcode }}</div>
-        </div>
-      </b-container>
-    </div> -->
-
-    <!-- <b-modal
-      id="modal-Edit-animal"
-      ref="modal"
-      title="Edit animal information"
-      size="sm"
-      @show="resetModalEditanimal"
-      @hidden="resetModalEditanimal"
-      @ok="handleOkEditanimal"
-    >
-      <b-form @submit.stop.prevent="handleSubmitEditanimal">
-        <b-container class="bv-example-row" fluid="lg">
-          <b-row class="mb-1"><b-col cols="12"><label style="color: red">*</label><label>Category</label></b-col></b-row>
-          <div v-for="(animcategory,index) in animalcategories" :key="index">
-            <b-row class="mb-3">
-              <b-col cols="1"><input id="animcategory.name" v-model="category" type="radio" :value="animcategory.name" @change="onchanged()"></b-col>
-              <b-col cols="8"><span for="animcategory.name"> {{ animcategory.name }}  </span>  </b-col>
-              <b-col cols="1"><label style="background-color:red; cursor:pointer; padding-right:0.25em; padding-left:0.25em; margin-right: 1em" @click="deleteAnimalCategory(animcategory.categoryID)">  X  </label></b-col>
-            </b-row>
-          </div>
-          <b-row class="mb-3">
-            <b-col cols="9"><input id="newcategorybox" v-model="newcategory" type="text" placeholder="Enter a new category" style="text-transform: uppercase;"></b-col>
-            <b-col cols="1"><span style="background-color:green; color:white; font-weight:bold; cursor:pointer; padding-right:0.25em; padding-left:0.25em; margin-right: 1em" @click="addAnimalCategory(newcategory)">  +  </span></b-col>
-          </b-row>
-
-          <b-row class="mb-1"><b-col cols="12"><label style="color: red">*</label><label>Gender</label></b-col></b-row>
-          <div v-for="(gen,index) in genders" :key="index">
-            <b-row class="mb-3">
-              <b-col cols="1"><input id="gen.name" v-model="gender" type="radio" :value="gen.name"></b-col>
-              <b-col cols="8"><span for="gen.name"> {{ gen.name }}  </span>  </b-col>
-              <b-col cols="1"><span style="background-color:red; cursor:pointer; padding-right:0.25em; padding-left:0.25em; margin-right: 1em" @click="deleteAnimalGender(gen.genderID)"> X </span></b-col>
-            </b-row>
-          </div>
-          <b-row class="mb-3">
-            <b-col cols="9"><input id="newgenderbox" v-model="newgender" type="text" placeholder="Enter a new gender" style="text-transform: uppercase;"></b-col>
-            <b-col cols="1"><span style="background-color:green; color:white; font-weight:bold; cursor:pointer; padding-right:0.25em; padding-left:0.25em; margin-right: 1em" @click="addAnimalGender(newgender)">  +  </span> </b-col>
-          </b-row>
-          <b-row class="mb-1"><b-col cols="12"><label style="color: red">*</label><label>Created date</label></b-col></b-row>
-          <b-row class="mb-2">
-            <b-col cols="12"><input
-              v-model="createddate"
-              class="form-control"
-              type="datetime-local"
-              placeholder="Created date"
-              aria-label="default input example"
-              autocomplete="off"
-              @change="onchanged()"
-            >  </b-col>
-          </b-row>
-          <b-row class="mb-2"><b-col cols="4">Deleted date</b-col></b-row>
-          <b-row class="mb-2">
-            <b-col cols="12"><input
-              v-model="deleteddate"
-              class="form-control"
-              type="datetime-local"
-              placeholder="Deleted date"
-              aria-label="default input example"
-              autocomplete="off"
-              @change="onchanged()"
-            >  </b-col>
-          </b-row>
-          <b-row class="mb-2"><b-col cols="4">Qrcode</b-col></b-row>
-          <b-row class="mb-2">
-            <b-col cols="12"><input
-              v-model="qrcode"
-              class="form-control"
-              disabled="true"
-              type="text"
-              placeholder="00.00.00.00.00.00"
-              aria-label="default input example"
-              autocomplete="off"
-            >  </b-col>
-          </b-row>
-          <b-row class="mb-2"><b-col cols="4">Age in months</b-col></b-row>
-          <b-row class="mb-2">
-            <b-col cols="12"><input
-              v-model="monthage"
-              class="form-control"
-              type="number"
-              min="0"
-              placeholder="Age in months"
-              aria-label="default input example"
-              autocomplete="off"
-              @change="onchanged()"
-            >  </b-col>
-          </b-row>
-          <b-row class="mb-2"><b-col cols="4">Alias</b-col></b-row>
-          <b-row class="mb-2">
-            <b-col cols="12"><input
-              v-model="alias"
-              class="form-control"
-              type="text"
-              placeholder="Alias"
-              aria-label="default input example"
-              autocomplete="off"
-              @change="onchanged()"
-            >  </b-col>
-          </b-row>
-          <b-row class="mb-1">
-            <b-col cols="4">Photo</b-col>
-          </b-row>
-          <b-row class="mb-1">
-            <b-col cols="4"><img :src="photolink"></b-col>
-          </b-row>
-          <b-row class="mb-1">
-            <b-col cols="4"><camera @handleSetPhotoData="handleSetPhotoData" /></b-col>
-          </b-row>
-        </b-container>
-      </b-form>
-    </b-modal> -->
-
-    <!-- <div class="row">
-         <div class="col-md-4">
-          <button type="button"  v-on:click="modifyData" class="btn btn-primary" :disabled="confirmdisabled == 1">Confirm the Changes</button>
-        </div>
-      </div> -->
 
     <!-- Register animal dialog -->
     <el-dialog title="Register animal" :visible.sync="isRegisterAnimalModalVisible">
@@ -304,10 +158,16 @@
         <el-form-item label="Alias" prop="alias">
           <el-input v-model="form.alias" />
         </el-form-item>
-        <el-form-item label="Age (in months)" prop="age">
-          <el-input v-model.number="form.age" />
+        <el-form-item label="Name" prop="name">
+          <el-input v-model="form.name" />
         </el-form-item>
-        <el-form-item label="Category" prop="category">
+        <el-form-item label="IP" prop="ip">
+          <el-input v-model="form.ip" />
+        </el-form-item>
+        <el-form-item label="Age (in months)" prop="month_age">
+          <el-input v-model.number="form.month_age" />
+        </el-form-item>
+        <el-form-item label="Category" prop="category_id">
           <el-select v-model="form.category_id" placeholder="Select category" style="width: 100%;">
             <el-option
               v-for="(item, index) in animalcategories"
@@ -317,8 +177,8 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="Gender" prop="gender">
-          <el-select v-model="form.GID" placeholder="Select gender" style="width: 100%;">
+        <el-form-item label="Gender" prop="gender_id">
+          <el-select v-model="form.gender_id" placeholder="Select gender" style="width: 100%;">
             <el-option
               v-for="(item, index) in genders"
               :key="index"
@@ -332,7 +192,6 @@
           <el-col :span="12">
             <el-form-item label="Photo link">
               <el-upload
-                http-request
                 class="upload-demo"
                 :on-preview="handlePreview('photo_link')"
                 :on-remove="handleRemove"
@@ -369,14 +228,94 @@
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="isRegisterAnimalModalVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')">Register</el-button>
+        <el-button type="primary" @click="submitAnimalRegisterForm('ruleForm')">Register</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- Edit animal dialog -->
+    <el-dialog title="Edit animal" :visible.sync="isEditAnimalModalVisible">
+      <el-form ref="editForm" label-position="top" label-width="50px" :model="editAnimalForm" :rules="rules" size="mini" style="text-align: left;">
+        <el-form-item label="Alias" prop="alias">
+          <el-input v-model="editAnimalForm.alias" />
+        </el-form-item>
+        <el-form-item label="Name" prop="name">
+          <el-input v-model="editAnimalForm.name" />
+        </el-form-item>
+        <el-form-item label="IP" prop="ip">
+          <el-input v-model="editAnimalForm.ip" />
+        </el-form-item>
+        <el-form-item label="Age (in months)" prop="month_age">
+          <el-input v-model.number="editAnimalForm.month_age" />
+        </el-form-item>
+        <el-form-item label="Category" prop="category_id">
+          <el-select v-model="editAnimalForm.category_id" placeholder="Select category" style="width: 100%;">
+            <el-option
+              v-for="(item, index) in animalcategories"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="Gender" prop="gender_id">
+          <el-select v-model="editAnimalForm.gender_id" placeholder="Select gender" style="width: 100%;">
+            <el-option
+              v-for="(item, index) in genders"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-row :gutter="24">
+          <el-col :span="12">
+            <el-form-item label="Photo link">
+              <el-upload
+                class="upload-demo"
+                :on-preview="handlePreview('photo_link')"
+                :on-remove="handleRemove"
+                :file-list="photo_link_list"
+                :on-change="handleChangePhotoLink"
+                list-type="list"
+                :multiple="false"
+                :auto-upload="false"
+              >
+                <el-button size="small" type="primary">Click to upload</el-button>
+                <div slot="tip" class="el-upload__tip">jpg/png files with a size less than 500kb</div>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="QR Code">
+              <el-upload
+                class="upload-demo"
+                :on-preview="handlePreview"
+                :on-remove="handleRemove"
+                :file-list="qr_code_list"
+                :on-change="handleChangeQRCode"
+                list-type="list"
+                :multiple="false"
+                :auto-upload="false"
+              >
+                <el-button size="small" type="primary">Click to upload</el-button>
+                <div slot="tip" class="el-upload__tip">jpg/png files with a size less than 500kb</div>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="isEditAnimalModalVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="editAnimal('editForm')">Save Changes</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import Camera from './Camera.vue'
+// import Camera from './Camera.vue'
 import { QrcodeStream, QrcodeDropZone, QrcodeCapture } from 'vue-qrcode-reader'
 import { firestore } from './dashboard/admin/components/Config/firebase'
 import Vue from 'vue'
@@ -384,12 +323,14 @@ import { IconsPlugin } from 'bootstrap-vue'
 import VueExcelXlsx from 'vue-excel-xlsx'
 import { formatDate } from '@/helpers/time'
 import FsLightBox from 'fslightbox-vue'
-// Optionally install the BootstrapVue icon components plugin
+import { Message } from 'element-ui'
+
 Vue.use(IconsPlugin)
 Vue.use(VueExcelXlsx)
+
 export default {
   name: 'AnimalRecordManage',
-  components: { FsLightBox },
+  components: { FsLightBox, QrcodeStream, QrcodeDropZone, QrcodeCapture },
 
   data() {
     const options = [
@@ -400,11 +341,10 @@ export default {
 
     const selected = options[0]
     const selectedcategoryforsearch = []
-    const searchmode = 'MutipleSearch'
 
     return {
       qrCodeToggler: false,
-      photolinkToggle: false,
+      photolinkToggler: false,
       alias: '',
       animaloptions: [
         { text: 'Goat', value: 'Goat' },
@@ -454,32 +394,50 @@ export default {
         photolink: '',
         qrcode: ''
       },
-      searchmode,
       selected,
       selectedcategoryforsearch,
       isSearchMultipleAnimalDialogVisible: false,
-      isSearchByQRCodeDialogVisible: false,
+      isScanAnimalModalVisible: false,
       isRegisterAnimalModalVisible: false,
-      form: {
+      isEditAnimalModalVisible: false,
+      editAnimalForm: {
+        name: '',
         alias: '',
-        age: '',
-        GID: '',
+        month_age: '',
+        gender_id: '',
         category_id: '',
+        ip: '',
+        qr_code: null,
+        photo_link: null
+      },
+      form: {
+        name: '',
+        alias: '',
+        month_age: '',
+        gender_id: '',
+        category_id: '',
+        ip: '',
         qr_code: null,
         photo_link: null
       },
       rules: {
+        name: [
+          { required: true, message: 'Please input name', trigger: 'blur' }
+        ],
         alias: [
           { required: true, message: 'Please input alias', trigger: 'blur' }
         ],
-        age: [
+        ip: [
+          { required: true, message: 'Please input IP', trigger: 'blur' }
+        ],
+        month_age: [
           { required: true, message: 'Please input age', trigger: 'change' },
           { type: 'number', message: 'Age must be a number', trigger: 'change' }
         ],
         category_id: [
           { required: true, message: 'Please input category', trigger: 'change' }
         ],
-        GID: [
+        gender_id: [
           { required: true, message: 'Please input gender', trigger: 'change' }
         ],
         qr_code: [
@@ -490,8 +448,11 @@ export default {
         ]
       },
       qr_code_list: [],
-      photo_link_list: []
-      // foods: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
+      photo_link_list: [],
+      isCameraOpen: false,
+      isPhotoTaken: false,
+      isShotPhoto: false,
+      isLoading: false
     }
   },
 
@@ -501,6 +462,9 @@ export default {
         const container = this.$refs.tablearea
         container.scrollTop = container.scrollHeight + 120
       })
+    },
+    isScanAnimalModalVisible(newValue, oldValue) {
+      this.stopCameraStream()
     }
   },
 
@@ -525,6 +489,73 @@ export default {
   },
 
   methods: {
+    async onDetect(args) {
+      const result = await args
+      const content = result.content
+
+      this.$alert(content, 'Animal Information', {
+        confirmButtonText: 'OK'
+      })
+    },
+    takePhoto() {
+      if (!this.isPhotoTaken) {
+        this.isShotPhoto = true
+
+        const FLASH_TIMEOUT = 50
+
+        setTimeout(() => {
+          this.isShotPhoto = false
+        }, FLASH_TIMEOUT)
+      }
+
+      this.isPhotoTaken = !this.isPhotoTaken
+
+      const context = this.$refs.canvas.getContext('2d')
+      context.drawImage(this.$refs.camera, 0, 0, 450, 337.5)
+    },
+
+    downloadImage() {
+      const download = document.getElementById('downloadPhoto')
+      const canvas = document.getElementById('photoTaken').toDataURL('image/jpeg')
+        .replace('image/jpeg', 'image/octet-stream')
+      download.setAttribute('href', canvas)
+    },
+    toggleCamera() {
+      if (this.isCameraOpen) {
+        this.isCameraOpen = false
+        this.isPhotoTaken = false
+        this.isShotPhoto = false
+        this.stopCameraStream()
+      } else {
+        this.isCameraOpen = true
+        this.createCameraElement()
+      }
+    },
+    createCameraElement() {
+      this.isLoading = true
+
+      const constraints = (window.constraints = {
+        audio: false,
+        video: true
+      })
+
+      navigator.mediaDevices
+        .getUserMedia(constraints)
+        .then(stream => {
+          this.isLoading = false
+          this.$refs.camera.srcObject = stream
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    stopCameraStream() {
+      const tracks = this.$refs.camera.srcObject.getTracks()
+
+      tracks.forEach(track => {
+        track.stop()
+      })
+    },
     formatDataDate(date) {
       return formatDate(date)
     },
@@ -558,7 +589,33 @@ export default {
           break
       }
     },
-    submitForm(formName) {
+    editAnimal(formName) {
+      this.$refs[formName].validate(async(valid) => {
+        if (valid) {
+          delete this.editAnimalForm.gender
+          delete this.editAnimalForm.category
+          await this.$http.put(`animals/${this.editAnimalForm.id}`, this.editAnimalForm)
+            .then(({ data, status }) => {
+              if (status === 200) {
+                Message({
+                  message: 'Animal has been updated',
+                  type: 'success',
+                  duration: 5 * 1000
+                })
+                this.animals = []
+                this.fetchAnimalData()
+                this.isEditAnimalModalVisible = false
+              } else {
+                console.log('error submit!!')
+              }
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+        }
+      })
+    },
+    submitAnimalRegisterForm(formName) {
       if (this.photo_link_list.length > 0) {
         this.form.photo_link = this.photo_link_list[0].raw
       }
@@ -568,13 +625,30 @@ export default {
 
       this.$refs[formName].validate(async(valid) => {
         if (valid) {
-          const request = await this.$http.post('api/users', this.form)
-          console.log(request)
+          await this.$http.post('animals', this.form)
+          this.isRegisterAnimalModalVisible = false
+          Message({
+            message: 'Animal has been added',
+            type: 'success',
+            duration: 5 * 1000
+          })
+          this.animals = []
+          this.fetchAnimalData()
         } else {
           console.log('error submit!!')
           return false
         }
       })
+    },
+    mapNameToId(name, array) {
+      const item = array.find(element => element.name === name)
+      return item ? item.id : null
+    },
+    openEditAnimalModal(animal) {
+      animal.gender_id = this.mapNameToId(animal.gender, this.genders)
+      animal.category_id = this.mapNameToId(animal.category, this.animalcategories)
+      this.editAnimalForm = animal
+      this.isEditAnimalModalVisible = true
     },
     openDeleteConfirmationModal(id) {
       const h = this.$createElement
@@ -593,7 +667,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = 'Loading...'
 
-            const request = await this.$http.delete(`api/animals/${id}`)
+            const request = await this.$http.delete(`animals/${id}`)
 
             if (request.status === 200) {
               const index = this.animals.findIndex(obj => obj.id === id)
@@ -615,9 +689,10 @@ export default {
       })
     },
     async fetchAnimalData() {
-      const { data } = await this.$http.get('api/animals')
+      const { data } = await this.$http.get('animals')
       data.animals.data.forEach((value) => {
         this.animals.push({
+          name: value.name,
           alias: value.alias,
           category: value.category,
           created_at: value.created_at,
@@ -633,8 +708,8 @@ export default {
     },
 
     async fetchAnimalCategories() {
-      const { data } = await this.$http.get('api/categories')
-      data.data.data.forEach((value) => {
+      const { data } = await this.$http.get('category')
+      data.category.data.forEach((value) => {
         this.animalcategories.push({
           id: value.id,
           name: value.name,
@@ -644,8 +719,8 @@ export default {
     },
 
     async fetchAnimalGender() {
-      const { data } = await this.$http.get('api/gender')
-      data.data.data.forEach((value) => {
+      const { data } = await this.$http.get('gender')
+      data.gender.data.forEach((value) => {
         this.genders.push({
           id: value.GID,
           name: value.name
@@ -1134,5 +1209,119 @@ export default {
   overflow-y: scroll;
   overflow-x: scroll;
   height: calc(100vh - 20px);
+}
+
+.web-camera-container {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 500px;
+
+  .camera-button {
+    margin-bottom: 2rem;
+  }
+
+  .camera-box {
+    .camera-shutter {
+      opacity: 0;
+      width: 450px;
+      height: 337.5px;
+      background-color: #fff;
+      position: absolute;
+
+      &.flash {
+        opacity: 1;
+      }
+    }
+  }
+
+  .camera-shoot {
+    margin: 1rem 0;
+
+    button {
+      height: 60px;
+      width: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 100%;
+
+      img {
+        height: 35px;
+        object-fit: cover;
+      }
+    }
+  }
+
+  .camera-loading {
+    overflow: hidden;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    min-height: 150px;
+    margin: 3rem 0 0 -1.2rem;
+
+    ul {
+      height: 100%;
+      position: absolute;
+      width: 100%;
+      z-index: 999999;
+      margin: 0;
+    }
+
+    .loader-circle {
+      display: block;
+      height: 14px;
+      margin: 0 auto;
+      top: 50%;
+      left: 100%;
+      transform: translateY(-50%);
+      transform: translateX(-50%);
+      position: absolute;
+      width: 100%;
+      padding: 0;
+
+      li {
+        display: block;
+        float: left;
+        width: 10px;
+        height: 10px;
+        line-height: 10px;
+        padding: 0;
+        position: relative;
+        margin: 0 0 0 4px;
+        background: #999;
+        animation: preload 1s infinite;
+        top: -50%;
+        border-radius: 100%;
+
+        &:nth-child(2) {
+          animation-delay: .2s;
+        }
+
+        &:nth-child(3) {
+          animation-delay: .4s;
+        }
+      }
+    }
+  }
+
+  @keyframes preload {
+    0% {
+      opacity: 1
+    }
+    50% {
+      opacity: .4
+    }
+    100% {
+      opacity: 1
+    }
+  }
 }
 </style>

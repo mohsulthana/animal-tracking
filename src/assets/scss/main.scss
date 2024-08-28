@@ -1,0 +1,117 @@
+.wrapper {
+    opacity: 1;
+    background: url("~@/assets/background_for_app.jpg") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    min-height: 100vh;
+    overflow: hidden;
+
+    /* Height for devices larger than 576px */
+    @media (min-width: 992px) {
+        #intro {
+            margin-top: -58.59px;
+        }
+    }
+
+    .navbar .nav-link {
+        color: #fff !important;
+    }
+}
+
+.authentication-container {
+    min-height: 100%;
+    width: 100%;
+    background-color: #f0f2f5;
+    overflow: hidden;
+
+    .el-input {
+        display: inline-block;
+        height: 47px;
+        font-size: 1.25rem;
+        font-weight: 600;
+        border-radius: 6px;
+        transition: 0.2s ease;
+
+        input {
+            border-radius: 4px;
+            color: rgb(22, 21, 21);
+            height: 47px;
+
+            &:-webkit-autofill {
+                box-shadow: 0 0 0px 1000px $bg inset !important;
+                -webkit-text-fill-color: $cursor !important;
+            }
+        }
+    }
+
+    .authentication-form {
+        position: relative;
+        width: 100%;
+        max-width: 1000px;
+        padding: 300px 35px 0;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .tips {
+        font-size: 4rem;
+        color: #0a0a0a;
+        margin-bottom: 10px;
+
+        span {
+            &:first-of-type {
+                margin-right: 16px;
+            }
+        }
+    }
+
+    .svg-container {
+        padding: 6px 5px 6px 15px;
+        color: #0a0a0a;
+        vertical-align: middle;
+        width: 30px;
+        display: inline-block;
+    }
+
+    .title-container {
+        position: relative;
+
+        .title {
+            font-size: 26px;
+            color: #0a0a0a;
+            margin: 0px auto 40px auto;
+            text-align: center;
+            font-weight: bold;
+        }
+    }
+
+    .show-pwd {
+        position: absolute;
+        right: 10px;
+        top: 7px;
+        font-size: 16px;
+        color: #0a0a0a;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .thirdparty-button {
+        position: absolute;
+        right: 0;
+        bottom: 6px;
+    }
+
+    @media only screen and (max-width: 470px) {
+        .thirdparty-button {
+            display: none;
+        }
+    }
+}
+
+@supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
+    .authentication-container .el-input input {
+        color: $cursor;
+    }
+}

@@ -1,16 +1,20 @@
 <template>
   <div class="dashboard-editor-container">
+    <panel-group
+      @handleSetLineChartData="handleSetLineChartData"
+    />
 
-    <panel-group @handleSetLineChartData="handleSetLineChartData" @handleSetPieChartData="handleSetPieChartData" />
-
-    <el-row :gutter="12">
-      <el-col span="12">
+    <el-row :gutter="24">
+      <el-col :span="12" :xs="24">
         <el-card>
-          <AnimalGenderChart v-if="animalStatisticData.labels.length" :data="animalStatisticData" />
-          <el-empty v-else description="Empty category data" />
+          <AnimalGenderChart
+            v-if="animalStatisticData.labels?.length"
+            :data="animalStatisticData"
+          />
+          <el-empty v-else description="Empty animal data" />
         </el-card>
       </el-col>
-      <el-col span="12">
+      <el-col :span="12" :xs="24">
         <el-card>
           <el-radio-group v-model="selected">
             <el-radio-button :label="1">7 Days</el-radio-button>
@@ -45,7 +49,6 @@ export default {
     return {
       selected: 1,
       lineChartData: { type: 'footagein7days', data: [] },
-      pieChartData: { AdultMaleCount: 10, AdultFemaleCount: 20, YoungMaleCount: 30, YoungFemaleCount: 40 },
       animalStatisticData: {},
       animalFootageHistoryData: {}
     }
@@ -72,21 +75,21 @@ export default {
   },
   mounted() {
     this.fetchAnimalGender()
-
-    this.lineChartData1 = { goatNumber: this.$store.getters.footagecount.totalgoatin7days, cattleNumber: this.$store.getters.footagecount.totalcattlein7days, sheepNumber: this.$store.getters.footagecount.totalsheepin7days, bokNumber: this.$store.getters.footagecount.totalbokin7days }
-    this.lineChartData = { type: 'footagein7days', data: this.$store.getters.categoryfootage }
+    this.fetchFootageChart()
   },
 
   methods: {
     async fetchAnimalGender() {
-      const { data } = await this.$http.get('api/total-gender')
+      const { data } = await this.$http.get('total-gender')
       const labels = []
       const totalAnimals = []
       const backgroundColor = ['#41B883', '#E46651']
-      const datasets = [{
-        backgroundColor,
-        data: totalAnimals
-      }]
+      const datasets = [
+        {
+          backgroundColor,
+          data: totalAnimals
+        }
+      ]
 
       data.animals.forEach((value) => {
         labels.push(value.gender)
@@ -98,42 +101,14 @@ export default {
         datasets
       }
     },
+    async fetchFootageChart() {
+      const { data } = await this.$http.get('footage-chart')
+      data.data.forEach(footage => {
+        this.lineChartData.data.push(footage)
+      })
+    },
     handleSetLineChartData(type) {
-      this.lineChartData = { type: type, data: this.$store.getters.categoryfootage }
-    },
-
-    handleSetLineChartData1(type) {
-      switch (type) {
-        case 'footagein7days':
-          this.lineChartData1 = { goatNumber: this.$store.getters.footagecount.totalgoatin7days, cattleNumber: this.$store.getters.footagecount.totalcattlein7days, sheepNumber: this.$store.getters.footagecount.totalsheepin7days, bokNumber: this.$store.getters.footagecount.totalbokin7days }
-          break
-        case 'footagein1month':
-          this.lineChartData1 = { goatNumber: this.$store.getters.footagecount.totalgoatin1month, cattleNumber: this.$store.getters.footagecount.totalcattlein1month, sheepNumber: this.$store.getters.footagecount.totalsheepin1month, bokNumber: this.$store.getters.footagecount.totalbokin1month }
-          break
-        case 'footagein6months':
-          this.lineChartData1 = { goatNumber: this.$store.getters.footagecount.totalgoatin6months, cattleNumber: this.$store.getters.footagecount.totalcattlein6months, sheepNumber: this.$store.getters.footagecount.totalsheepin6months, bokNumber: this.$store.getters.footagecount.totalbokin6months }
-          break
-        case 'footagein1year':
-          this.lineChartData1 = { goatNumber: this.$store.getters.footagecount.totalgoatin1year, cattleNumber: this.$store.getters.footagecount.totalcattlein1year, sheepNumber: this.$store.getters.footagecount.totalsheepin1year, bokNumber: this.$store.getters.footagecount.totalbokin1year }
-          break
-      }
-    },
-
-    handleSetPieChartData(type) {
-      var AdultMaleCount = 0
-      var AdultFemaleCount = 0
-      var YoungMaleCount = 0
-      var YoungFemaleCount = 0
-
-      AdultMaleCount = this.$store.getters.animals.filter(a => a.category === type && a.monthage >= 12 && a.gender === 'M').length
-      AdultFemaleCount = this.$store.getters.animals.filter(a => a.category === type && a.monthage >= 12 && a.gender === 'F').length
-      YoungMaleCount = this.$store.getters.animals.filter(a => a.category === type && a.monthage < 12 && a.gender === 'M').length
-      YoungFemaleCount = this.$store.getters.animals.filter(a => a.category === type && a.monthage < 12 && a.gender === 'F').length
-
-      this.pieChartData = { AdultMaleCount: AdultMaleCount,
-        AdultFemaleCount: AdultFemaleCount,
-        YoungMaleCount: YoungMaleCount,
-        YoungFemaleCount: YoungFemaleCount }
+      this.lineChartData.type = type
     }
   }
 }
@@ -159,7 +134,7 @@ export default {
   }
 }
 
-@media (max-width:1024px) {
+@media (max-width: 1024px) {
   .chart-wrapper {
     padding: 8px;
   }

@@ -76,7 +76,10 @@ export default {
       switch (type) {
         case 'footagein7days':// footage in a week.
           var w = today.getDay() - 1
-          xlabels = [this.weekdaynames[(w - 6 < 0) ? w - 6 + 7 : w - 6], this.weekdaynames[(w - 5 < 0) ? w - 5 + 7 : w - 5], this.weekdaynames[(w - 4 < 0) ? w - 4 + 7 : w - 4], this.weekdaynames[(w - 3 < 0) ? w - 3 + 7 : w - 3], this.weekdaynames[(w - 2 < 0) ? w - 2 + 7 : w - 2], this.weekdaynames[(w - 1 < 0) ? w - 1 + 7 : w - 1], this.weekdaynames[w]]
+          xlabels = [
+            this.weekdaynames[(w - 6 < 0) ? w - 6 + 7 : w - 6], this.weekdaynames[(w - 5 < 0) ? w - 5 + 7 : w - 5], this.weekdaynames[(w - 4 < 0) ? w - 4 + 7 : w - 4], this.weekdaynames[(w - 3 < 0) ? w - 3 + 7 : w - 3], this.weekdaynames[(w - 2 < 0) ? w - 2 + 7 : w - 2], this.weekdaynames[(w - 1 < 0) ? w - 1 + 7 : w - 1], this.weekdaynames[w]
+
+          ]
           data.forEach(d => {
             var color = '#' + (Math.random() * 0xFFFFFF << 0).toString(16)
             series.push({

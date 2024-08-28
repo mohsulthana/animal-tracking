@@ -8,19 +8,33 @@
 import { mapGetters } from 'vuex'
 import adminDashboard from './Admin'
 import editorDashboard from './Editor'
+import guestDashboard from './Guest'
 
 export default {
   name: 'Dashboard',
-  components: { adminDashboard, editorDashboard },
+  components: { adminDashboard, editorDashboard, guestDashboard },
   data() {
     return {
-      currentRole: 'adminDashboard'
+      role_id: this.$store.getters.user.role_id
     }
   },
   computed: {
     ...mapGetters([
       'roles'
-    ])
+    ]),
+    currentRole() {
+      console.log(this.role_id)
+      switch (parseInt(this.role_id)) {
+        case 1:
+          return adminDashboard
+        case 2:
+          return editorDashboard
+        case 3:
+          return guestDashboard
+        default:
+          return adminDashboard
+      }
+    }
   },
   async beforeCreate() {
 
