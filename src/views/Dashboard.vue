@@ -23,7 +23,6 @@ export default {
       'roles'
     ]),
     currentRole() {
-      console.log(this.role_id)
       switch (parseInt(this.role_id)) {
         case 1:
           return adminDashboard
@@ -44,9 +43,9 @@ export default {
 
   },
   created() {
-    if (!this.roles.includes('admin')) {
-      this.currentRole = 'editorDashboard'
-    }
+    // if (!this.roles.includes('admin')) {
+    //   this.currentRole = 'editorDashboard'
+    // }
   }
 }
 </script>
