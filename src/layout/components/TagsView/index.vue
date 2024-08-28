@@ -63,6 +63,15 @@ export default {
     this.addTags()
   },
   methods: {
+    hasPermissions(key) {
+      const role_id = parseInt(this.$store.getters.user.role_id)
+      const roles = this.$store.getters['roles'].filter(role => role.id === role_id)
+      return roles.some(role => {
+        const filteredPermissions = JSON.parse(role.permissions)
+        filteredPermissions.push('dashboard', 'settings')
+        return filteredPermissions.includes(key)
+      })
+    },
     isActive(route) {
       return route.path === this.$route.path
     },
