@@ -30,7 +30,7 @@
       </el-dropdown>
     </div>
     <h6 style="margin-right: 16px;">
-      {{ $store.getters.user.firstname + $store.getters.user.surname }}
+      {{ $store.getters.user.firstname + ' ' + $store.getters.user.surname }}
     </h6>
   </div>
 </template>

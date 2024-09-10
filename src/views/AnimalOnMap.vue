@@ -2,7 +2,7 @@
   <div id="animal-record-management">
     <el-row :span="24">
       <el-col>
-        <el-card class="box-card">
+        <el-card class="box-card" style="height: 900px;">
           <div slot="header" class="d-flex justify-content-between">
             <h5>Animals on map</h5>
           </div>
@@ -51,11 +51,12 @@
                 "
               >All</el-button>
             </el-button-group>
-            <div
+            <animal-map />
+            <!-- <div
               id="mapContainer"
               ref="hereMap"
               style="height: 600px; width: 100%"
-            />
+            /> -->
           </div>
         </el-card>
       </el-col>
@@ -65,10 +66,13 @@
 
 <script>
 import { firestore } from './dashboard/admin/components/Config/firebase'
+import AnimalMap from '@/components/AnimalMap'
 
 export default {
   name: 'HereMap',
-
+  components: {
+    AnimalMap
+  },
   data() {
     return {
       animalcategories: [],
@@ -111,7 +115,6 @@ export default {
       mapRef: null
     }
   },
-
   async mounted() {
     this.mapRef = this.$refs.hereMap
     // Initialize the platform object:

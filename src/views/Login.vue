@@ -157,7 +157,9 @@ export default {
         background: 'rgba(0, 0, 0, 0.7)'
       })
 
-      await this.$http.post('login-with-google', decoded)
+      const payload = { ...decoded, login_with: 'google' }
+
+      await this.$http.post('login-with-google', payload)
         .then(async(response) => {
           const token = response.data.access_token
           const user = response.data.user
