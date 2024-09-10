@@ -239,7 +239,7 @@ export default {
               })
 
               setTimeout(() => {
-                this.$router.push({ name: 'dashboard' })
+                this.$router.push('/')
               }, 1000)
             })
             .catch((error) => {
