@@ -126,6 +126,16 @@ export const routes = [
     ]
   },
   {
+    path: '/landing-page',
+    component: () => import('@/views/LandingPage'),
+    hidden: true,
+    name: 'landing-page',
+    meta: {
+      requiresAuth: false,
+      title: 'Landing Page'
+    }
+  },
+  {
     path: '/login',
     component: () => import('@/views/Login'),
     hidden: true,

@@ -51,6 +51,14 @@ Vue.use(Element, {
   locale: enLang // 如果使用中文，无需设置，请删除
 })
 
+import { BootstrapVue } from 'bootstrap-vue'
+
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+
+// Make BootstrapVue available throughout your project
+Vue.use(BootstrapVue)
+
 // google-map
 /* Vue.use(VueGoogleMaps, {
   load: {
